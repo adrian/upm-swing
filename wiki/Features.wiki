@@ -1,0 +1,21 @@
+---+++ Phase 1
+   * Cross platform, must be capable of running on Windows, Mac OS X  and Linux (initially just a tar.gz but ideally RPM and Debian versions as well)
+   * Ability to share the password file among several locations, if it's updated on one machine then it should be automatically/semi-automatically copied on to all machines using that file
+   * Fast, needs to be quick to start and use
+   * Quick and easy to access search (like the search in iTunes)
+   * Phonetic password, i.e. allow for the ability to see the password in the NATO phonetic alphabet (http://en.wikipedia.org/wiki/NATO_phonetic_alphabet)
+   * Allow passwords to be organised into groups
+   * Strong encryption
+   * Copy username, password
+   * Clear clipborad when closing
+   * Keep main window on top
+   * Easy to internationalise
+   * Store nothing in memory in plain text (especialy the master password)
+
+---+++ Phase 2
+   * Automatically check for updates
+   * Password generation (lc chars, uc chars, numbers, symbols)
+   * Password file backup (automatic)
+   * On screen keyboard
+   * Password, Challenge/response phrases, pin number
+   * Run from portable media

@@ -1,0 +1,11 @@
+This object has methods on it to serialise/deserialise a Java primitive to a flat packed version.
+
+---+++ Methods
+*public String flatPack(String s)*
+*public String flatPack(int i)*
+*public String flatPack(long l)*
+*public String flatPack(double d)*
+*public String flatPack(float f)*
+*public String flatPack(char c)*
+
+*public String assemble(InputStream is)*

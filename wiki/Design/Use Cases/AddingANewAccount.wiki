@@ -1,0 +1,6 @@
+   * Users clicks the "Add Account" button
+   * The "Add Account" window is displayed
+   * The user fills in the fields for the new account and clicks "OK"
+   * A new Account object is created and the data from the screen is put into it. The data is encrypted as it's put into the Account
+   * The Account is added to the PasswordDatabase
+   * The PasswordDatabase is saved to disk. This involves encrypting all the data and writing the resultant string out to the PasswordDatabase file

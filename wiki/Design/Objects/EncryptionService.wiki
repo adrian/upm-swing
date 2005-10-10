@@ -1,0 +1,20 @@
+The purpose of this class is to expose a simple encryption interface to the rest of the application.
+
+---++ Class: EncryptionService
+
+---+++ Methods
+*private EncryptionService()*
+The constructor is private so that this class cannot be instaniated normally.
+
+*public static EncryptionService getInstance()*
+Get a singleton instance of this class
+
+*public void init(char[] password)*
+   * =password=: The password to use to initialize the PBEKeySpec
+Initialise the PBE Cipher with the given password
+
+*public Cipher getEncryptionCipher()*
+Get the Cipher object to use for encryption
+
+*public Cipher getDecryptionCipher()*
+Get the Cipher object to use for decryption

@@ -1,0 +1,4 @@
+* The GUI
+* The encryption/decryption module
+* Remote password database synchronization
+* The password database

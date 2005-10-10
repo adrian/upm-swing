@@ -1,0 +1,3 @@
+GeneralNotes - High level notes on how the application will work
+MainModules - Main areas of the application
+PasswordDatabase - The design of the Password Database module

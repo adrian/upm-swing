@@ -1,0 +1,33 @@
+A DatabaseHeader holds information that relates to the database as a whole.
+
+Here's what the flatpacked version of this object looks like...
+   =xxyyzzaaaa.....bbbb.....=
+   * xx - Major
+   * yy - Minor
+   * zz - Patch
+   * aaaa - Length of the revision field
+   * .... - The revision field
+   * bbbb - Length of the MAC field
+   * .... - The MAC field
+
+---+++ Class
+*Signature:* extends FlatPackObject
+
+---+++ Attributes
+   * majorVersion
+   * minorVersion
+   * patchVersion
+   * revision
+   * MAC
+
+Each of these attributes should have a getter and setter.
+
+---+++ Methods
+*public DatabaseHeader(String flatPacked)*
+This method takes the flat packed data and deserialises it into the correct fields
+
+*public String getVersion()*
+Returns a string with majorVersion.minorVersion.patchVersion
+
+*public String flatPack()*
+Returns a flat packed version of the header information

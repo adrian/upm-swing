@@ -1,0 +1,1 @@
+This application will be used to store passwords for different applications, websites, etc. It grew from a need for a cross platform application that I could use both at home and at work. I use the same password manager and database at home and work. The biggest problem/pain in the past has been keeping these two databases in sync.

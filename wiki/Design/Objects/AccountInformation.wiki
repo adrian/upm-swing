@@ -1,0 +1,15 @@
+This object holds information relating to an Account. Information such as the account name, URL, password, etc
+
+---+++ Class
+*Signature:* extends FlatPackObject
+
+---+++ Attributes
+   * Account Name
+   * User id
+   * Password
+   * URL
+   * Notes
+
+Each of these attributes should have a getter and setter.
+
+The _set_ method for each attribute (except the accout name) should encrypt the data before storing it in memory. This way nothing important is ever left unencrypted. The _get_ methods will then need to decrypt before returning the cleartext.

@@ -1,0 +1,5 @@
+* Users clicks the "Edit Account" button
+* The "Edit Account" window is displayed
+* The user makes the necessary changes and clicks "OK"
+* The data on the screen is put back into the Account object. The data is encrypted as it's put into the Account
+* The PasswordDatabase is saved to disk. This involves encrypting all the data and writing the resultant string out to the PasswordDatabase file

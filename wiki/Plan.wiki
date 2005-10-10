@@ -1,0 +1,13 @@
+   * Need to find out how to use the Java encryption stuff
+   * Design the database layer (and probably the encryption service interface)
+   * Design the encryption service
+   * Build the database and encryption service
+   * Design the GUI
+   * Build the GUI
+   
+---++ Main Modules
+   * The GUI
+   * The password database
+   * The encryption/decryption module (used by both the GUI and database layers)
+   * Remote password database synchronization
+   

@@ -1,0 +1,8 @@
+   * Blowfish - http://www.schneier.com/blowfish.html
+   * Crypto++ - http://www.eskimo.com/~weidai/cryptlib.html
+   * mcrypt - http://sourceforge.net/projects/mcrypt/
+   * Cipher modes - http://www.disappearing-inc.com/C/ciphermodes.html
+   * An Introduction to Using Keys in Cryptography - http://www.di-mgt.com.au/cryptokeys.html
+   * http://kvirc.firenze.linux.it/cgi-bin/pragma.cgi?view=code, http://kvirc.firenze.linux.it/~pragma/tar/rijndael-cpplib.tar.gz - Rijndael cryptography library
+   * http://cvs.sourceforge.net/viewcvs.py/keepass/keepass/Crypto/
+   * http://fp.gladman.plus.com/cryptography_technology/index.htm - Brian Gladman's Home Page on Cryptography

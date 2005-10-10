@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ $Id: build.xml 27 2005-09-03 12:14:42Z Adrian Smith $
+
+ Universal Password Manager
+ Copyright (C) 2005 Adrian Smith
+
+ This file is part of Universal Password Manager.
+   
+ Universal Password Manager is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ Universal Password Manager is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Universal Password Manager; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+
+<project name="Universal Password Manager" default="compile" basedir=".">
+
+	<property file="build.properties"/>
+	
+	<!-- Set all the project properties -->
+	<property name="src" value="src"/>
+	<property name="test.src" value="test"/>
+	<property name="build" value="build"/>
+	<property name="test.build" value="testbuild"/>
+	<property name="dist" value="dist"/>
+	<property name="short.name" value="upm"/>
+	<property name="lib" value="lib"/>
+
+
+	<!-- Define a classpath for use later on -->
+	<path id="project.class.path">
+		<pathelement path="${build}"/>
+		<pathelement path="${test.build}"/>
+		<pathelement location="${lib}\junit.jar"/>
+	</path>
+
+
+	<!-- The clean target cleans the environment -->
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${test.build}"/>
+		<delete>
+			<fileset dir="${basedir}" includes="TEST-*"/>
+		</delete>
+	</target>
+
+
+	<!-- The compile target compiles the source -->
+	<target name="compile">
+
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true">
+			<classpath refid="project.class.path" />
+		</javac>
+
+		<mkdir dir="${test.build}"/>
+		<javac srcdir="${test.src}" destdir="${test.build}" debug="on" failonerror="true">
+			<classpath refid="project.class.path" />
+		</javac>
+  	
+	</target>
+
+
+	<!-- Perform a build -->
+	<target name="build">
+
+		<!-- The version has to be set before we can do a build -->
+		<antcall target="checkPropertyExists">
+			<param name="propertyToCheck" value="version"/>
+		</antcall>
+
+		<echo message="Performing the build ${version}"/>
+
+		<!-- build up JARs -->
+		<mkdir dir="${dist}\${version}"/>    
+		<jar destfile="${dist}\${version}\${short.name}.jar" basedir="${build}" includes="**\*.class">
+			<manifest>
+				<attribute name="${short.name}" value="${version}"/>
+			</manifest>
+		</jar>
+
+	</target>
+
+	
+	<!-- Check if the given property is set. If it's not then fail the build -->
+	<target name="checkPropertyExists" unless="${propertyToCheck}">
+		<fail message="The user property '${propertyToCheck}' is not set"/>
+	</target>
+
+	
+	<target name="test" depends="compile">
+		<!-- I had to put the junit.jar file into my ANT_HOME/lib in order for
+		     the junit task to work -->
+		<junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on">
+			<classpath refid="project.class.path" />
+			<formatter type="plain"/>
+			<batchtest>
+				<fileset dir="${test.build}">
+					<include name="**/*.class"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	
+	<target name="backup" description="Sends all the projects source code up to an FTP server">
+		
+		<zip destfile="${basedir}\upm.zip">
+			<fileset dir="${basedir}">
+				<exclude name="${build}\**"/>
+				<exclude name="${test.build}\**"/>
+				<exclude name="upm.zip"/>
+				<exclude name="TEST-*"/>
+			</fileset>
+		</zip>
+
+		<ftp server="${backup.server}"
+			 userid="${backup.userid}"
+			 password="${backup.password}"
+			 remotedir="${backup.remoteDir}"
+			 verbose="yes">
+			<fileset file="${basedir}\upm.zip"/>
+		</ftp>
+		
+		<delete file="${basedir}\upm.zip"/>
+		
+	</target>
+
+
+	<target name="refresh" description="Refreshes all the projects source code from an FTP server">
+		<!-- JAR files should have the property svn:needs-lock
+		     so they'll be readonly -->
+		<mkdir dir="${lib}"/> <!-- just in case we only have build.xml -->
+		<attrib readonly="false">
+			<fileset dir="${lib}" includes="*.jar"/>
+		</attrib>
+			
+		<ftp action="get" 
+			 server="${backup.server}"
+			 userid="${backup.userid}"
+			 password="${backup.password}"
+			 remotedir="${backup.remoteDir}"
+			 verbose="yes">
+			<fileset file="${basedir}\upm.zip"/>
+		</ftp>
+
+		<unzip src="${basedir}\upm.zip"
+			 dest="${basedir}"/>
+
+		<delete file="${basedir}\upm.zip"/>
+		
+		<attrib readonly="true">
+			<fileset dir="${lib}" includes="*.jar"/>
+		</attrib>
+	</target>
+
+</project>

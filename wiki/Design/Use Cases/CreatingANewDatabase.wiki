@@ -1,0 +1,4 @@
+* Users selects the "New Database" button in the File menu
+* User is promped for the path & filename of the new database
+* A new PasswordDatabase object is created
+* The GUI reads each account name from the PasswordDatabase and displays them in it's listview
