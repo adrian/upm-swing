@@ -22,28 +22,16 @@
  */
 package com._17od.upm.crypto;
 
-
 import java.util.Arrays;
-import java.util.Random;
-
 import com._17od.upm.crypto.EncryptionService;
 import junit.framework.TestCase;
 
 
 public class TestEncryptionService extends TestCase {
 
-	private char[] password = "test password".toCharArray();
-	private EncryptionService encryptionService;
-
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		encryptionService = EncryptionService.getInstance();
-		encryptionService.init(password);
-	}
-
-	
 	public void testEncryptDecryptString() throws Exception {
+		char[] password = "test password".toCharArray();
+		EncryptionService encryptionService = new EncryptionService(password);
 		byte[] cleartext = "samplestring".getBytes();
 		byte[] cipherText = encryptionService.encrypt(cleartext);
 		byte[] cleartext2 = encryptionService.decrypt(cipherText);
@@ -51,39 +39,21 @@ public class TestEncryptionService extends TestCase {
 	}
 
 	
-	public void testChangeSalt() throws Exception {
-		byte[] cleartext = "samplestring".getBytes();
-		byte[] cipherText = encryptionService.encrypt(cleartext);
-		
-	    //Generate a random salt and use it to reinitialise the EncryptionService
-		Thread.sleep(100); //Sleep to ensure the Random class will run in the future with a new seed
-	    Random saltGen = new Random();
-	    byte pSalt[] = new byte[EncryptionService.SALT_LENGTH];
-	    saltGen.nextBytes(pSalt);
-		encryptionService.init(password, pSalt);
+	public void testChangePassword() throws Exception {
 
-		//When we decrypt the cipherText we should get a different result
-		try {
-			byte[] cleartext2 = encryptionService.decrypt(cipherText);
-			fail("Should have got an InvalidPasswordException because we changed the salt");
-		} catch (InvalidPasswordException e) {
-			//should get here
-		}
-	}
+		char[] password = "test password".toCharArray();
+		EncryptionService encryptionService = new EncryptionService(password);
 
+		char[] password2 = "test password2".toCharArray();
+		EncryptionService encryptionService2 = new EncryptionService(password2, encryptionService.getSalt());
 
-	public void testChangePasswordAndSalt() throws Exception {
-		char[] password2 = "a new password".toCharArray();
 		byte[] cleartext = "samplestring".getBytes();
 		byte[] cipherText = encryptionService.encrypt(cleartext);
 
-		//Reinitialise the EncryptionService with a new password (which will also mean a new salt) 
-		encryptionService.init(password2);
-
 		//When we decrypt the cipherText we should get a different result
 		try {
-			byte[] cleartext2 = encryptionService.decrypt(cipherText);
-			fail("Should have got an InvalidPasswordException because we changed the password (and salt)");
+			encryptionService2.decrypt(cipherText);
+			fail("Should have got an InvalidPasswordException because we changed the password");
 		} catch (InvalidPasswordException e) {
 			//should get here
 		}
@@ -91,15 +61,19 @@ public class TestEncryptionService extends TestCase {
 
 	
 	public void testSaltIsRandom() throws Exception {
+
+		char[] password = "test password".toCharArray();
+		EncryptionService encryptionService = new EncryptionService(password);
+
 		byte[] salt1 = encryptionService.getSalt();
 		Thread.sleep(100); //Sleep to ensure the Random class will run in the future with a new seed
-		encryptionService.init(password);
+		encryptionService = new EncryptionService(password);
 		byte[] salt2 = encryptionService.getSalt();
 		Thread.sleep(100);
-		encryptionService.init(password);
+		encryptionService = new EncryptionService(password);
 		byte[] salt3 = encryptionService.getSalt();
 		Thread.sleep(100);
-		encryptionService.init(password);
+		encryptionService = new EncryptionService(password);
 		byte[] salt4 = encryptionService.getSalt();
 		
 		assertNotEquals(salt1, salt2, "Salt1 and Salt2 are the same");

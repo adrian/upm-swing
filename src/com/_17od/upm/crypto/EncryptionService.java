@@ -42,7 +42,6 @@ import java.io.FileNotFoundException;
 
 public class EncryptionService {
 
-	private static EncryptionService singletonInstance;
 	private Cipher encryptionCipher; 
 	private Cipher decryptionCipher;
 	private byte[] salt;
@@ -55,26 +54,7 @@ public class EncryptionService {
 	private static final String algorithm = "PBEWithMD5AndDES";
 
 	
-	/*
-	 * This is a singleton class so we need to remove the ability
-	 * to create instances of it
-	 */
-	private EncryptionService() {
-	}
-
-
-	/**
-	 * Get the singleton instance of this class
-	 */
-	public static EncryptionService getInstance() {
-		if (singletonInstance == null) {
-			singletonInstance = new EncryptionService();
-		}
-		return singletonInstance;
-	}
-	
-	
-	public void init(char[] password) throws GeneralSecurityException {
+	public EncryptionService(char[] password) throws GeneralSecurityException {
 	    //Generate a random salt
 	    Random saltGen = new Random();
 	    byte pSalt[] = new byte[SALT_LENGTH];
@@ -84,7 +64,12 @@ public class EncryptionService {
 	}
 	
 	
-	public void init(char[] password, byte[] salt) throws GeneralSecurityException {
+	public EncryptionService(char[] password, byte[] salt) throws GeneralSecurityException {
+		init(password, salt);
+	}
+	
+	
+	private void init(char[] password, byte[] salt) throws GeneralSecurityException {
 		
 		PBEKeySpec pbeKeySpec;
 	    PBEParameterSpec pbeParamSpec;
@@ -142,6 +127,7 @@ public class EncryptionService {
 		}
 		return retVal;
 	}
+	
 
 	public byte[] getSalt() {
 		return salt;

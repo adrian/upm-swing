@@ -36,9 +36,8 @@ import com._17od.upm.database.ProblemReadingDatabaseFile;
 
 public class TestPasswordDatabase extends TestCase {
 
-	private String databaseFileName = "c:\\temp\\pd5";
-	private char[] password = {'v', 'e', 'r', 'y', 's', 'e', 'c',
-			'r', 'e', 't', 'p', 'a', 's', 's', 'w', 'o', 'r', 'd'};
+	private String databaseFileName = System.getProperty("user.dir") + "/pd";
+	private char[] password = "very secret password".toCharArray();
 
 	
 	public TestPasswordDatabase(String name) {
@@ -46,33 +45,34 @@ public class TestPasswordDatabase extends TestCase {
 	}
 	
 	
-	public void testOpenNonExistantFile() throws IOException, ProblemReadingDatabaseFile, GeneralSecurityException, InvalidPasswordException {
-		
+	public void testOpenNonExistantFile() throws Exception {
+
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
-		
-		PasswordDatabase.createNewDatabase(databaseFileName, password);
-		
+
+		new PasswordDatabase(databaseFileName, password);
+
 		File f = new File(databaseFileName);
 		if (f.exists() == false) {
 			fail("Database file should exist now");
 		}
+
 	}
 
 
-	public void testOpenExistingDB() throws IOException, ProblemReadingDatabaseFile, GeneralSecurityException {
+	public void testOpenExistingDB() throws Exception {
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
 		
 		//Create the db on this line
-		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName), password);
+		PasswordDatabase db = new PasswordDatabase(databaseFileName, password);
 		db.save();
 		
 		//Now try to open the db again
-		new PasswordDatabase(new File(databaseFileName), password);
+		new PasswordDatabase(databaseFileName, password);
 	}
 	
-	
+/*	
 	public void testAddAccount() throws IOException, ProblemReadingDatabaseFile, GeneralSecurityException {
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
@@ -148,7 +148,7 @@ public class TestPasswordDatabase extends TestCase {
 		}
 		
 	}
-
+*/
 	
 	private void deleteFile(String fileName) {
 		File f = new File(fileName);

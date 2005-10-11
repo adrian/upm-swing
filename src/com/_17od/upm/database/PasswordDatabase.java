@@ -23,22 +23,18 @@
 package com._17od.upm.database;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.EOFException;
-import java.util.Arrays;
+import java.io.RandomAccessFile;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-
 import com._17od.upm.crypto.EncryptionService;
-import com._17od.upm.crypto.InvalidPasswordException;
-
 
 
 /**
@@ -47,42 +43,47 @@ import com._17od.upm.crypto.InvalidPasswordException;
  */
 public class PasswordDatabase {
 
-	private static final String MAC = "UniversalPasswordManagerMAC";
-
 	private static final String MAJOR_VERSION = "1"; 
 	private static final String MINOR_VERSION = "0"; 
 	private static final String PATCH_VERSION = "0";
 
-	private static File databaseFile;
-	private static DatabaseHeader dh;
-	private static HashMap accounts;
+	private File databaseFile;
+	private DatabaseHeader dh;
+	private HashMap accounts;
+	private EncryptionService encryptionService;
 
 	
-	private PasswordDatabase() {
-		//Don't allow constructor to be called externally
+	public PasswordDatabase(String dbFile, char[] password) throws Exception {
+		this(dbFile, password, false);
 	}
-
 	
-	public static PasswordDatabase createNewDatabase(String dbFile, char[] password) throws IOException, GeneralSecurityException  {
-		PasswordDatabase pd = new PasswordDatabase();
-		pd.initialiseNewDatabase(dbFile, password);
-		return pd;
-	}
-
-
-	public static PasswordDatabase loadExistingDatabase(String dbFile, char[] password) throws FileNotFoundException {
-		
+	
+	public PasswordDatabase(String dbFile, char[] password, boolean overwrite) throws Exception {
 		databaseFile = new File(dbFile);
-			
+		//Either create a new file (if it exists and overwrite == true OR it doesn't exist) or open the existing file
+		if ((databaseFile.exists() && overwrite == true) || !databaseFile.exists()) {
+			databaseFile.delete();
+			databaseFile.createNewFile();
+			dh = new DatabaseHeader(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
+			accounts = new HashMap();
+			encryptionService = new EncryptionService(password);
+		} else {
+			load(password);
+		}
+	}
+
+
+	private void load(char[] password) throws IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+		
 		//Get the salt
 		byte[] salt = new byte[EncryptionService.SALT_LENGTH];
 		FileInputStream fileIS = new FileInputStream(databaseFile);
 		fileIS.read(salt);
 		fileIS.close();
 
-		EncryptionService.getInstance().init(password, salt);
+		encryptionService = new EncryptionService(password, salt);
 		
-		InputStream is = EncryptionService.getInstance().getCipherInputStream(databaseFile);
+		InputStream is = encryptionService.getCipherInputStream(databaseFile);
 		is.skip(salt.length);
 
 		//Load the header
@@ -101,23 +102,9 @@ public class PasswordDatabase {
 		
 		is.close();
 
-		
-		//If the password is correct then continue to load the database
-		PasswordDatabase pd = new PasswordDatabase();
-		pd.loadDatabase(password);
-		return pd;
 	}
 	
 
-	private void initialiseNewDatabase(String dbFile, char[] password) throws IOException, GeneralSecurityException {
-		EncryptionService.getInstance().init(password);
-		databaseFile = new File(dbFile);
-		databaseFile.createNewFile();
-		dh = new DatabaseHeader(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
-		accounts = new HashMap();
-	}
-	
-	
 	public void addAccount(AccountInformation ai) {
 		accounts.put(ai.getAccountName(), ai);
 	}
@@ -127,35 +114,37 @@ public class PasswordDatabase {
 		accounts.remove(accountName);
 	}
 
+	
 	public AccountInformation getAccount(String name) {
 		return (AccountInformation) accounts.get(name);
 	}
 	
+	
 	public void save() throws IOException {
-
-		//Write the MAC
-		byte[] encryptedMac = EncryptionService.getInstance().getMAC(MAC.getBytes());
-		OutputStream dbOutputStream = new FileOutputStream(databaseFile);
-		dbOutputStream.write(encryptedMac);
-		dbOutputStream.close();
+		OutputStream os = encryptionService.getCipherOutputStream(databaseFile);
 		
-		//Now write out the encrypted contents
-		OutputStream os = EncryptionService.getInstance().getCipherOutputStream(databaseFile);
-
 		//Write the header
 		dh.flatPack(os);
-		
+
 		//Write all the accounts
 		Iterator it = accounts.values().iterator();
 		while (it.hasNext()) {
 			AccountInformation ai = (AccountInformation) it.next();
 			ai.flatPack(os);
 		}
-	
+
 		os.flush();
 		os.close();
+		
+		RandomAccessFile raf = new RandomAccessFile(databaseFile, "rw");
+		raf.write(encryptionService.getSalt());
+		raf.close();
+		//OutputStream dbOutputStream = new FileOutputStream(databaseFile);
+		//dbOutputStream.write(encryptionService.getSalt());
+		//dbOutputStream.close();
 	}
 
+	
 	public Collection getAccounts() {
 		return accounts.values();
 	}
