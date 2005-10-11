@@ -53,9 +53,9 @@ public class PasswordDatabase {
 	private static final String MINOR_VERSION = "0"; 
 	private static final String PATCH_VERSION = "0";
 
-	private File databaseFile;
-	private DatabaseHeader dh;
-	private HashMap accounts;
+	private static File databaseFile;
+	private static DatabaseHeader dh;
+	private static HashMap accounts;
 
 	
 	private PasswordDatabase() {
@@ -72,29 +72,18 @@ public class PasswordDatabase {
 
 	public static PasswordDatabase loadExistingDatabase(String dbFile, char[] password) throws FileNotFoundException {
 		
-		//First check to ensure the password is correct
-		InputStream unencryptedInputStream = new FileInputStream(dbFile);
-		byte[] macOnFile = new byte[MAC.getBytes().length];
-		unencryptedInputStream.read(macOnFile);
-		
-		byte[] encryptedMac = EncryptionService.getInstance().getMAC(MAC.getBytes());
-		
-		unencryptedInputStream.close();
-		
-		if (!Arrays.equals(macOnFile, encryptedMac)) {
-			throw new InvalidPasswordException();
-		}
-		
-		//If the password is correct then continue to load the database
-		PasswordDatabase pd = new PasswordDatabase();
-		pd.loadDatabase(password);
-		return pd;
-	}
-	
+		databaseFile = new File(dbFile);
+			
+		//Get the salt
+		byte[] salt = new byte[EncryptionService.SALT_LENGTH];
+		FileInputStream fileIS = new FileInputStream(databaseFile);
+		fileIS.read(salt);
+		fileIS.close();
 
-	private void loadDatabase(char[] password) throws IOException, ProblemReadingDatabaseFile, GeneralSecurityException, InvalidPasswordException {
+		EncryptionService.getInstance().init(password, salt);
 		
 		InputStream is = EncryptionService.getInstance().getCipherInputStream(databaseFile);
+		is.skip(salt.length);
 
 		//Load the header
 		dh = new DatabaseHeader(is);
@@ -111,9 +100,15 @@ public class PasswordDatabase {
 		}
 		
 		is.close();
+
+		
+		//If the password is correct then continue to load the database
+		PasswordDatabase pd = new PasswordDatabase();
+		pd.loadDatabase(password);
+		return pd;
 	}
 	
-	
+
 	private void initialiseNewDatabase(String dbFile, char[] password) throws IOException, GeneralSecurityException {
 		EncryptionService.getInstance().init(password);
 		databaseFile = new File(dbFile);
