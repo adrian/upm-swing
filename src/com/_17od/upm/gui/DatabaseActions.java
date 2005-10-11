@@ -1,5 +1,5 @@
 /*
- * $Id: AccountInformation.java 31 2005-09-04 15:57:49Z Adrian Smith $
+ * $Id$
  * 
  * Universal Password Manager
  * Copyright (C) 2005 Adrian Smith
@@ -35,9 +35,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
-import com._17od.upm.AccountInformation;
-import com._17od.upm.PasswordDatabase;
-import com._17od.upm.ProblemReadingDatabaseFile;
+import com._17od.upm.database.AccountInformation;
+import com._17od.upm.database.PasswordDatabase;
+import com._17od.upm.database.ProblemReadingDatabaseFile;
 
 
 public class DatabaseActions implements ActionListener {

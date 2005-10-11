@@ -1,5 +1,5 @@
 /*
- * $Id: PasswordDatabase.java 33 2005-09-19 17:35:31Z Adrian Smith $
+ * $Id$
  * 
  * Universal Password Manager
  * Copyright (C) 2005 Adrian Smith
@@ -20,7 +20,7 @@
  * along with Universal Password Manager; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package com._17od.upm;
+package com._17od.upm.database;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,6 +35,9 @@ import java.util.Iterator;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+
+import com._17od.upm.crypto.EncryptionService;
+import com._17od.upm.crypto.InvalidPasswordException;
 
 
 

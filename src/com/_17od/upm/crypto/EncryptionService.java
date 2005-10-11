@@ -1,5 +1,5 @@
 /*
- * $Id: EncryptionService.java 30 2005-09-04 11:07:54Z Adrian Smith $
+ * $Id$
  * 
  * Universal Password Manager
  * Copyright (C) 2005 Adrian Smith
@@ -20,7 +20,7 @@
  * along with Universal Password Manager; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package com._17od.upm;
+package com._17od.upm.crypto;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
@@ -34,6 +34,8 @@ import javax.crypto.spec.PBEParameterSpec;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.security.GeneralSecurityException;
+import java.util.Random;
+
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.BadPaddingException;
 import java.io.File;
@@ -45,12 +47,12 @@ public class EncryptionService {
 	private static EncryptionService singletonInstance;
 	private Cipher encryptionCipher; 
 	private Cipher decryptionCipher;
-	private Mac mac;
-	private static final String macAlgorithim = "HmacMD5";
 	//Would prefer if I could use AES or Twofish here. Sun doesn't 
 	//distribute one with their JRE. Might want to look into
 	//http://www.bouncycastle.org
 	private static final String algorithm = "PBEWithMD5AndDES";
+	private static final int SALT_LENGTH = 8;
+	private byte[] salt;
 
 	
 	/*
@@ -78,10 +80,10 @@ public class EncryptionService {
 	    PBEParameterSpec pbeParamSpec;
 	    SecretKeyFactory keyFac;
 	    
-	    byte[] salt = {
-	        (byte)0xc7, (byte)0x73, (byte)0x21, (byte)0x8c,
-	        (byte)0x7e, (byte)0xc8, (byte)0xee, (byte)0x99
-	    };
+	    //Generate a random salt
+	    Random saltGen = new Random();
+	    salt = new byte[SALT_LENGTH];
+	    saltGen.nextBytes(salt);
 
 	    int count = 20;
 
@@ -97,9 +99,6 @@ public class EncryptionService {
 	    encryptionCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
 	    decryptionCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
 	    
-	    //Initialise the MAC
-	    mac = Mac.getInstance(macAlgorithim);
-	    mac.init(pbeKey);
 	}
 	
 	
@@ -131,10 +130,9 @@ public class EncryptionService {
 	public byte[] decrypt(byte[] ciphertext) throws IllegalBlockSizeException, BadPaddingException {
 		return decryptionCipher.doFinal(ciphertext);
 	}
-	
-	
-	public byte[] getMAC(byte[] macString) {
-		return mac.doFinal(macString);
-	}
 
+	public byte[] getSalt() {
+		return salt;
+	}
+	
 }

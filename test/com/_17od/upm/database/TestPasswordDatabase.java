@@ -1,5 +1,5 @@
 /*
- * $Id: TestPasswordDatabase.java 30 2005-09-04 11:07:54Z Adrian Smith $
+ * $Id$
  * 
  * Universal Password Manager
  * Copyright (C) 2005 Adrian Smith
@@ -20,13 +20,18 @@
  * along with Universal Password Manager; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package com._17od.upm;
+package com._17od.upm.database;
 
 import junit.framework.TestCase;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.security.GeneralSecurityException;
+
+import com._17od.upm.crypto.InvalidPasswordException;
+import com._17od.upm.database.AccountInformation;
+import com._17od.upm.database.PasswordDatabase;
+import com._17od.upm.database.ProblemReadingDatabaseFile;
 
 
 public class TestPasswordDatabase extends TestCase {

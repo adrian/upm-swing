@@ -1,5 +1,5 @@
 /*
- * $Id: ProblemReadingDatabaseFile.java 28 2005-09-03 19:02:07Z Adrian Smith $
+ * $Id$
  * 
  * Universal Password Manager
  * Copyright (C) 2005 Adrian Smith
@@ -20,7 +20,7 @@
  * along with Universal Password Manager; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package com._17od.upm;
+package com._17od.upm.database;
 
 
 public class ProblemReadingDatabaseFile extends Exception {
