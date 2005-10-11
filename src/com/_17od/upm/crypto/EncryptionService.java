@@ -25,8 +25,6 @@ package com._17od.upm.crypto;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.CipherInputStream;
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -47,12 +45,14 @@ public class EncryptionService {
 	private static EncryptionService singletonInstance;
 	private Cipher encryptionCipher; 
 	private Cipher decryptionCipher;
+	private byte[] salt;
+
+	public static final int SALT_LENGTH = 8;
+
 	//Would prefer if I could use AES or Twofish here. Sun doesn't 
 	//distribute one with their JRE. Might want to look into
 	//http://www.bouncycastle.org
 	private static final String algorithm = "PBEWithMD5AndDES";
-	private static final int SALT_LENGTH = 8;
-	private byte[] salt;
 
 	
 	/*
@@ -75,16 +75,22 @@ public class EncryptionService {
 	
 	
 	public void init(char[] password) throws GeneralSecurityException {
+	    //Generate a random salt
+	    Random saltGen = new Random();
+	    byte pSalt[] = new byte[SALT_LENGTH];
+	    saltGen.nextBytes(pSalt);
+
+	    init(password, pSalt);
+	}
+	
+	
+	public void init(char[] password, byte[] salt) throws GeneralSecurityException {
 		
 		PBEKeySpec pbeKeySpec;
 	    PBEParameterSpec pbeParamSpec;
 	    SecretKeyFactory keyFac;
-	    
-	    //Generate a random salt
-	    Random saltGen = new Random();
-	    salt = new byte[SALT_LENGTH];
-	    saltGen.nextBytes(salt);
 
+	    this.salt = salt;
 	    int count = 20;
 
 	    pbeParamSpec = new PBEParameterSpec(salt, count);
@@ -127,8 +133,14 @@ public class EncryptionService {
 	}
 
 	
-	public byte[] decrypt(byte[] ciphertext) throws IllegalBlockSizeException, BadPaddingException {
-		return decryptionCipher.doFinal(ciphertext);
+	public byte[] decrypt(byte[] ciphertext) throws IllegalBlockSizeException, InvalidPasswordException {
+		byte[] retVal;
+		try {
+			retVal = decryptionCipher.doFinal(ciphertext);
+		} catch (BadPaddingException e) {
+			throw new InvalidPasswordException(); 
+		}
+		return retVal;
 	}
 
 	public byte[] getSalt() {
