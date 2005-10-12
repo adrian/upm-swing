@@ -32,7 +32,6 @@ public class DatabaseHeader extends FlatPackObject {
 	private String majorVersion;
 	private String minorVersion;
 	private String patchVersion;
-	private String revision;
 	
 	
 	public DatabaseHeader(InputStream is) throws IOException, ProblemReadingDatabaseFile {
@@ -44,7 +43,6 @@ public class DatabaseHeader extends FlatPackObject {
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
 		this.patchVersion = patchVersion;
-		this.revision = "0";
 	}
 	
 	
@@ -52,7 +50,6 @@ public class DatabaseHeader extends FlatPackObject {
 		os.write(flatPack(majorVersion));
 		os.write(flatPack(minorVersion));
 		os.write(flatPack(patchVersion));
-		os.write(flatPack(revision));
 	}
 
 	
@@ -60,7 +57,6 @@ public class DatabaseHeader extends FlatPackObject {
 		majorVersion = getString(is);
 		minorVersion = getString(is);
 		patchVersion = getString(is);
-		revision = getString(is);
 	}	
 
 	public String getVersion() {
@@ -101,16 +97,6 @@ public class DatabaseHeader extends FlatPackObject {
 
 	public void setPatchVersion(String patchVersion) {
 		this.patchVersion = patchVersion;
-	}
-
-
-	public String getRevision() {
-		return revision;
-	}
-
-
-	public void setRevision(String revision) {
-		this.revision = revision;
 	}
 
 }

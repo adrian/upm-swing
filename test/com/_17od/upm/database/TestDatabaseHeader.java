@@ -37,7 +37,6 @@ public class TestDatabaseHeader extends TestCase {
 		
 		//Create a new DatabaseHeader
 		DatabaseHeader dh = new DatabaseHeader("0", "1", "3");
-		dh.setRevision("1");
 		
 		//Flat pack it
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -47,8 +46,7 @@ public class TestDatabaseHeader extends TestCase {
 		String s = os.toString();
 		assertEquals("00010" +
 					 "00011" +
-					 "00013" +
-					 "00011", s); 
+					 "00013", s); 
 	}
 	
 
@@ -56,8 +54,7 @@ public class TestDatabaseHeader extends TestCase {
 
 		String s = new String("00010" +
 							  "00011" +
-							  "00013" +
-							  "00011"); 
+							  "00013"); 
 		byte[] b = s.getBytes();
 		ByteArrayInputStream is = new ByteArrayInputStream(b);
 		DatabaseHeader dh = new DatabaseHeader(is);
@@ -65,7 +62,6 @@ public class TestDatabaseHeader extends TestCase {
 		assertEquals("0", dh.getMajorVersion());
 		assertEquals("1", dh.getMinorVersion());
 		assertEquals("3", dh.getPatchVersion());
-		assertEquals("1", dh.getRevision());
 	}
 	
 }
