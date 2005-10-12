@@ -22,19 +22,21 @@
  */
 package com._17od.upm.database;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.EOFException;
-import java.io.RandomAccessFile;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.io.OutputStream;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import com._17od.upm.crypto.EncryptionService;
+import com._17od.upm.crypto.InvalidPasswordException;
 
 
 /**
@@ -53,13 +55,13 @@ public class PasswordDatabase {
 	private EncryptionService encryptionService;
 
 	
-	public PasswordDatabase(String dbFile, char[] password) throws Exception {
+	public PasswordDatabase(File dbFile, char[] password) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
 		this(dbFile, password, false);
 	}
 	
 	
-	public PasswordDatabase(String dbFile, char[] password, boolean overwrite) throws Exception {
-		databaseFile = new File(dbFile);
+	public PasswordDatabase(File dbFile, char[] password, boolean overwrite) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
+		databaseFile = dbFile;
 		//Either create a new file (if it exists and overwrite == true OR it doesn't exist) or open the existing file
 		if ((databaseFile.exists() && overwrite == true) || !databaseFile.exists()) {
 			databaseFile.delete();
@@ -73,23 +75,33 @@ public class PasswordDatabase {
 	}
 
 
-	private void load(char[] password) throws IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+	private void load(char[] password) throws IOException, GeneralSecurityException, ProblemReadingDatabaseFile, IllegalBlockSizeException, InvalidPasswordException {
 		
-		//Get the salt
+		//Read the encrypted bytes into an in memory object (the ByteArrayOutputStream)
+		FileInputStream fis = new FileInputStream(databaseFile);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		int i = 0;
+		while ((i = fis.read()) != -1) {
+			baos.write(i);
+		}
+		byte[] saltAndKeyBytes = baos.toByteArray();
+		baos.close();
+		fis.close();
+
+		//Split up the salt and encrypted bytes
 		byte[] salt = new byte[EncryptionService.SALT_LENGTH];
-		FileInputStream fileIS = new FileInputStream(databaseFile);
-		fileIS.read(salt);
-		fileIS.close();
+		System.arraycopy(saltAndKeyBytes, 0, salt, 0, EncryptionService.SALT_LENGTH);
+		int encryptedBytesLength = saltAndKeyBytes.length - EncryptionService.SALT_LENGTH;
+		byte[] encryptedBytes = new byte[encryptedBytesLength]; 
+		System.arraycopy(saltAndKeyBytes, EncryptionService.SALT_LENGTH, encryptedBytes, 0, encryptedBytesLength);
 
+		//Attempt to dencrypt the database information
 		encryptionService = new EncryptionService(password, salt);
+		byte[] decryptedBytes = encryptionService.decrypt(encryptedBytes);
 		
-		InputStream is = encryptionService.getCipherInputStream(databaseFile);
-		is.skip(salt.length);
-
-		//Load the header
+		//We'll get to here if the password was correct so load up the decryped byte
+		ByteArrayInputStream is = new ByteArrayInputStream(decryptedBytes);
 		dh = new DatabaseHeader(is);
-		
-		//Load the accounts
 		accounts = new HashMap();
 		try {
 			while (true) { //keep loading accounts until an EOFException is thrown
@@ -99,7 +111,6 @@ public class PasswordDatabase {
 		} catch (EOFException e) {
 			//just means we hit eof
 		}
-		
 		is.close();
 
 	}
@@ -120,28 +131,28 @@ public class PasswordDatabase {
 	}
 	
 	
-	public void save() throws IOException {
-		OutputStream os = encryptionService.getCipherOutputStream(databaseFile);
-		
-		//Write the header
-		dh.flatPack(os);
+	public void save() throws IOException, IllegalBlockSizeException, BadPaddingException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-		//Write all the accounts
+		//Build up a byte array of all the data to be encrypted
+		dh.flatPack(os);
 		Iterator it = accounts.values().iterator();
 		while (it.hasNext()) {
 			AccountInformation ai = (AccountInformation) it.next();
 			ai.flatPack(os);
 		}
-
-		os.flush();
 		os.close();
+		byte[] dataToEncrypt = os.toByteArray();
+
+		//Now encrypt the database data
+		byte[] encryptedData = encryptionService.encrypt(dataToEncrypt);
 		
-		RandomAccessFile raf = new RandomAccessFile(databaseFile, "rw");
-		raf.write(encryptionService.getSalt());
-		raf.close();
-		//OutputStream dbOutputStream = new FileOutputStream(databaseFile);
-		//dbOutputStream.write(encryptionService.getSalt());
-		//dbOutputStream.close();
+		//Write the salt and the encrypted data out to the database file
+		FileOutputStream fos = new FileOutputStream(databaseFile);
+		fos.write(encryptionService.getSalt());
+		fos.write(encryptedData);
+		fos.close();
+
 	}
 
 	

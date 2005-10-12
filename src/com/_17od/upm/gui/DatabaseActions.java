@@ -30,11 +30,13 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import javax.crypto.IllegalBlockSizeException;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
+import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
@@ -69,10 +71,12 @@ public class DatabaseActions implements ActionListener {
      * This method asks the user for the name of a new database and then creates it.
      * If the file already exists then the user is asked if they'd like to overwrite it.
      * @throws IOException
-     * @throws ProblemReadingDatabaseFile
      * @throws GeneralSecurityException
+     * @throws ProblemReadingDatabaseFile
+     * @throws InvalidPasswordException
+     * @throws IllegalBlockSizeException
      */
-    private void newDatabase() throws IOException, ProblemReadingDatabaseFile, GeneralSecurityException {
+    private void newDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
         
         File newDatabaseFile;
         boolean gotValidFile = false;
@@ -157,7 +161,7 @@ public class DatabaseActions implements ActionListener {
     }
     
     
-    private void openDatabase() throws IOException, ProblemReadingDatabaseFile, GeneralSecurityException {
+    private void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Open Password Database...");
         int returnVal = fc.showOpenDialog(mainWindow);

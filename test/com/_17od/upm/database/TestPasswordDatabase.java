@@ -23,15 +23,14 @@
 package com._17od.upm.database;
 
 import junit.framework.TestCase;
-import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.io.File;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import javax.crypto.IllegalBlockSizeException;
+
 import com._17od.upm.crypto.InvalidPasswordException;
-import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.PasswordDatabase;
-import com._17od.upm.database.ProblemReadingDatabaseFile;
 
 
 public class TestPasswordDatabase extends TestCase {
@@ -50,7 +49,7 @@ public class TestPasswordDatabase extends TestCase {
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
 
-		new PasswordDatabase(databaseFileName, password);
+		new PasswordDatabase(new File(databaseFileName), password);
 
 		File f = new File(databaseFileName);
 		if (f.exists() == false) {
@@ -65,15 +64,15 @@ public class TestPasswordDatabase extends TestCase {
 		deleteFile(databaseFileName);
 		
 		//Create the db on this line
-		PasswordDatabase db = new PasswordDatabase(databaseFileName, password);
+		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName), password);
 		db.save();
 		
 		//Now try to open the db again
-		new PasswordDatabase(databaseFileName, password);
+		new PasswordDatabase(new File(databaseFileName), password);
 	}
 	
-/*	
-	public void testAddAccount() throws IOException, ProblemReadingDatabaseFile, GeneralSecurityException {
+	
+	public void testAddAccount() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
 		
@@ -102,7 +101,7 @@ public class TestPasswordDatabase extends TestCase {
 	}
 	
 
-	public void testRemoveAccount() throws IOException, ProblemReadingDatabaseFile, GeneralSecurityException {
+	public void testRemoveAccount() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
 		
@@ -148,7 +147,7 @@ public class TestPasswordDatabase extends TestCase {
 		}
 		
 	}
-*/
+
 	
 	private void deleteFile(String fileName) {
 		File f = new File(fileName);

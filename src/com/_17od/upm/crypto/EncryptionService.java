@@ -32,8 +32,7 @@ import javax.crypto.spec.PBEParameterSpec;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.security.GeneralSecurityException;
-import java.util.Random;
-
+import java.security.SecureRandom;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.BadPaddingException;
 import java.io.File;
@@ -52,11 +51,12 @@ public class EncryptionService {
 	//distribute one with their JRE. Might want to look into
 	//http://www.bouncycastle.org
 	private static final String algorithm = "PBEWithMD5AndDES";
+	private static final String randomAlgorithm = "SHA1PRNG";
 
 	
 	public EncryptionService(char[] password) throws GeneralSecurityException {
 	    //Generate a random salt
-	    Random saltGen = new Random();
+	    SecureRandom saltGen = SecureRandom.getInstance(randomAlgorithm);
 	    byte pSalt[] = new byte[SALT_LENGTH];
 	    saltGen.nextBytes(pSalt);
 
