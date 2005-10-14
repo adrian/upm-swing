@@ -9,6 +9,9 @@ package com._17od.upm.invest.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,27 +62,32 @@ public class TestDialog implements ActionListener {
 
 	public void actionPerformed(ActionEvent arg0) {
 		final JDialog dialog = new JDialog(frame, true);
-		dialog.getContentPane().setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
-		dialog.getContentPane().setBackground(Color.BLUE);
+		dialog.getContentPane().setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 
-		JPanel panel = new JPanel(new SpringLayout());
-		panel.setBackground(Color.GREEN);
+		Container container = dialog.getContentPane();
 		JLabel label = new JLabel("User Id");
+		c.gridx = 0;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.LINE_START;
+		container.add(label, c);
+		
 		JTextField userId = new JTextField(20);
-		//userId.setMaximumSize(userId.getPreferredSize());
-		label.setLabelFor(userId);
-		panel.add(label);
-		panel.add(userId);
-		SpringUtilities.makeCompactGrid(panel,
-                1, 2, //rows, cols
-                6, 6,        //initX, initY
-                6, 6);       //xPad, yPad
-        dialog.getContentPane().add(panel);
-        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+		c.weightx = 1.0;
+		c.gridx = 1;
+		c.gridwidth = 2;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		container.add(userId, c);
+		
         JButton button = new JButton("Close");
-        dialog.getContentPane().add(button);
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+		c.weightx = 0;
+		c.weighty = 1.0;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 3;
+		c.anchor = GridBagConstraints.PAGE_END;
+		c.fill = GridBagConstraints.NONE;
+		container.add(button, c);
 
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
