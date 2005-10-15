@@ -1,5 +1,5 @@
 /*
- * $Id: AccountInformation.java 31 2005-09-04 15:57:49Z Adrian Smith $
+ * $Id$
  * 
  * Universal Password Manager
  * Copyright (C) 2005 Adrian Smith
@@ -57,6 +57,8 @@ public class MainWindow extends JFrame {
     
     public static final String NEW_DATABASE_TXT = "New Database";
     public static final String OPEN_DATABASE_TXT = "Open Database";
+    public static final String ADD_ACCOUNT_TXT = "Add Account";
+    public static final String EDIT_ACCOUNT_TXT = "Edit Account";
 
     private JButton newAccountButton;
     private JButton editAccountButton;
@@ -68,7 +70,9 @@ public class MainWindow extends JFrame {
     private JMenuItem openDatabaseMenuItem;
     private JMenuItem exitMenuItem;
     private JMenu fileMenu;
-    private DefaultListModel accountsListModel;
+    private JList accountsListview;
+    
+    private DatabaseActions dbActions;
     
     
     public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
@@ -109,6 +113,9 @@ public class MainWindow extends JFrame {
         		getContentPane().setLayout(new BorderLayout());
         }
 
+        //Create the action handler classes
+        dbActions = new DatabaseActions(this);
+
         //The toolbar
         getContentPane().add(createToolBar(), BorderLayout.PAGE_START);
 
@@ -137,13 +144,12 @@ public class MainWindow extends JFrame {
         centralPanel.add(Box.createVerticalStrut(5));
         
         //The Accounts listview
-        JList accounts = new JList();
-        accounts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        accounts.setSelectedIndex(0);
-        accounts.setVisibleRowCount(10);
-        accountsListModel = new DefaultListModel();
-        accounts.setModel(accountsListModel);
-        JScrollPane accountsScrollList = new JScrollPane(accounts, 
+        accountsListview = new JList();
+        accountsListview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        accountsListview.setSelectedIndex(0);
+        accountsListview.setVisibleRowCount(10);
+        accountsListview.setModel(new DefaultListModel());
+        JScrollPane accountsScrollList = new JScrollPane(accountsListview, 
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         accountsScrollList.setAlignmentX(Component.LEFT_ALIGNMENT);
         centralPanel.add(accountsScrollList);
@@ -161,28 +167,22 @@ public class MainWindow extends JFrame {
         
         // The "Add Account" button
         newAccountButton = new JButton();
-        newAccountButton.setToolTipText("Add Account");
+        newAccountButton.setToolTipText(ADD_ACCOUNT_TXT);
         newAccountButton.setIcon(new ImageIcon(iconsDir + "/new_document_24.gif"));
         newAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/new_document_24_d.gif"));;
-        newAccountButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addAccount();
-            }
-        });
+        newAccountButton.addActionListener(dbActions);
         newAccountButton.setEnabled(false);
+        newAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
         toolbar.add(newAccountButton);
 
         // The "Edit Account" button
         editAccountButton = new JButton();
-        editAccountButton.setToolTipText("Edit Account");
+        editAccountButton.setToolTipText(EDIT_ACCOUNT_TXT);
         editAccountButton.setIcon(new ImageIcon(iconsDir + "/cut_clipboard_24.gif"));
         editAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/cut_clipboard_24_d.gif"));;
-        editAccountButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                editAccount();
-            }
-        });
+        editAccountButton.addActionListener(dbActions);
         editAccountButton.setEnabled(false);
+        editAccountButton.setActionCommand(EDIT_ACCOUNT_TXT);
         toolbar.add(editAccountButton);
         
         toolbar.addSeparator();
@@ -230,16 +230,14 @@ public class MainWindow extends JFrame {
 
         return toolbar;
     }
-    
-    
+
+
     private JMenuBar createMenuBar() {
 
         JMenuBar menuBar = new JMenuBar();
         
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
-        
-        DatabaseActions dbActions = new DatabaseActions(this);
         
         newDatabaseMenuItem = new JMenuItem(NEW_DATABASE_TXT);
         fileMenu.add(newDatabaseMenuItem);
@@ -264,18 +262,10 @@ public class MainWindow extends JFrame {
     }
     
     
-    public DefaultListModel getAccountsModel() {
-    		return accountsListModel;
+    public JList getAccountsListview() {
+    		return accountsListview;
     }
     
-    private void addAccount() {
-        //TODO Add impl
-    }
-
-    private void editAccount() {
-        //TODO Add impl
-    }
-
     private void options() {
         //TODO Add impl
     }

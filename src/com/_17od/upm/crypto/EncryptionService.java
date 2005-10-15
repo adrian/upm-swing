@@ -23,114 +23,86 @@
 package com._17od.upm.crypto;
 
 import javax.crypto.Cipher;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.BadPaddingException;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 
 public class EncryptionService {
 
-	private Cipher encryptionCipher; 
-	private Cipher decryptionCipher;
-	private byte[] salt;
+    private Cipher encryptionCipher; 
+    private Cipher decryptionCipher;
+    private byte[] salt;
 
-	public static final int SALT_LENGTH = 8;
+    public static final int SALT_LENGTH = 8;
 
-	//Would prefer if I could use AES or Twofish here. Sun doesn't 
-	//distribute one with their JRE. Might want to look into
-	//http://www.bouncycastle.org
-	private static final String algorithm = "PBEWithMD5AndDES";
-	private static final String randomAlgorithm = "SHA1PRNG";
+    //Would prefer if I could use AES or Twofish here. Sun doesn't 
+    //distribute one with their JRE. Might want to look into
+    //http://www.bouncycastle.org
+    private static final String algorithm = "PBEWithMD5AndDES";
+    private static final String randomAlgorithm = "SHA1PRNG";
 
-	
-	public EncryptionService(char[] password) throws GeneralSecurityException {
-	    //Generate a random salt
-	    SecureRandom saltGen = SecureRandom.getInstance(randomAlgorithm);
-	    byte pSalt[] = new byte[SALT_LENGTH];
-	    saltGen.nextBytes(pSalt);
 
-	    init(password, pSalt);
-	}
-	
-	
-	public EncryptionService(char[] password, byte[] salt) throws GeneralSecurityException {
-		init(password, salt);
-	}
-	
-	
+    public EncryptionService(char[] password) throws GeneralSecurityException {
+        //Generate a random salt
+        SecureRandom saltGen = SecureRandom.getInstance(randomAlgorithm);
+        byte pSalt[] = new byte[SALT_LENGTH];
+        saltGen.nextBytes(pSalt);
+
+        init(password, pSalt);
+    }
+
+
+    public EncryptionService(char[] password, byte[] salt) throws GeneralSecurityException {
+        init(password, salt);
+    }
+
+
 	private void init(char[] password, byte[] salt) throws GeneralSecurityException {
-		
-		PBEKeySpec pbeKeySpec;
-	    PBEParameterSpec pbeParamSpec;
-	    SecretKeyFactory keyFac;
+        PBEKeySpec pbeKeySpec;
+        PBEParameterSpec pbeParamSpec;
+        SecretKeyFactory keyFac;
 
-	    this.salt = salt;
-	    int count = 20;
+        this.salt = salt;
+        int count = 20;
 
-	    pbeParamSpec = new PBEParameterSpec(salt, count);
-	    
-	    pbeKeySpec = new PBEKeySpec(password);
-	    keyFac = SecretKeyFactory.getInstance(algorithm);
-	    SecretKey pbeKey = keyFac.generateSecret(pbeKeySpec);
+        pbeParamSpec = new PBEParameterSpec(salt, count);
 
-	    encryptionCipher = Cipher.getInstance(algorithm);
-	    decryptionCipher = Cipher.getInstance(algorithm);
+        pbeKeySpec = new PBEKeySpec(password);
+        keyFac = SecretKeyFactory.getInstance(algorithm);
+        SecretKey pbeKey = keyFac.generateSecret(pbeKeySpec);
 
-	    encryptionCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
-	    decryptionCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
-	    
-	}
-	
-	
-	public CipherOutputStream getCipherOutputStream(File file) throws FileNotFoundException {
-	    return new CipherOutputStream(new FileOutputStream(file), encryptionCipher);
-	}
+        encryptionCipher = Cipher.getInstance(algorithm);
+        decryptionCipher = Cipher.getInstance(algorithm);
 
-	
-	public CipherInputStream getCipherInputStream(File file) throws FileNotFoundException {
-	    return new CipherInputStream(new FileInputStream(file), decryptionCipher);
-	}
-	
-	
-	public Cipher getEncryptionCipher() {
-		return encryptionCipher;
-	}
-	
-	
-	public Cipher getDecryptionCipher() {
-		return decryptionCipher;
-	}
-	
-	
+        encryptionCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
+        decryptionCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
+    }
+
+
 	public byte[] encrypt(byte[] cleartext) throws IllegalBlockSizeException, BadPaddingException {
-		return encryptionCipher.doFinal(cleartext);
+        return encryptionCipher.doFinal(cleartext);
 	}
 
-	
-	public byte[] decrypt(byte[] ciphertext) throws IllegalBlockSizeException, InvalidPasswordException {
-		byte[] retVal;
-		try {
-			retVal = decryptionCipher.doFinal(ciphertext);
-		} catch (BadPaddingException e) {
-			throw new InvalidPasswordException(); 
-		}
-		return retVal;
-	}
-	
 
-	public byte[] getSalt() {
-		return salt;
-	}
-	
+    public byte[] decrypt(byte[] ciphertext) throws IllegalBlockSizeException, InvalidPasswordException {
+        byte[] retVal;
+        try {
+            retVal = decryptionCipher.doFinal(ciphertext);
+        } catch (BadPaddingException e) {
+            throw new InvalidPasswordException(); 
+        }
+        return retVal;
+    }
+
+
+    public byte[] getSalt() {
+        return salt;
+    }
+
 }

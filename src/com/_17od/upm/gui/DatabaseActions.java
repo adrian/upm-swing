@@ -30,7 +30,9 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -59,9 +61,13 @@ public class DatabaseActions implements ActionListener {
                 newDatabase();
             } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_TXT) {
                 openDatabase();
+            } else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
+                addAccount();
+            } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
+                editAccount();
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), "Error...", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
             //TODO: Make this a better dialog that has a "show" button where you can see the full stack trace
         }
 	}
@@ -139,25 +145,8 @@ public class DatabaseActions implements ActionListener {
         
         database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());
         database.save();
-        openDatabase(database);
+        loadDatabase(database);
         
-    }
-    
-    
-    private void openDatabase(PasswordDatabase database) {
-
-    		//Enable the account buttons on the toolbar
-    		mainWindow.getNewAccountButton().setEnabled(true);
-    		mainWindow.getEditAccountButton().setEnabled(true);
-    		mainWindow.getOptionsButton().setEnabled(true);
-
-    		//Populate the listview
-    		Iterator it = database.getAccounts().iterator();
-    		while (it.hasNext()) {
-    			AccountInformation account = (AccountInformation) it.next();
-    			mainWindow.getAccountsModel().addElement(account.getAccountName());
-    		}
-
     }
     
     
@@ -179,10 +168,63 @@ public class DatabaseActions implements ActionListener {
 
             if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
             		database = new PasswordDatabase(databaseFile, masterPassword.getPassword());
-            		openDatabase(database);
+            		loadDatabase(database);
             }
         }
         
     }
+
     
+    private void loadDatabase(PasswordDatabase database) {
+
+        //Enable the account buttons on the toolbar
+        mainWindow.getNewAccountButton().setEnabled(true);
+        mainWindow.getEditAccountButton().setEnabled(true);
+        mainWindow.getOptionsButton().setEnabled(true);
+
+        //Populate the listview
+        Iterator it = database.getAccounts().iterator();
+        while (it.hasNext()) {
+            AccountInformation account = (AccountInformation) it.next();
+            ((DefaultListModel) mainWindow.getAccountsListview().getModel()).addElement(account.getAccountName());
+        }
+
+    }
+
+    
+    private void addAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
+        AccountInformation accInfo = new AccountInformation();
+        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Add Account", true);
+        accDialog.pack();
+        accDialog.setLocationRelativeTo(mainWindow);
+        accDialog.show();
+        
+        if (accDialog.okClicked()) {
+            accInfo = accDialog.getAccount();
+            database.deleteAccount(accInfo.getAccountName());
+            database.addAccount(accInfo);
+            database.save();
+            ((DefaultListModel) mainWindow.getAccountsListview().getModel()).addElement(accInfo.getAccountName());
+        }
+        
+    }
+
+    
+    private void editAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
+        String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
+        AccountInformation accInfo = database.getAccount(selectedAccName);
+        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Edit Account", false);
+        accDialog.pack();
+        accDialog.setLocationRelativeTo(mainWindow);
+        accDialog.show();
+        
+        if (accDialog.okClicked()) {
+            accInfo = accDialog.getAccount();
+            database.deleteAccount(accInfo.getAccountName());
+            database.addAccount(accInfo);
+            database.save();
+        }
+        
+    }
+
 }

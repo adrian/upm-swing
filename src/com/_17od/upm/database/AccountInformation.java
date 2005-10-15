@@ -34,7 +34,17 @@ public class AccountInformation extends FlatPackObject {
 	private byte[] password;
 	private byte[] url;
 	private byte[] notes;
-	
+
+
+    public AccountInformation() {
+        accountName = "";
+        userId = "".getBytes();
+        password = "".getBytes();
+        url = "".getBytes();
+        notes = "".getBytes();
+    }
+    
+    
 	public AccountInformation(String accountName, byte[] userId, byte[] password,
 			byte[] url, byte[] notes) {
 		this.accountName = accountName;
