@@ -179,7 +179,6 @@ public class DatabaseActions implements ActionListener {
 
         //Enable the account buttons on the toolbar
         mainWindow.getNewAccountButton().setEnabled(true);
-        mainWindow.getEditAccountButton().setEnabled(true);
         mainWindow.getOptionsButton().setEnabled(true);
 
         //Populate the listview

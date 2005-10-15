@@ -26,7 +26,16 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -45,6 +54,8 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 /**
@@ -153,6 +164,23 @@ public class MainWindow extends JFrame {
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         accountsScrollList.setAlignmentX(Component.LEFT_ALIGNMENT);
         centralPanel.add(accountsScrollList);
+        accountsListview.addMouseListener(new MouseAdapter() {
+           public void mouseClicked(MouseEvent e) {
+               if (accountsListview.getSelectedValue().equals("")) {
+                   editAccountButton.setEnabled(false);
+                   copyUsernameButton.setEnabled(false);
+                   copyPasswordButton.setEnabled(false);
+               } else {
+                   editAccountButton.setEnabled(true);
+                   copyUsernameButton.setEnabled(true);
+                   copyPasswordButton.setEnabled(true);
+               }
+               
+               if (e.getClickCount() == 2) {
+                   editAccountButton.doClick();
+               }
+           }
+        });
 
         getContentPane().add(centralPanel, BorderLayout.CENTER);
 
