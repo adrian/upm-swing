@@ -150,26 +150,41 @@ public class DatabaseActions implements ActionListener {
     }
     
     
-    private void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
+    private void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Open Password Database...");
         int returnVal = fc.showOpenDialog(mainWindow);
         
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File databaseFile = fc.getSelectedFile();
-            
-            JPasswordField masterPassword = new JPasswordField("");
-            JOptionPane pane = new JOptionPane(new Object[] {"Please enter your master password",
-                                                    masterPassword},
-                                                JOptionPane.QUESTION_MESSAGE,
-                                                JOptionPane.OK_CANCEL_OPTION);
-            JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
-            dialog.show();
 
-            if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
-            		database = new PasswordDatabase(databaseFile, masterPassword.getPassword());
-            		loadDatabase(database);
+            boolean passwordCorrect = false;
+            boolean okClicked = true;
+            while (!passwordCorrect && okClicked) {
+                JPasswordField masterPassword = new JPasswordField("");
+                JOptionPane pane = new JOptionPane(new Object[] {"Please enter your master password",
+                                                                    masterPassword},
+                                                                    JOptionPane.QUESTION_MESSAGE,
+                                                                    JOptionPane.OK_CANCEL_OPTION);
+                JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
+                dialog.show();
+
+                if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
+                    try {
+                        database = new PasswordDatabase(databaseFile, masterPassword.getPassword());
+                        passwordCorrect = true;
+                    } catch (InvalidPasswordException e) {
+                        JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
+                    }
+                } else {
+                    okClicked = false;
+                }
             }
+            
+            if (passwordCorrect == true) {
+                loadDatabase(database);
+            }
+            
         }
         
     }
@@ -180,7 +195,11 @@ public class DatabaseActions implements ActionListener {
         //Enable the account buttons on the toolbar
         mainWindow.getNewAccountButton().setEnabled(true);
         mainWindow.getOptionsButton().setEnabled(true);
+        mainWindow.getSearchField().setEnabled(true);
 
+        //Initialise the listview
+        ((DefaultListModel) mainWindow.getAccountsListview().getModel()).clear();
+        
         //Populate the listview
         Iterator it = database.getAccounts().iterator();
         while (it.hasNext()) {
@@ -226,4 +245,34 @@ public class DatabaseActions implements ActionListener {
         
     }
 
+    
+    public void applySearchCriteria(String filterStr) {
+        String upperFilterStr = null;
+        if (filterStr != null) {
+            upperFilterStr = filterStr.toUpperCase();
+        }
+
+        ((DefaultListModel) mainWindow.getAccountsListview().getModel()).clear();
+        Iterator it = database.getAccounts().iterator();
+        while (it.hasNext()) {
+            AccountInformation account = (AccountInformation) it.next();
+            if (filterStr == null || account.getAccountName().indexOf(upperFilterStr) > -1) {
+                ((DefaultListModel) mainWindow.getAccountsListview().getModel()).addElement(account.getAccountName());
+            }
+        }
+    }
+    
+    
+    public void setButtonState() {
+        if (mainWindow.getAccountsListview().getSelectedValue().equals("")) {
+            mainWindow.getEditAccountButton().setEnabled(false);
+            mainWindow.getCopyUsernameButton().setEnabled(false);
+            mainWindow.getCopyPasswordButton().setEnabled(false);
+        } else {
+            mainWindow.getEditAccountButton().setEnabled(true);
+            mainWindow.getCopyUsernameButton().setEnabled(true);
+            mainWindow.getCopyPasswordButton().setEnabled(true);
+        }
+
+    }
 }

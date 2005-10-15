@@ -23,12 +23,19 @@
 package com._17od.upm.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -36,12 +43,14 @@ import java.io.IOException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -56,6 +65,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import com._17od.upm.crypto.EncryptionService;
 
 
 /**
@@ -76,6 +87,7 @@ public class MainWindow extends JFrame {
     private JButton copyUsernameButton;
     private JButton copyPasswordButton;
     private JButton optionsButton;
+    private JTextField searchField;
     
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
@@ -120,42 +132,70 @@ public class MainWindow extends JFrame {
     private void addComponentsToPane() {
 
         //Ensure the layout manager is a BorderLayout
-        if (!(getContentPane().getLayout() instanceof BorderLayout)) {
-        		getContentPane().setLayout(new BorderLayout());
+        if (!(getContentPane().getLayout() instanceof GridBagLayout)) {
+        		getContentPane().setLayout(new GridBagLayout());
         }
 
         //Create the action handler classes
         dbActions = new DatabaseActions(this);
 
-        //The toolbar
-        getContentPane().add(createToolBar(), BorderLayout.PAGE_START);
-
-        //The menubar
+        //Create the menubar
         setJMenuBar(createMenuBar());
-
-        //Create a panel to contain the search dialog and accounts listview
-        JPanel centralPanel = new JPanel();
-        BoxLayout layout = new BoxLayout(centralPanel, BoxLayout.Y_AXIS);
-        centralPanel.setLayout(layout);
-
-        //JSeparator sep = new JSeparator();
-        //sep.setMaximumSize(sep.getPreferredSize());
-        //sep.setAlignmentY(Component.LEFT_ALIGNMENT);
-        //centralPanel.add(sep);
-
-        centralPanel.add(Box.createVerticalStrut(5));
         
-        //The search field
-        JTextField searchField = new JTextField("Search", 20);
-        searchField.setMaximumSize(searchField.getPreferredSize());
-        searchField.setAlignmentX(Component.LEFT_ALIGNMENT);
-        searchField.setAlignmentY(Component.TOP_ALIGNMENT);
-        centralPanel.add(searchField);
+        GridBagConstraints c = new GridBagConstraints();
 
-        centralPanel.add(Box.createVerticalStrut(5));
+        //The toolbar Row
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0, 0, 0, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        getContentPane().add(createToolBar(), c);
+
+        //A seperator Row
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        getContentPane().add(new JSeparator(), c);
         
-        //The Accounts listview
+        //The search field row
+        searchField = new JTextField(20);
+        searchField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        searchField.setEnabled(false);
+        searchField.setMinimumSize(searchField.getPreferredSize());
+        searchField.addKeyListener(new KeyAdapter() {
+           public void keyTyped(KeyEvent e) {
+               String filterStr = null;
+               if (e.getKeyChar() == '\b') {
+                   filterStr = searchField.getText().substring(0, searchField.getText().length() - 1);
+               } else {
+                   filterStr = searchField.getText() + e.getKeyChar();
+               }
+               dbActions.applySearchCriteria(filterStr);
+               dbActions.setButtonState();
+           }
+        });
+        c.gridx = 0;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(5, 2, 5, 2);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        getContentPane().add(searchField, c);
+
+        //The accounts listview row
         accountsListview = new JList();
+        accountsListview.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         accountsListview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         accountsListview.setSelectedIndex(0);
         accountsListview.setVisibleRowCount(10);
@@ -163,26 +203,25 @@ public class MainWindow extends JFrame {
         JScrollPane accountsScrollList = new JScrollPane(accountsListview, 
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         accountsScrollList.setAlignmentX(Component.LEFT_ALIGNMENT);
-        centralPanel.add(accountsScrollList);
         accountsListview.addMouseListener(new MouseAdapter() {
            public void mouseClicked(MouseEvent e) {
-               if (accountsListview.getSelectedValue().equals("")) {
-                   editAccountButton.setEnabled(false);
-                   copyUsernameButton.setEnabled(false);
-                   copyPasswordButton.setEnabled(false);
-               } else {
-                   editAccountButton.setEnabled(true);
-                   copyUsernameButton.setEnabled(true);
-                   copyPasswordButton.setEnabled(true);
-               }
-               
+               dbActions.setButtonState();
                if (e.getClickCount() == 2) {
                    editAccountButton.doClick();
                }
            }
         });
-
-        getContentPane().add(centralPanel, BorderLayout.CENTER);
+        c.gridx = 0;
+        c.gridy = 3;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 2, 2, 2);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.BOTH;
+        c.ipady = 80;
+        c.ipadx = 80;
+        getContentPane().add(accountsListview, c);
 
     }
     
@@ -331,4 +370,9 @@ public class MainWindow extends JFrame {
 		return optionsButton;
 	}
 
+    
+    public JTextField getSearchField() {
+        return searchField;
+    }
+    
 }
