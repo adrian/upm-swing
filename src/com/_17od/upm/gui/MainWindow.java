@@ -173,20 +173,13 @@ public class MainWindow extends JFrame {
         searchField.setMinimumSize(searchField.getPreferredSize());
         searchField.addKeyListener(new KeyAdapter() {
            public void keyTyped(KeyEvent e) {
-               String filterStr = null;
-               if (e.getKeyChar() == '\b') {
-                   filterStr = searchField.getText().substring(0, searchField.getText().length() - 1);
-               } else {
-                   filterStr = searchField.getText() + e.getKeyChar();
-               }
-               dbActions.applySearchCriteria(filterStr);
-               dbActions.setButtonState();
+               dbActions.applySearchCriteria(e.getKeyChar());
            }
         });
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(5, 2, 5, 2);
+        c.insets = new Insets(5, 1, 5, 1);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 1;
@@ -214,7 +207,7 @@ public class MainWindow extends JFrame {
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 2, 2, 2);
+        c.insets = new Insets(0, 1, 1, 1);
         c.weightx = 1;
         c.weighty = 1;
         c.gridwidth = 1;

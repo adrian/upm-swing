@@ -197,16 +197,9 @@ public class DatabaseActions implements ActionListener {
         mainWindow.getOptionsButton().setEnabled(true);
         mainWindow.getSearchField().setEnabled(true);
 
-        //Initialise the listview
-        ((DefaultListModel) mainWindow.getAccountsListview().getModel()).clear();
+        mainWindow.getSearchField().setText("");
+        applySearchCriteria('\b');
         
-        //Populate the listview
-        Iterator it = database.getAccounts().iterator();
-        while (it.hasNext()) {
-            AccountInformation account = (AccountInformation) it.next();
-            ((DefaultListModel) mainWindow.getAccountsListview().getModel()).addElement(account.getAccountName());
-        }
-
     }
 
     
@@ -246,7 +239,16 @@ public class DatabaseActions implements ActionListener {
     }
 
     
-    public void applySearchCriteria(String filterStr) {
+    public void applySearchCriteria(char c) {
+
+        //Figure out what the new filter strig should be based on the key that was pressed
+        String filterStr = null;
+        if (c == '\b' && mainWindow.getSearchField().getText().length() > 1) {
+            filterStr = mainWindow.getSearchField().getText().substring(0, mainWindow.getSearchField().getText().length() - 1);
+        } else if (c != '\b') {
+            filterStr = mainWindow.getSearchField().getText() + c;
+        }
+
         String upperFilterStr = null;
         if (filterStr != null) {
             upperFilterStr = filterStr.toUpperCase();
@@ -256,15 +258,18 @@ public class DatabaseActions implements ActionListener {
         Iterator it = database.getAccounts().iterator();
         while (it.hasNext()) {
             AccountInformation account = (AccountInformation) it.next();
-            if (filterStr == null || account.getAccountName().indexOf(upperFilterStr) > -1) {
+            if (filterStr == null || account.getAccountName().toUpperCase().indexOf(upperFilterStr) > -1) {
                 ((DefaultListModel) mainWindow.getAccountsListview().getModel()).addElement(account.getAccountName());
             }
         }
+        
+        setButtonState();
+
     }
     
     
     public void setButtonState() {
-        if (mainWindow.getAccountsListview().getSelectedValue().equals("")) {
+        if (mainWindow.getAccountsListview().getSelectedValue() == null || mainWindow.getAccountsListview().getSelectedValue().equals("")) {
             mainWindow.getEditAccountButton().setEnabled(false);
             mainWindow.getCopyUsernameButton().setEnabled(false);
             mainWindow.getCopyPasswordButton().setEnabled(false);
