@@ -65,6 +65,8 @@ public class DatabaseActions implements ActionListener {
                 addAccount();
             } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
                 editAccount();
+            } else if (event.getActionCommand() == MainWindow.OPTIONS_TXT) {
+                options();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
@@ -203,7 +205,7 @@ public class DatabaseActions implements ActionListener {
     }
 
     
-    private void addAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
+    public void addAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
         AccountInformation accInfo = new AccountInformation();
         AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Add Account", true);
         accDialog.pack();
@@ -280,4 +282,13 @@ public class DatabaseActions implements ActionListener {
         }
 
     }
+
+    
+    public void options() {
+        OptionsDialog oppDialog = new OptionsDialog(mainWindow);
+        oppDialog.pack();
+        oppDialog.setLocationRelativeTo(mainWindow);
+        oppDialog.show();
+    }
+    
 }

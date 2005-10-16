@@ -22,40 +22,25 @@
  */
 package com._17od.upm.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -63,10 +48,6 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import com._17od.upm.crypto.EncryptionService;
 
 
 /**
@@ -81,6 +62,7 @@ public class MainWindow extends JFrame {
     public static final String OPEN_DATABASE_TXT = "Open Database";
     public static final String ADD_ACCOUNT_TXT = "Add Account";
     public static final String EDIT_ACCOUNT_TXT = "Edit Account";
+    public static final String OPTIONS_TXT = "Options";
 
     private JButton newAccountButton;
     private JButton editAccountButton;
@@ -168,7 +150,6 @@ public class MainWindow extends JFrame {
         
         //The search field row
         searchField = new JTextField(20);
-        searchField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         searchField.setEnabled(false);
         searchField.setMinimumSize(searchField.getPreferredSize());
         searchField.addKeyListener(new KeyAdapter() {
@@ -188,7 +169,6 @@ public class MainWindow extends JFrame {
 
         //The accounts listview row
         accountsListview = new JList();
-        accountsListview.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         accountsListview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         accountsListview.setSelectedIndex(0);
         accountsListview.setVisibleRowCount(10);
@@ -207,7 +187,7 @@ public class MainWindow extends JFrame {
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 1, 1, 1);
+        c.insets = new Insets(0, 0, 0, 0);
         c.weightx = 1;
         c.weighty = 1;
         c.gridwidth = 1;
@@ -277,15 +257,12 @@ public class MainWindow extends JFrame {
 
         // The "Option" button
         optionsButton = new JButton();
-        optionsButton.setToolTipText("Options");
+        optionsButton.setToolTipText(OPTIONS_TXT);
         optionsButton.setIcon(new ImageIcon(iconsDir + "/properties_doc_24.gif"));
         optionsButton.setDisabledIcon(new ImageIcon(iconsDir + "/properties_doc_24_d.gif"));;
-        optionsButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                options();
-            }
-        });
+        optionsButton.addActionListener(dbActions);
         optionsButton.setEnabled(false);
+        optionsButton.setActionCommand(OPTIONS_TXT);
         toolbar.add(optionsButton);
 
         return toolbar;
@@ -296,7 +273,7 @@ public class MainWindow extends JFrame {
 
         JMenuBar menuBar = new JMenuBar();
         
-        JMenu fileMenu = new JMenu("File");
+        fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
         
         newDatabaseMenuItem = new JMenuItem(NEW_DATABASE_TXT);
@@ -324,10 +301,6 @@ public class MainWindow extends JFrame {
     
     public JList getAccountsListview() {
     		return accountsListview;
-    }
-    
-    private void options() {
-        //TODO Add impl
     }
     
     private void copyUsernameToClipboard() {

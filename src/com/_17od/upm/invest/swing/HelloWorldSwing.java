@@ -20,6 +20,11 @@ public class HelloWorldSwing {
         JLabel label = new JLabel("Hello World");
         frame.getContentPane().add(label);
 
+        JTextField tf = new JTextField();
+        System.out.println(tf.getBorder());
+        frame.getContentPane().add(tf);
+        
+        
         //Display the window.
         frame.pack();
         frame.setVisible(true);
