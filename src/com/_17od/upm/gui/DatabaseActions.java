@@ -46,13 +46,14 @@ import com._17od.upm.database.ProblemReadingDatabaseFile;
 public class DatabaseActions implements ActionListener {
 
 	private MainWindow mainWindow;
-
 	private PasswordDatabase database;
 
+	
 	public DatabaseActions(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
 	}
 
+	
 	public void actionPerformed(ActionEvent event) {
 		try {
 			if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
@@ -73,6 +74,7 @@ public class DatabaseActions implements ActionListener {
 			// you can see the full stack trace
 		}
 	}
+
 
 	/**
 	 * This method asks the user for the name of a new database and then creates
@@ -160,8 +162,8 @@ public class DatabaseActions implements ActionListener {
 
 	}
 
-	private void openDatabase() throws IllegalBlockSizeException, IOException,
-			GeneralSecurityException, ProblemReadingDatabaseFile {
+	
+	private void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
 		JFileChooser fc = new JFileChooser();
 		fc.setDialogTitle("Open Password Database...");
 		int returnVal = fc.showOpenDialog(mainWindow);
@@ -173,22 +175,16 @@ public class DatabaseActions implements ActionListener {
 			boolean okClicked = true;
 			while (!passwordCorrect && okClicked) {
 				JPasswordField masterPassword = new JPasswordField("");
-				JOptionPane pane = new JOptionPane(new Object[] {
-						"Please enter your master password", masterPassword },
-						JOptionPane.QUESTION_MESSAGE,
-						JOptionPane.OK_CANCEL_OPTION);
-				JDialog dialog = pane.createDialog(mainWindow,
-						"Master Password...");
+				JOptionPane pane = new JOptionPane(new Object[] {"Please enter your master password", masterPassword }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+				JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
 				dialog.show();
 
 				if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
 					try {
-						database = new PasswordDatabase(databaseFile,
-								masterPassword.getPassword());
+						database = new PasswordDatabase(databaseFile, masterPassword.getPassword());
 						passwordCorrect = true;
 					} catch (InvalidPasswordException e) {
-						JOptionPane.showMessageDialog(mainWindow,
-								"Incorrect password");
+						JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
 					}
 				} else {
 					okClicked = false;
@@ -203,6 +199,7 @@ public class DatabaseActions implements ActionListener {
 
 	}
 
+	
 	private void loadDatabase(PasswordDatabase database) {
 
 		//Enable the account buttons on the toolbar
@@ -210,61 +207,76 @@ public class DatabaseActions implements ActionListener {
 		mainWindow.getSearchField().setEnabled(true);
 
 		//Change the title
-		mainWindow.setTitle(mainWindow.getTitle() + " - "
-				+ database.getDatabaseFile());
+		mainWindow.setTitle(mainWindow.getTitle() + " - " + database.getDatabaseFile());
 		mainWindow.getSearchField().setText("");
 		applySearchCriteria('\b');
 
 	}
+	
 
-	public void addAccount() throws IllegalBlockSizeException,
-			BadPaddingException, IOException {
+	public void addAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
+		
+		DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
+
+		//Initialise the AccountDialog
 		AccountInformation accInfo = new AccountInformation();
-		AccountDialog accDialog = new AccountDialog(accInfo, mainWindow,
-				"Add Account", true);
+		AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Add Account", true);
 		accDialog.pack();
 		accDialog.setLocationRelativeTo(mainWindow);
-		accDialog.show();
 
+		//Keep looping until the user provides a non-existant account or they hit cancel
+		boolean validAccount = false;
+		do {
+			accDialog.show();
+			if (accDialog.okClicked()) {
+				accInfo = accDialog.getAccount();
+				if (listview.contains(accInfo.getAccountName())) {
+					JOptionPane.showMessageDialog(mainWindow, "An account with the name [" + accInfo.getAccountName() + "] already exists", "Account already exists...", JOptionPane.ERROR_MESSAGE);
+				} else {
+					validAccount = true;
+				}
+			}
+		} while (!validAccount && accDialog.okClicked());
+
+		//If the user press OK then save the new account to the database
 		if (accDialog.okClicked()) {
-			accInfo = accDialog.getAccount();
 			database.deleteAccount(accInfo.getAccountName());
 			database.addAccount(accInfo);
 			database.save();
-			((DefaultListModel) mainWindow.getAccountsListview().getModel())
-					.addElement(accInfo.getAccountName());
 		}
 
 	}
 
-	private void editAccount() throws IllegalBlockSizeException,
-			BadPaddingException, IOException {
-		String selectedAccName = (String) mainWindow.getAccountsListview()
-				.getSelectedValue();
+	private void editAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
+		String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
 		AccountInformation accInfo = database.getAccount(selectedAccName);
-		AccountDialog accDialog = new AccountDialog(accInfo, mainWindow,
-				"Edit Account", false);
+		AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Edit Account", true);
 		accDialog.pack();
 		accDialog.setLocationRelativeTo(mainWindow);
 		accDialog.show();
 
+		//If the ok button was clicked then save the account to the database and update the 
+		//listview with the new account name (if it's changed) 
 		if (accDialog.okClicked()) {
 			accInfo = accDialog.getAccount();
-			database.deleteAccount(accInfo.getAccountName());
+			database.deleteAccount(selectedAccName);
 			database.addAccount(accInfo);
 			database.save();
+			if (!accInfo.getAccountName().equals(selectedAccName)) {
+				int i = ((DefaultListModel) mainWindow.getAccountsListview().getModel()).lastIndexOf(selectedAccName);
+				((DefaultListModel) mainWindow.getAccountsListview().getModel()).remove(i);
+				((DefaultListModel) mainWindow.getAccountsListview().getModel()).insertElementAt(accInfo.getAccountName(), i);
+			}
 		}
-
 	}
 
+	
 	public void applySearchCriteria(char c) {
 
-		//Figure out what the new filter strig should be based on the key that
-		// was pressed
+		//Figure out what the filter string is
 		String filterStr = null;
 		if (c == '\b' && mainWindow.getSearchField().getText().length() > 1) {
-			filterStr = mainWindow.getSearchField().getText().substring(0,
-					mainWindow.getSearchField().getText().length() - 1);
+			filterStr = mainWindow.getSearchField().getText().substring(0, mainWindow.getSearchField().getText().length() - 1);
 		} else if (c != '\b') {
 			filterStr = mainWindow.getSearchField().getText() + c;
 		}
@@ -274,16 +286,14 @@ public class DatabaseActions implements ActionListener {
 			upperFilterStr = filterStr.toUpperCase();
 		}
 
-		((DefaultListModel) mainWindow.getAccountsListview().getModel())
-				.clear();
+		//Add the accounts to the listview
+		DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
+		listview.clear();
 		Iterator it = database.getAccounts().iterator();
 		while (it.hasNext()) {
 			AccountInformation account = (AccountInformation) it.next();
-			if (filterStr == null
-					|| account.getAccountName().toUpperCase().indexOf(
-							upperFilterStr) > -1) {
-				((DefaultListModel) mainWindow.getAccountsListview().getModel())
-						.addElement(account.getAccountName());
+			if (filterStr == null || account.getAccountName().toUpperCase().indexOf(upperFilterStr) > -1) {
+				listview.addElement(account.getAccountName());
 			}
 		}
 
@@ -291,6 +301,7 @@ public class DatabaseActions implements ActionListener {
 
 	}
 
+	
 	public void setButtonState() {
 		if (mainWindow.getAccountsListview().getSelectedValue() == null
 				|| mainWindow.getAccountsListview().getSelectedValue().equals(
@@ -306,6 +317,7 @@ public class DatabaseActions implements ActionListener {
 
 	}
 
+	
 	public void options() {
 		OptionsDialog oppDialog = new OptionsDialog(mainWindow);
 		oppDialog.pack();

@@ -250,6 +250,7 @@ public class AccountDialog extends JDialog {
 
     
     private void closeButtonAction() {
+        okClicked = false;
         setVisible(false);
         dispose();
     }

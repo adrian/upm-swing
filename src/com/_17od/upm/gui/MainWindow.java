@@ -134,7 +134,7 @@ public class MainWindow extends JFrame {
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
+        c.fill = GridBagConstraints.HORIZONTAL;
         getContentPane().add(createToolBar(), c);
 
         //A seperator Row
@@ -174,8 +174,8 @@ public class MainWindow extends JFrame {
         accountsListview.setVisibleRowCount(10);
         accountsListview.setModel(new DefaultListModel());
         JScrollPane accountsScrollList = new JScrollPane(accountsListview, 
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        accountsScrollList.setAlignmentX(Component.LEFT_ALIGNMENT);
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        //accountsScrollList.setAlignmentX(Component.LEFT_ALIGNMENT);
         accountsListview.addMouseListener(new MouseAdapter() {
            public void mouseClicked(MouseEvent e) {
                dbActions.setButtonState();
@@ -186,14 +186,14 @@ public class MainWindow extends JFrame {
         });
         c.gridx = 0;
         c.gridy = 3;
-        c.anchor = GridBagConstraints.LINE_START;
+        c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(0, 0, 0, 0);
         c.weightx = 1;
         c.weighty = 1;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.BOTH;
-        c.ipady = 80;
-        c.ipadx = 80;
+        //c.ipady = 80;
+        //c.ipadx = 80;
         getContentPane().add(accountsListview, c);
 
     }
