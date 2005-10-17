@@ -1,5 +1,5 @@
 /*
- * $Id: Util.java 19 2005-09-01 20:01:06Z Adrian Smith $
+ * $Id$
  * 
  * Universal Password Manager
  * Copyright (C) 2005 Adrian Smith
@@ -20,25 +20,27 @@
  * along with Universal Password Manager; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package com._17od.upm;
+package com._17od.upm.util;
+
+import junit.framework.TestCase;
 
 
-public class Util {
+public class TestUtil extends TestCase {
 
-	/**
-	 * Left pad an integer to a given length with the given
-	 * character 
-	 * @param i The integer to pad
-	 * @param length The length to pad it to
-	 * @param c The character to do the padding with
-	 * @return A padded version of the integer
-	 */
-	public static String lpad(int i, int length, char c) {
-		StringBuffer buf = new StringBuffer(String.valueOf(i));
-		while (buf.length() < length) {
-			buf.insert(0, c);
-		}
-		return buf.toString();
+	public void testLpad1() {
+		assertEquals(Util.lpad(1, 1, '0'), "1");
+	}
+
+	public void testLpad2() {
+		assertEquals(Util.lpad(1, 2, '0'), "01");
+	}
+
+	public void testLpad3() {
+		assertEquals(Util.lpad(34, 2, '0'), "34");
+	}
+
+	public void testLpad4() {
+		assertEquals(Util.lpad(34, 6, 'd'), "dddd34");
 	}
 
 }

@@ -160,4 +160,9 @@ public class PasswordDatabase {
 		return accounts.values();
 	}
 	
+	
+	public File getDatabaseFile() {
+		return databaseFile;
+	}
+	
 }

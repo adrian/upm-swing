@@ -29,8 +29,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.util.prefs.Preferences;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -40,16 +38,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import com._17od.upm.util.Preferences;
 
 
 public class OptionsDialog extends JDialog {
 
     private JTextField dbToLoadOnStartup;
     private boolean okClicked = false;
-    private static Preferences pref = Preferences.userNodeForPackage(OptionsDialog.class);
     private JFrame parentFrame;
-    
-    private static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
     
     
     public OptionsDialog(JFrame frame) {
@@ -73,7 +69,7 @@ public class OptionsDialog extends JDialog {
         c.fill = GridBagConstraints.NONE;
         container.add(accountToLoadOnStartupLabel, c);
         
-        dbToLoadOnStartup = new JTextField(pref.get(DB_TO_LOAD_ON_STARTUP, null), 25);
+        dbToLoadOnStartup = new JTextField(Preferences.getDBToOptionOnStartup(), 25);
         c.gridx = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.CENTER;
@@ -149,8 +145,8 @@ public class OptionsDialog extends JDialog {
     
     private void okButtonAction() {
         try {
-            pref.put(DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
-            pref.exportNode(new FileOutputStream(System.getProperty("user.dir") + "/upm.xml"));
+        	Preferences.setDBToOptionOnStartup(dbToLoadOnStartup.getText());
+        	Preferences.save();
             setVisible(false);
             dispose();
             okClicked = true;
@@ -159,11 +155,6 @@ public class OptionsDialog extends JDialog {
         }
     }
 
-    
-    public static String getDBToOptionOnStartup() {
-        return pref.get(OptionsDialog.DB_TO_LOAD_ON_STARTUP, null);
-    }
-    
     
     private void closeButtonAction() {
         setVisible(false);

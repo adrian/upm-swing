@@ -199,6 +199,8 @@ public class DatabaseActions implements ActionListener {
         mainWindow.getOptionsButton().setEnabled(true);
         mainWindow.getSearchField().setEnabled(true);
 
+        //Change the title
+        mainWindow.setTitle(mainWindow.getTitle() + " - " + database.getDatabaseFile());
         mainWindow.getSearchField().setText("");
         applySearchCriteria('\b');
         
