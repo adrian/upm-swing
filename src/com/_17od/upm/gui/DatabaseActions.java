@@ -43,254 +43,274 @@ import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 
-
 public class DatabaseActions implements ActionListener {
 
-    private MainWindow mainWindow;
-    private PasswordDatabase database;
+	private MainWindow mainWindow;
 
-    
-    	public DatabaseActions(MainWindow mainWindow) {
-    		this.mainWindow = mainWindow;
-    	}
-	
-    	
-	public void actionPerformed(ActionEvent event) {
-        try {
-            if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
-                newDatabase();
-            } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_TXT) {
-                openDatabase();
-            } else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
-                addAccount();
-            } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
-                editAccount();
-            } else if (event.getActionCommand() == MainWindow.OPTIONS_TXT) {
-                options();
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
-            //TODO: Make this a better dialog that has a "show" button where you can see the full stack trace
-        }
+	private PasswordDatabase database;
+
+	public DatabaseActions(MainWindow mainWindow) {
+		this.mainWindow = mainWindow;
 	}
 
+	public void actionPerformed(ActionEvent event) {
+		try {
+			if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
+				newDatabase();
+			} else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_TXT) {
+				openDatabase();
+			} else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
+				addAccount();
+			} else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
+				editAccount();
+			} else if (event.getActionCommand() == MainWindow.OPTIONS_TXT) {
+				options();
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(),
+					"Error...", JOptionPane.ERROR_MESSAGE);
+			//TODO: Make this a better dialog that has a "show" button where
+			// you can see the full stack trace
+		}
+	}
 
-    /**
-     * This method asks the user for the name of a new database and then creates it.
-     * If the file already exists then the user is asked if they'd like to overwrite it.
-     * @throws IOException
-     * @throws GeneralSecurityException
-     * @throws ProblemReadingDatabaseFile
-     * @throws InvalidPasswordException
-     * @throws IllegalBlockSizeException
-     */
-    private void newDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
-        
-        File newDatabaseFile;
-        boolean gotValidFile = false;
-        do {
-            JFileChooser fc = new JFileChooser();
-            fc.setDialogTitle("New Password Database...");
-            int returnVal = fc.showSaveDialog(mainWindow);
-            
-            if (returnVal != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-            
-            newDatabaseFile = fc.getSelectedFile();
-            
-            //Warn the user if the database file already exists
-            if (newDatabaseFile.exists()) {
-            		int i = JOptionPane.showConfirmDialog(mainWindow, "The file " + newDatabaseFile.getAbsolutePath() + 
-            				" already exists.\nDo you want to overwrite it?", "File Already Exists...", JOptionPane.YES_NO_OPTION);
-            		if (i == JOptionPane.YES_OPTION) {
-                        gotValidFile = true;
-            		}
-            } else {
-                gotValidFile = true;
-            }
-            
-        } while (!gotValidFile);
+	/**
+	 * This method asks the user for the name of a new database and then creates
+	 * it. If the file already exists then the user is asked if they'd like to
+	 * overwrite it.
+	 * 
+	 * @throws IOException
+	 * @throws GeneralSecurityException
+	 * @throws ProblemReadingDatabaseFile
+	 * @throws InvalidPasswordException
+	 * @throws IllegalBlockSizeException
+	 */
+	private void newDatabase() throws IllegalBlockSizeException, IOException,
+			GeneralSecurityException, ProblemReadingDatabaseFile,
+			InvalidPasswordException {
 
-        JPasswordField masterPassword;
-        boolean passwordsMatch = false;
-        do {
-            
-            //Get a new master password for this database from the user
-            
-            masterPassword = new JPasswordField("");
-            JPasswordField confirmedMasterPassword = new JPasswordField("");
-            JOptionPane pane = new JOptionPane(new Object[] {"Please enter a master password for your new database...",
-                                                    masterPassword,
-                                                    "Confirmation...",
-                                                    confirmedMasterPassword},
-                                                JOptionPane.QUESTION_MESSAGE,
-                                                JOptionPane.OK_CANCEL_OPTION);
-            JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
-            dialog.show();
-    
-            if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
-            		if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
-                    JOptionPane.showMessageDialog(mainWindow, "The two passwords you entered don't match");
-                } else {
-                    passwordsMatch = true;
-                }
-            } else {
-                return;
-            }
-            
-        } while (passwordsMatch == false);
+		File newDatabaseFile;
+		boolean gotValidFile = false;
+		do {
+			JFileChooser fc = new JFileChooser();
+			fc.setDialogTitle("New Password Database...");
+			int returnVal = fc.showSaveDialog(mainWindow);
 
-        if (newDatabaseFile.exists()) {
-            newDatabaseFile.delete();
-        }
-        
-        database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());
-        database.save();
-        loadDatabase(database);
-        
-    }
-    
-    
-    private void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
-        JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("Open Password Database...");
-        int returnVal = fc.showOpenDialog(mainWindow);
-        
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File databaseFile = fc.getSelectedFile();
+			if (returnVal != JFileChooser.APPROVE_OPTION) {
+				return;
+			}
 
-            boolean passwordCorrect = false;
-            boolean okClicked = true;
-            while (!passwordCorrect && okClicked) {
-                JPasswordField masterPassword = new JPasswordField("");
-                JOptionPane pane = new JOptionPane(new Object[] {"Please enter your master password",
-                                                                    masterPassword},
-                                                                    JOptionPane.QUESTION_MESSAGE,
-                                                                    JOptionPane.OK_CANCEL_OPTION);
-                JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
-                dialog.show();
+			newDatabaseFile = fc.getSelectedFile();
 
-                if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
-                    try {
-                        database = new PasswordDatabase(databaseFile, masterPassword.getPassword());
-                        passwordCorrect = true;
-                    } catch (InvalidPasswordException e) {
-                        JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
-                    }
-                } else {
-                    okClicked = false;
-                }
-            }
-            
-            if (passwordCorrect == true) {
-                loadDatabase(database);
-            }
-            
-        }
-        
-    }
+			//Warn the user if the database file already exists
+			if (newDatabaseFile.exists()) {
+				int i = JOptionPane.showConfirmDialog(mainWindow, "The file "
+						+ newDatabaseFile.getAbsolutePath()
+						+ " already exists.\nDo you want to overwrite it?",
+						"File Already Exists...", JOptionPane.YES_NO_OPTION);
+				if (i == JOptionPane.YES_OPTION) {
+					gotValidFile = true;
+				}
+			} else {
+				gotValidFile = true;
+			}
 
-    
-    private void loadDatabase(PasswordDatabase database) {
+		} while (!gotValidFile);
 
-        //Enable the account buttons on the toolbar
-        mainWindow.getNewAccountButton().setEnabled(true);
-        mainWindow.getOptionsButton().setEnabled(true);
-        mainWindow.getSearchField().setEnabled(true);
+		JPasswordField masterPassword;
+		boolean passwordsMatch = false;
+		do {
 
-        //Change the title
-        mainWindow.setTitle(mainWindow.getTitle() + " - " + database.getDatabaseFile());
-        mainWindow.getSearchField().setText("");
-        applySearchCriteria('\b');
-        
-    }
+			//Get a new master password for this database from the user
 
-    
-    public void addAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
-        AccountInformation accInfo = new AccountInformation();
-        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Add Account", true);
-        accDialog.pack();
-        accDialog.setLocationRelativeTo(mainWindow);
-        accDialog.show();
-        
-        if (accDialog.okClicked()) {
-            accInfo = accDialog.getAccount();
-            database.deleteAccount(accInfo.getAccountName());
-            database.addAccount(accInfo);
-            database.save();
-            ((DefaultListModel) mainWindow.getAccountsListview().getModel()).addElement(accInfo.getAccountName());
-        }
-        
-    }
+			masterPassword = new JPasswordField("");
+			JPasswordField confirmedMasterPassword = new JPasswordField("");
+			JOptionPane pane = new JOptionPane(
+					new Object[] {
+							"Please enter a master password for your new database...",
+							masterPassword, "Confirmation...",
+							confirmedMasterPassword },
+					JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+			JDialog dialog = pane
+					.createDialog(mainWindow, "Master Password...");
+			dialog.show();
 
-    
-    private void editAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
-        String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
-        AccountInformation accInfo = database.getAccount(selectedAccName);
-        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Edit Account", false);
-        accDialog.pack();
-        accDialog.setLocationRelativeTo(mainWindow);
-        accDialog.show();
-        
-        if (accDialog.okClicked()) {
-            accInfo = accDialog.getAccount();
-            database.deleteAccount(accInfo.getAccountName());
-            database.addAccount(accInfo);
-            database.save();
-        }
-        
-    }
+			if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
+				if (!Arrays.equals(masterPassword.getPassword(),
+						confirmedMasterPassword.getPassword())) {
+					JOptionPane.showMessageDialog(mainWindow,
+							"The two passwords you entered don't match");
+				} else {
+					passwordsMatch = true;
+				}
+			} else {
+				return;
+			}
 
-    
-    public void applySearchCriteria(char c) {
+		} while (passwordsMatch == false);
 
-        //Figure out what the new filter strig should be based on the key that was pressed
-        String filterStr = null;
-        if (c == '\b' && mainWindow.getSearchField().getText().length() > 1) {
-            filterStr = mainWindow.getSearchField().getText().substring(0, mainWindow.getSearchField().getText().length() - 1);
-        } else if (c != '\b') {
-            filterStr = mainWindow.getSearchField().getText() + c;
-        }
+		if (newDatabaseFile.exists()) {
+			newDatabaseFile.delete();
+		}
 
-        String upperFilterStr = null;
-        if (filterStr != null) {
-            upperFilterStr = filterStr.toUpperCase();
-        }
+		database = new PasswordDatabase(newDatabaseFile, masterPassword
+				.getPassword());
+		database.save();
+		loadDatabase(database);
 
-        ((DefaultListModel) mainWindow.getAccountsListview().getModel()).clear();
-        Iterator it = database.getAccounts().iterator();
-        while (it.hasNext()) {
-            AccountInformation account = (AccountInformation) it.next();
-            if (filterStr == null || account.getAccountName().toUpperCase().indexOf(upperFilterStr) > -1) {
-                ((DefaultListModel) mainWindow.getAccountsListview().getModel()).addElement(account.getAccountName());
-            }
-        }
-        
-        setButtonState();
+	}
 
-    }
-    
-    
-    public void setButtonState() {
-        if (mainWindow.getAccountsListview().getSelectedValue() == null || mainWindow.getAccountsListview().getSelectedValue().equals("")) {
-            mainWindow.getEditAccountButton().setEnabled(false);
-            mainWindow.getCopyUsernameButton().setEnabled(false);
-            mainWindow.getCopyPasswordButton().setEnabled(false);
-        } else {
-            mainWindow.getEditAccountButton().setEnabled(true);
-            mainWindow.getCopyUsernameButton().setEnabled(true);
-            mainWindow.getCopyPasswordButton().setEnabled(true);
-        }
+	private void openDatabase() throws IllegalBlockSizeException, IOException,
+			GeneralSecurityException, ProblemReadingDatabaseFile {
+		JFileChooser fc = new JFileChooser();
+		fc.setDialogTitle("Open Password Database...");
+		int returnVal = fc.showOpenDialog(mainWindow);
 
-    }
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File databaseFile = fc.getSelectedFile();
 
-    
-    public void options() {
-        OptionsDialog oppDialog = new OptionsDialog(mainWindow);
-        oppDialog.pack();
-        oppDialog.setLocationRelativeTo(mainWindow);
-        oppDialog.show();
-    }
-    
+			boolean passwordCorrect = false;
+			boolean okClicked = true;
+			while (!passwordCorrect && okClicked) {
+				JPasswordField masterPassword = new JPasswordField("");
+				JOptionPane pane = new JOptionPane(new Object[] {
+						"Please enter your master password", masterPassword },
+						JOptionPane.QUESTION_MESSAGE,
+						JOptionPane.OK_CANCEL_OPTION);
+				JDialog dialog = pane.createDialog(mainWindow,
+						"Master Password...");
+				dialog.show();
+
+				if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
+					try {
+						database = new PasswordDatabase(databaseFile,
+								masterPassword.getPassword());
+						passwordCorrect = true;
+					} catch (InvalidPasswordException e) {
+						JOptionPane.showMessageDialog(mainWindow,
+								"Incorrect password");
+					}
+				} else {
+					okClicked = false;
+				}
+			}
+
+			if (passwordCorrect == true) {
+				loadDatabase(database);
+			}
+
+		}
+
+	}
+
+	private void loadDatabase(PasswordDatabase database) {
+
+		//Enable the account buttons on the toolbar
+		mainWindow.getNewAccountButton().setEnabled(true);
+		mainWindow.getSearchField().setEnabled(true);
+
+		//Change the title
+		mainWindow.setTitle(mainWindow.getTitle() + " - "
+				+ database.getDatabaseFile());
+		mainWindow.getSearchField().setText("");
+		applySearchCriteria('\b');
+
+	}
+
+	public void addAccount() throws IllegalBlockSizeException,
+			BadPaddingException, IOException {
+		AccountInformation accInfo = new AccountInformation();
+		AccountDialog accDialog = new AccountDialog(accInfo, mainWindow,
+				"Add Account", true);
+		accDialog.pack();
+		accDialog.setLocationRelativeTo(mainWindow);
+		accDialog.show();
+
+		if (accDialog.okClicked()) {
+			accInfo = accDialog.getAccount();
+			database.deleteAccount(accInfo.getAccountName());
+			database.addAccount(accInfo);
+			database.save();
+			((DefaultListModel) mainWindow.getAccountsListview().getModel())
+					.addElement(accInfo.getAccountName());
+		}
+
+	}
+
+	private void editAccount() throws IllegalBlockSizeException,
+			BadPaddingException, IOException {
+		String selectedAccName = (String) mainWindow.getAccountsListview()
+				.getSelectedValue();
+		AccountInformation accInfo = database.getAccount(selectedAccName);
+		AccountDialog accDialog = new AccountDialog(accInfo, mainWindow,
+				"Edit Account", false);
+		accDialog.pack();
+		accDialog.setLocationRelativeTo(mainWindow);
+		accDialog.show();
+
+		if (accDialog.okClicked()) {
+			accInfo = accDialog.getAccount();
+			database.deleteAccount(accInfo.getAccountName());
+			database.addAccount(accInfo);
+			database.save();
+		}
+
+	}
+
+	public void applySearchCriteria(char c) {
+
+		//Figure out what the new filter strig should be based on the key that
+		// was pressed
+		String filterStr = null;
+		if (c == '\b' && mainWindow.getSearchField().getText().length() > 1) {
+			filterStr = mainWindow.getSearchField().getText().substring(0,
+					mainWindow.getSearchField().getText().length() - 1);
+		} else if (c != '\b') {
+			filterStr = mainWindow.getSearchField().getText() + c;
+		}
+
+		String upperFilterStr = null;
+		if (filterStr != null) {
+			upperFilterStr = filterStr.toUpperCase();
+		}
+
+		((DefaultListModel) mainWindow.getAccountsListview().getModel())
+				.clear();
+		Iterator it = database.getAccounts().iterator();
+		while (it.hasNext()) {
+			AccountInformation account = (AccountInformation) it.next();
+			if (filterStr == null
+					|| account.getAccountName().toUpperCase().indexOf(
+							upperFilterStr) > -1) {
+				((DefaultListModel) mainWindow.getAccountsListview().getModel())
+						.addElement(account.getAccountName());
+			}
+		}
+
+		setButtonState();
+
+	}
+
+	public void setButtonState() {
+		if (mainWindow.getAccountsListview().getSelectedValue() == null
+				|| mainWindow.getAccountsListview().getSelectedValue().equals(
+						"")) {
+			mainWindow.getEditAccountButton().setEnabled(false);
+			mainWindow.getCopyUsernameButton().setEnabled(false);
+			mainWindow.getCopyPasswordButton().setEnabled(false);
+		} else {
+			mainWindow.getEditAccountButton().setEnabled(true);
+			mainWindow.getCopyUsernameButton().setEnabled(true);
+			mainWindow.getCopyPasswordButton().setEnabled(true);
+		}
+
+	}
+
+	public void options() {
+		OptionsDialog oppDialog = new OptionsDialog(mainWindow);
+		oppDialog.pack();
+		oppDialog.setLocationRelativeTo(mainWindow);
+		oppDialog.show();
+	}
+
 }

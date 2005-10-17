@@ -261,7 +261,7 @@ public class MainWindow extends JFrame {
         optionsButton.setIcon(new ImageIcon(iconsDir + "/properties_doc_24.gif"));
         optionsButton.setDisabledIcon(new ImageIcon(iconsDir + "/properties_doc_24_d.gif"));;
         optionsButton.addActionListener(dbActions);
-        optionsButton.setEnabled(false);
+        optionsButton.setEnabled(true);
         optionsButton.setActionCommand(OPTIONS_TXT);
         toolbar.add(optionsButton);
 

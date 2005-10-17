@@ -61,7 +61,7 @@ public class OptionsDialog extends JDialog {
         JLabel accountToLoadOnStartupLabel = new JLabel("Account To Load On Startup");
         c.gridx = 0;
         c.gridy = 0;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 0;
         c.weighty = 1;
@@ -72,7 +72,7 @@ public class OptionsDialog extends JDialog {
         dbToLoadOnStartup = new JTextField(Preferences.getDBToOptionOnStartup(), 25);
         c.gridx = 1;
         c.gridy = 0;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 1;
         c.weighty = 0;
@@ -88,7 +88,7 @@ public class OptionsDialog extends JDialog {
         });
         c.gridx = 2;
         c.gridy = 0;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 0;
         c.weighty = 0;
@@ -127,14 +127,15 @@ public class OptionsDialog extends JDialog {
         buttonPanel.add(cancelButton);
         c.gridx = 0;
         c.gridy = 3;
-        c.anchor = GridBagConstraints.PAGE_END;
+        c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(5, 0, 5, 0);
         c.weightx = 0;
         c.weighty = 0;
-        c.gridwidth = 2;
+        c.gridwidth = 3;
         c.fill = GridBagConstraints.NONE;
         container.add(buttonPanel, c);
         
+        setResizable(false);
     }
     
 
