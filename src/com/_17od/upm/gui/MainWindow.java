@@ -23,6 +23,7 @@
 package com._17od.upm.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -131,7 +132,7 @@ public class MainWindow extends JFrame {
         c.gridy = 0;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.insets = new Insets(0, 0, 0, 0);
-        c.weightx = 1;
+        c.weightx = 0;
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -163,8 +164,8 @@ public class MainWindow extends JFrame {
         c.insets = new Insets(5, 1, 5, 1);
         c.weightx = 1;
         c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
         getContentPane().add(searchField, c);
 
         //The accounts listview row
@@ -173,9 +174,7 @@ public class MainWindow extends JFrame {
         accountsListview.setSelectedIndex(0);
         accountsListview.setVisibleRowCount(10);
         accountsListview.setModel(new DefaultListModel());
-        JScrollPane accountsScrollList = new JScrollPane(accountsListview, 
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        //accountsScrollList.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JScrollPane accountsScrollList = new JScrollPane(accountsListview, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         accountsListview.addMouseListener(new MouseAdapter() {
            public void mouseClicked(MouseEvent e) {
                dbActions.setButtonState();
@@ -187,14 +186,12 @@ public class MainWindow extends JFrame {
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(0, 0, 0, 0);
+        c.insets = new Insets(0, 1, 1, 1);
         c.weightx = 1;
         c.weighty = 1;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.BOTH;
-        //c.ipady = 80;
-        //c.ipadx = 80;
-        getContentPane().add(accountsListview, c);
+        getContentPane().add(accountsScrollList, c);
 
     }
     
