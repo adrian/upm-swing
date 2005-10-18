@@ -29,6 +29,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -52,33 +55,35 @@ public class OptionsDialog extends JDialog {
         super(frame, "Options", true);
 
         parentFrame = frame;
-        getContentPane().setLayout(new GridBagLayout());
+        getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+
+        JPanel borderPane = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        Container container = getContentPane();
+        borderPane.setBorder(BorderFactory.createEtchedBorder());
 
         //The dbToLoadOnStartup Row
         JLabel accountToLoadOnStartupLabel = new JLabel("Account To Load On Startup");
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
+        //c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 0;
         c.weighty = 1;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
-        container.add(accountToLoadOnStartupLabel, c);
+        borderPane.add(accountToLoadOnStartupLabel, c);
         
         dbToLoadOnStartup = new JTextField(Preferences.getDBToOptionOnStartup(), 25);
         c.gridx = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
+        //c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(dbToLoadOnStartup, c);
+        borderPane.add(dbToLoadOnStartup, c);
         
         JButton dbToLoadOnStartupButton = new JButton("..");
         dbToLoadOnStartupButton.addActionListener(new ActionListener() {
@@ -89,25 +94,14 @@ public class OptionsDialog extends JDialog {
         c.gridx = 2;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
+        //c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 0;
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
-        container.add(dbToLoadOnStartupButton, c);
+        borderPane.add(dbToLoadOnStartupButton, c);
         
-        //Seperator Row
-        JSeparator sep = new JSeparator();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.PAGE_END;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 3;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(sep, c);
-
+        getContentPane().add(borderPane);
 
         //Button Row
         JPanel buttonPanel = new JPanel();
@@ -125,15 +119,7 @@ public class OptionsDialog extends JDialog {
             }
         });
         buttonPanel.add(cancelButton);
-        c.gridx = 0;
-        c.gridy = 3;
-        c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(5, 0, 5, 0);
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 3;
-        c.fill = GridBagConstraints.NONE;
-        container.add(buttonPanel, c);
+        getContentPane().add(buttonPanel, c);
         
         setResizable(false);
     }
