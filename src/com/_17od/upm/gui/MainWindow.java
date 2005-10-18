@@ -32,6 +32,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import javax.crypto.IllegalBlockSizeException;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -48,6 +52,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com._17od.upm.database.ProblemReadingDatabaseFile;
+import com._17od.upm.util.Preferences;
+
 
 /**
  * This is the main application entry class
@@ -61,10 +68,12 @@ public class MainWindow extends JFrame {
     public static final String OPEN_DATABASE_TXT = "Open Database";
     public static final String ADD_ACCOUNT_TXT = "Add Account";
     public static final String EDIT_ACCOUNT_TXT = "Edit Account";
+    public static final String DELETE_ACCOUNT_TXT = "Delete Account";
     public static final String OPTIONS_TXT = "Options";
 
     private JButton newAccountButton;
     private JButton editAccountButton;
+    private JButton deleteAccountButton;
     private JButton copyUsernameButton;
     private JButton copyPasswordButton;
     private JButton optionsButton;
@@ -79,13 +88,15 @@ public class MainWindow extends JFrame {
     private DatabaseActions dbActions;
     
     
-    public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+    public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
     		super(title);
 
         //Use the System look and feel
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        dbActions = new DatabaseActions(this);
 
         //Set up the content pane.
         addComponentsToPane();
@@ -94,6 +105,12 @@ public class MainWindow extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        
+        //Load the startup database if it's configured
+        String db = Preferences.getDBToOptionOnStartup();
+        if (db != null && !db.equals("")) {
+            dbActions.openDatabase(db);
+        }
     }
    
     
@@ -116,9 +133,6 @@ public class MainWindow extends JFrame {
         if (!(getContentPane().getLayout() instanceof GridBagLayout)) {
         		getContentPane().setLayout(new GridBagLayout());
         }
-
-        //Create the action handler classes
-        dbActions = new DatabaseActions(this);
 
         //Create the menubar
         setJMenuBar(createMenuBar());
@@ -153,7 +167,7 @@ public class MainWindow extends JFrame {
         searchField.setMinimumSize(searchField.getPreferredSize());
         searchField.addKeyListener(new KeyAdapter() {
            public void keyTyped(KeyEvent e) {
-               dbActions.applySearchCriteria(e.getKeyChar());
+               dbActions.filter(e.getKeyChar());
            }
         });
         c.gridx = 0;
@@ -163,7 +177,7 @@ public class MainWindow extends JFrame {
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 2;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.NONE;
         getContentPane().add(searchField, c);
 
         //The accounts listview row
@@ -219,7 +233,17 @@ public class MainWindow extends JFrame {
         editAccountButton.setEnabled(false);
         editAccountButton.setActionCommand(EDIT_ACCOUNT_TXT);
         toolbar.add(editAccountButton);
-        
+
+        // The "Delete Account" button
+        deleteAccountButton = new JButton();
+        deleteAccountButton.setToolTipText(DELETE_ACCOUNT_TXT);
+        deleteAccountButton.setIcon(new ImageIcon(iconsDir + "/delete_x_24.gif"));
+        deleteAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/delete_x_24_d.gif"));;
+        deleteAccountButton.addActionListener(dbActions);
+        deleteAccountButton.setEnabled(false);
+        deleteAccountButton.setActionCommand(DELETE_ACCOUNT_TXT);
+        toolbar.add(deleteAccountButton);
+
         toolbar.addSeparator();
 
         // The "Copy Username" button
@@ -330,6 +354,11 @@ public class MainWindow extends JFrame {
 	public JButton getOptionsButton() {
 		return optionsButton;
 	}
+
+
+    public JButton getDeleteAccountButton() {
+        return deleteAccountButton;
+    }
 
     
     public JTextField getSearchField() {

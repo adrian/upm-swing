@@ -22,14 +22,9 @@
  */
 package com._17od.upm.gui;
 
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -39,8 +34,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
+
 import com._17od.upm.util.Preferences;
 
 
@@ -57,53 +53,31 @@ public class OptionsDialog extends JDialog {
         parentFrame = frame;
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
-        JPanel borderPane = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
+        //JPanel borderPane = new JPanel(new GridBagLayout());
+        JPanel borderPane = new JPanel();
 
-        borderPane.setBorder(BorderFactory.createEtchedBorder());
+        //Put a border on the panel
+        Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+        Border etchedBorder = BorderFactory.createEtchedBorder();
+        Border titledBorder = BorderFactory.createTitledBorder(etchedBorder, " Startup Database ");
+        Border compoundBorder = BorderFactory.createCompoundBorder(emptyBorder, titledBorder);
+        borderPane.setBorder(compoundBorder);
 
-        //The dbToLoadOnStartup Row
-        JLabel accountToLoadOnStartupLabel = new JLabel("Account To Load On Startup");
-        c.gridx = 0;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.LINE_START;
-        //c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 0;
-        c.weighty = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        borderPane.add(accountToLoadOnStartupLabel, c);
-        
+        //Add the components to the panel
+        JLabel accountToLoadOnStartupLabel = new JLabel("Database To Load On Startup");
+        borderPane.add(accountToLoadOnStartupLabel);
         dbToLoadOnStartup = new JTextField(Preferences.getDBToOptionOnStartup(), 25);
-        c.gridx = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.LINE_START;
-        //c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        borderPane.add(dbToLoadOnStartup, c);
-        
+        borderPane.add(dbToLoadOnStartup);
         JButton dbToLoadOnStartupButton = new JButton("..");
         dbToLoadOnStartupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getDBToLoadOnStartup();
             }
         });
-        c.gridx = 2;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.LINE_START;
-        //c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        borderPane.add(dbToLoadOnStartupButton, c);
-        
+        borderPane.add(dbToLoadOnStartupButton);
         getContentPane().add(borderPane);
 
-        //Button Row
+        //Add the OK/Cancel buttons to the dialog
         JPanel buttonPanel = new JPanel();
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
@@ -119,8 +93,8 @@ public class OptionsDialog extends JDialog {
             }
         });
         buttonPanel.add(cancelButton);
-        getContentPane().add(buttonPanel, c);
-        
+        getContentPane().add(buttonPanel);
+
         setResizable(false);
     }
     

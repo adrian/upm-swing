@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.EOFException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -156,8 +157,8 @@ public class PasswordDatabase {
 	}
 
 	
-	public Collection getAccounts() {
-		return accounts.values();
+	public ArrayList getAccounts() {
+	    return new ArrayList(accounts.values());
 	}
 	
 	
