@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -65,87 +66,9 @@ public class TestDialog implements ActionListener {
 
 
 	public void actionPerformed(ActionEvent arg0) {
-		final JDialog dialog = new JDialog(frame, true);
-		dialog.getContentPane().setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-
-		Container container = dialog.getContentPane();
-
-        JLabel useridLabel = new JLabel("User Id");
-        c.gridx = 0;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        container.add(useridLabel, c);
-        
-        JTextField userId = new JTextField(20);
-        c.gridx = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;
-        c.weighty = 0;
-        c.gridwidth = 2;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(userId, c);
-        
-        JLabel notesLabel = new JLabel("Notes");
-        c.gridx = 0;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        container.add(notesLabel, c);
-        
-        JTextArea notes = new JTextArea(10, 20);
-        JScrollPane notesScrollPane = new JScrollPane(notes);
-        c.gridx = 1;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.gridwidth = 2;
-        c.fill = GridBagConstraints.BOTH;
-        container.add(notesScrollPane, c);
-        
-        JSeparator sep = new JSeparator();
-        c.gridx = 0;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.PAGE_END;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.weightx = 1.0;
-        c.weighty = 0;
-        c.gridwidth = 3;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(sep, c);
-        
-        JButton button = new JButton("Close");
-        c.gridx = 0;
-        c.gridy = 3;
-        c.anchor = GridBagConstraints.PAGE_END;
-        c.insets = new Insets(5, 0, 5, 0);
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 3;
-        c.fill = GridBagConstraints.NONE;
-        container.add(button, c);
-
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dialog.setVisible(false);
-                dialog.dispose();
-            }
-        });
-		
-		dialog.pack();
+		JOptionPane pane = new JOptionPane();
+		pane.setMessageType(JOptionPane.ERROR_MESSAGE);
+		JDialog dialog = pane.createDialog(frame, "Test Dialog");
 		dialog.show();
 	}
 
