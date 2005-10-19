@@ -71,7 +71,7 @@ public class DatabaseActions implements ActionListener {
                 options();
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
+        	errorHandler(e);
             //TODO: Make this a better dialog that has a "show" button where
             // you can see the full stack trace
         }
@@ -152,6 +152,14 @@ public class DatabaseActions implements ActionListener {
     }
 
 	
+    public void errorHandler(Exception e) {
+    	//JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
+    	ErrorMessageDialog d = new ErrorMessageDialog(mainWindow);
+    	d.pack();
+    	d.show();
+    }
+    
+    
     public void openDatabase(String databaseFilename) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
 
         boolean passwordCorrect = false;

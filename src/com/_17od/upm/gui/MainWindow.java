@@ -22,6 +22,7 @@
  */
 package com._17od.upm.gui;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -106,10 +107,14 @@ public class MainWindow extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         
-        //Load the startup database if it's configured
-        String db = Preferences.getDBToOptionOnStartup();
-        if (db != null && !db.equals("")) {
-            dbActions.openDatabase(db);
+        try {
+        	//Load the startup database if it's configured
+        	String db = Preferences.getDBToOptionOnStartup();
+        	if (db != null && !db.equals("")) {
+        		dbActions.openDatabase(db);
+        	}
+        } catch (Exception e) {
+        	dbActions.errorHandler(e);
         }
     }
    
@@ -148,8 +153,12 @@ public class MainWindow extends JFrame {
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        getContentPane().add(createToolBar(), c);
+        Component toolbar = createToolBar();
+        getContentPane().add(toolbar, c);
 
+        //Keep the frame background color consistent
+        getContentPane().setBackground(toolbar.getBackground());
+		
         //A seperator Row
         c.gridx = 0;
         c.gridy = 1;
