@@ -153,10 +153,10 @@ public class DatabaseActions implements ActionListener {
 
 	
     public void errorHandler(Exception e) {
-    	//JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
-    	ErrorMessageDialog d = new ErrorMessageDialog(mainWindow);
-    	d.pack();
-    	d.show();
+        JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
+    //ErrorMessageDialog d = new ErrorMessageDialog(mainWindow);
+    	//d.pack();
+    	//d.show();
     }
     
     
