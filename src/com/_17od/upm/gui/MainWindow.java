@@ -108,13 +108,13 @@ public class MainWindow extends JFrame {
         setVisible(true);
         
         try {
-        	//Load the startup database if it's configured
-        	String db = Preferences.getDBToOptionOnStartup();
-        	if (db != null && !db.equals("")) {
-        		dbActions.openDatabase(db);
-        	}
+            //Load the startup database if it's configured
+            String db = Preferences.getDBToOptionOnStartup();
+            if (db != null && !db.equals("")) {
+                dbActions.openDatabase(db);
+            }
         } catch (Exception e) {
-        	dbActions.errorHandler(e);
+            dbActions.errorHandler(e);
         }
     }
    

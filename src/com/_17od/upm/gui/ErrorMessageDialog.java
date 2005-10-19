@@ -23,24 +23,48 @@
 package com._17od.upm.gui;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.io.File;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 
 public class ErrorMessageDialog extends JDialog {
 
-    private static String iconsDir = new File("images").getAbsolutePath();
-
-    
-    public ErrorMessageDialog(JFrame frame) {
+    public ErrorMessageDialog(JFrame frame, Exception e) {
         super(frame, "Error", true);
         
         if (!(getContentPane().getLayout() instanceof BorderLayout)) {
-        	getContentPane().setLayout(new BorderLayout());
+            getContentPane().setLayout(new BorderLayout());
         }
+        
+        JPanel messagePanel = new JPanel(new BorderLayout(10, 10));
+        Box iconBox = new Box(BoxLayout.Y_AXIS);
+        iconBox.add(new JLabel(UIManager.getIcon("OptionPane.errorIcon")));
+        iconBox.add(Box.createGlue());
+        messagePanel.add(iconBox, BorderLayout.WEST);
+        String errorMessage = e.getClass().getName();
+        if (e.getMessage() != null) {
+            errorMessage = errorMessage + e.getMessage();
+        }
+        JLabel errorMessageLabel = new JLabel(errorMessage);
+        messagePanel.add(errorMessageLabel, BorderLayout.CENTER);
+        getContentPane().add(messagePanel, BorderLayout.CENTER);
+        
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(new JButton("Details"));
+        buttonPanel.add(new JButton("Close"));
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+        
+        
     }
     
 }
