@@ -28,6 +28,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -35,7 +37,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-
 import javax.crypto.IllegalBlockSizeException;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -52,7 +53,8 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.util.Preferences;
 
@@ -121,6 +123,9 @@ public class MainWindow extends JFrame {
         } catch (Exception e) {
             dbActions.errorHandler(e);
         }
+        
+        //Give the search field focus
+        searchField.requestFocus();
     }
    
     
@@ -201,13 +206,31 @@ public class MainWindow extends JFrame {
         accountsListview.setVisibleRowCount(10);
         accountsListview.setModel(new DefaultListModel());
         JScrollPane accountsScrollList = new JScrollPane(accountsListview, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        accountsListview.addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		if (accountsListview.getModel().getSize() > 0 && accountsListview.getSelectedIndex() == -1) {
+        			accountsListview.setSelectionInterval(0, 0);
+        		}
+        	}
+        });
+        accountsListview.addListSelectionListener(new ListSelectionListener() {
+        	public void valueChanged(ListSelectionEvent e) {
+                dbActions.setButtonState();
+        	}
+        });
         accountsListview.addMouseListener(new MouseAdapter() {
            public void mouseClicked(MouseEvent e) {
-               dbActions.setButtonState();
                if (e.getClickCount() == 2) {
                    editAccountButton.doClick();
                }
            }
+        });
+        accountsListview.addKeyListener(new KeyAdapter() {
+        	public void keyReleased(KeyEvent e) {
+        		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        			editAccountButton.doClick();
+        		}
+        	}
         });
         c.gridx = 0;
         c.gridy = 3;
