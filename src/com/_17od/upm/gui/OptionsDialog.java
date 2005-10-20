@@ -40,7 +40,7 @@ import javax.swing.border.Border;
 import com._17od.upm.util.Preferences;
 
 
-public class OptionsDialog extends JDialog {
+public class OptionsDialog extends EscapeDialog {
 
     private JTextField dbToLoadOnStartup;
     private boolean okClicked = false;

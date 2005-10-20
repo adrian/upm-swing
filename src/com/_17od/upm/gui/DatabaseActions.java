@@ -147,16 +147,35 @@ public class DatabaseActions implements ActionListener {
         database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());
         database.save();
         accountNames = new ArrayList();
-        populateListview(accountNames);
+        doOpenDatabaseActions();
     
     }
 
 	
     public void errorHandler(Exception e) {
-        //JOptionPane.showMessageDialog(mainWindow, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
-        ErrorMessageDialog d = new ErrorMessageDialog(mainWindow, e);
-        d.pack();
-        d.show();
+    	String errorMessage = e.getMessage();
+        if (errorMessage == null) {
+            errorMessage = e.getClass().getName();
+        }
+        JOptionPane.showMessageDialog(mainWindow, errorMessage, "Error...", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    
+    private void doOpenDatabaseActions() {
+        mainWindow.getNewAccountButton().setEnabled(true);
+        mainWindow.getSearchField().setEnabled(true);
+        mainWindow.setTitle(mainWindow.getTitle() + " - " + database.getDatabaseFile());
+        mainWindow.getSearchField().setText("");
+
+        accountNames = new ArrayList();
+        ArrayList dbAccounts = database.getAccounts();
+        for (int i=0; i<dbAccounts.size(); i++) {
+            AccountInformation ai = (AccountInformation) dbAccounts.get(i);
+            String accountName = (String) ai.getAccountName();
+            accountNames.add(accountName);
+        }
+
+        populateListview(accountNames);
     }
     
     
@@ -183,20 +202,7 @@ public class DatabaseActions implements ActionListener {
         }
         
         if (passwordCorrect == true) {
-            mainWindow.getNewAccountButton().setEnabled(true);
-            mainWindow.getSearchField().setEnabled(true);
-            mainWindow.setTitle(mainWindow.getTitle() + " - " + database.getDatabaseFile());
-            mainWindow.getSearchField().setText("");
-
-            accountNames = new ArrayList();
-            ArrayList dbAccounts = database.getAccounts();
-            for (int i=0; i<dbAccounts.size(); i++) {
-                AccountInformation ai = (AccountInformation) dbAccounts.get(i);
-                String accountName = (String) ai.getAccountName();
-                accountNames.add(accountName);
-            }
-
-            populateListview(accountNames);
+        	doOpenDatabaseActions();
         }
 
     }

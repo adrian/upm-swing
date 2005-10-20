@@ -111,7 +111,12 @@ public class MainWindow extends JFrame {
             //Load the startup database if it's configured
             String db = Preferences.getDBToOptionOnStartup();
             if (db != null && !db.equals("")) {
-                dbActions.openDatabase(db);
+	            File dbFile = new File(db);
+	            if (!dbFile.exists()) {
+	            	dbActions.errorHandler(new Exception("The startup database [" + db + "] does not exist"));
+	            } else {
+	            	dbActions.openDatabase(db);
+	            }
             }
         } catch (Exception e) {
             dbActions.errorHandler(e);

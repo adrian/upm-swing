@@ -42,7 +42,7 @@ import javax.swing.JTextField;
 import com._17od.upm.database.AccountInformation;
 
 
-public class AccountDialog extends JDialog {
+public class AccountDialog extends EscapeDialog {
 
     private AccountInformation pAccount;
     private JTextField userId;
