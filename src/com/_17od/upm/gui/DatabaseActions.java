@@ -74,8 +74,6 @@ public class DatabaseActions implements ActionListener {
             }
         } catch (Exception e) {
             errorHandler(e);
-            //TODO: Make this a better dialog that has a "show" button where
-            // you can see the full stack trace
         }
     }
 
@@ -155,7 +153,8 @@ public class DatabaseActions implements ActionListener {
 
 	
     public void errorHandler(Exception e) {
-    	String errorMessage = e.getMessage();
+        e.printStackTrace();
+        String errorMessage = e.getMessage();
         if (errorMessage == null) {
             errorMessage = e.getClass().getName();
         }

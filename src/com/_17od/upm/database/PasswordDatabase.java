@@ -88,6 +88,11 @@ public class PasswordDatabase {
 		baos.close();
 		fis.close();
 
+        //Make sure this is a real password database file (well at least the right size)
+        if (saltAndKeyBytes.length < EncryptionService.SALT_LENGTH) {
+            throw new ProblemReadingDatabaseFile("Either this isn't a UPM database file or it's corrupt");
+        }
+        
 		//Split up the salt and encrypted bytes
 		byte[] salt = new byte[EncryptionService.SALT_LENGTH];
 		System.arraycopy(saltAndKeyBytes, 0, salt, 0, EncryptionService.SALT_LENGTH);
