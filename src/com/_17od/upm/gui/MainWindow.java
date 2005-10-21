@@ -26,6 +26,9 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -53,8 +56,11 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.util.Preferences;
 
@@ -73,6 +79,7 @@ public class MainWindow extends JFrame {
     public static final String EDIT_ACCOUNT_TXT = "Edit Account";
     public static final String DELETE_ACCOUNT_TXT = "Delete Account";
     public static final String OPTIONS_TXT = "Options";
+    public static final String ABOUT_TXT = "About";
 
     private JButton newAccountButton;
     private JButton editAccountButton;
@@ -85,7 +92,9 @@ public class MainWindow extends JFrame {
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
     private JMenuItem exitMenuItem;
+    private JMenuItem aboutMenuItem;
     private JMenu fileMenu;
+    private JMenu helpMenu;
     private JList accountsListview;
     
     private DatabaseActions dbActions;
@@ -184,11 +193,18 @@ public class MainWindow extends JFrame {
         searchField = new JTextField(20);
         searchField.setEnabled(false);
         searchField.setMinimumSize(searchField.getPreferredSize());
-        searchField.addKeyListener(new KeyAdapter() {
-           public void keyTyped(KeyEvent e) {
-               dbActions.filter(e.getKeyChar());
-           }
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+        	public void changedUpdate(DocumentEvent e) {
+        		//This method never seems to be called
+        	}
+        	public void insertUpdate(DocumentEvent e) {
+        		dbActions.filter();
+        	}
+        	public void removeUpdate(DocumentEvent e) {
+        		dbActions.filter();
+        	}
         });
+		
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
@@ -330,25 +346,34 @@ public class MainWindow extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         
         fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
         menuBar.add(fileMenu);
         
-        newDatabaseMenuItem = new JMenuItem(NEW_DATABASE_TXT);
+        newDatabaseMenuItem = new JMenuItem(NEW_DATABASE_TXT, KeyEvent.VK_N);
         fileMenu.add(newDatabaseMenuItem);
         newDatabaseMenuItem.addActionListener(dbActions);
  
-        openDatabaseMenuItem = new JMenuItem(OPEN_DATABASE_TXT);
+        openDatabaseMenuItem = new JMenuItem(OPEN_DATABASE_TXT, KeyEvent.VK_O);
         fileMenu.add(openDatabaseMenuItem);
         openDatabaseMenuItem.addActionListener(dbActions);
 
         fileMenu.addSeparator();
         
-        exitMenuItem = new JMenuItem("Exit");
+        exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
         fileMenu.add(exitMenuItem);
         exitMenuItem.addActionListener(new ActionListener() {
         		public void actionPerformed(ActionEvent e) {
         			System.exit(0);
         		}
         });
+
+        helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic(KeyEvent.VK_H);
+        menuBar.add(helpMenu);
+
+        aboutMenuItem = new JMenuItem(ABOUT_TXT, KeyEvent.VK_A);
+        helpMenu.add(aboutMenuItem);
+        aboutMenuItem.addActionListener(dbActions);
 
         return menuBar;
         
@@ -360,14 +385,22 @@ public class MainWindow extends JFrame {
     }
     
     private void copyUsernameToClipboard() {
-        //TODO Add impl
+    	AccountInformation accInfo = dbActions.getSelectedAccount();
+    	copyToClipboard(new String(accInfo.getUserId()));
     }
 
     private void copyPasswordToClipboard() {
-        //TODO Add impl
+    	AccountInformation accInfo = dbActions.getSelectedAccount();
+    	copyToClipboard(new String(accInfo.getPassword()));
     }
 
 
+    private void copyToClipboard(String s) {
+        StringSelection stringSelection = new StringSelection(s);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, stringSelection);
+    }
+    
 	public JButton getCopyPasswordButton() {
 		return copyPasswordButton;
 	}

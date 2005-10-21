@@ -69,6 +69,8 @@ public class DatabaseActions implements ActionListener {
                 deleteAccount();
             } else if (event.getActionCommand() == MainWindow.OPTIONS_TXT) {
                 options();
+            } else if (event.getActionCommand() == MainWindow.ABOUT_TXT) {
+                showAbout();
             }
         } catch (Exception e) {
             errorHandler(e);
@@ -275,12 +277,18 @@ public class DatabaseActions implements ActionListener {
     }
 
     
+    public AccountInformation getSelectedAccount() {
+        DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
+        String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
+        return database.getAccount(selectedAccName);
+    }
+    
+    
     private void editAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
 
         DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
-        
+    	AccountInformation accInfo = getSelectedAccount();
         String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
-        AccountInformation accInfo = database.getAccount(selectedAccName);
         AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Edit Account", true);
         accDialog.pack();
         accDialog.setLocationRelativeTo(mainWindow);
@@ -306,32 +314,19 @@ public class DatabaseActions implements ActionListener {
 
     }
 
-	
-    public void filter(char c) {
-
-        //Figure out what the filter string is
-        String filterStr = null;
-        if (c == '\b' && mainWindow.getSearchField().getText().length() > 1) {
-            filterStr = mainWindow.getSearchField().getText().substring(0, mainWindow.getSearchField().getText().length() - 1);
-        } else if (c != '\b') {
-            filterStr = mainWindow.getSearchField().getText() + c;
-        }
-
-        String upperFilterStr = null;
-        if (filterStr != null) {
-            upperFilterStr = filterStr.toUpperCase();
-        }
+    
+    public void filter() {
+        String filterStr = mainWindow.getSearchField().getText().toLowerCase();
 
         ArrayList filteredAccountsList = new ArrayList();
         for (int i=0; i<accountNames.size(); i++) {
             String accountName = (String) accountNames.get(i);
-            if (upperFilterStr == null || accountName.toUpperCase().indexOf(upperFilterStr) != -1) {
+            if (filterStr.equals("") || accountName.toLowerCase().indexOf(filterStr) != -1) {
                 filteredAccountsList.add(accountName);
             }
         }
         
         populateListview(filteredAccountsList);
-        
     }
 
 
@@ -371,4 +366,9 @@ public class DatabaseActions implements ActionListener {
         oppDialog.show();
     }
 
+    
+    private void showAbout() {
+    	JOptionPane.showMessageDialog(mainWindow, "Universal Password Manager", "Universal Password Manager", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
 }
