@@ -22,6 +22,7 @@
  */
 package com._17od.upm.gui;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -32,11 +33,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
+
 import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.PasswordDatabase;
@@ -277,7 +283,6 @@ public class DatabaseActions implements ActionListener {
 
     
     public AccountInformation getSelectedAccount() {
-        DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
         String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
         return database.getAccount(selectedAccName);
     }
@@ -285,9 +290,8 @@ public class DatabaseActions implements ActionListener {
     
     private void editAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
 
-        DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
-    	AccountInformation accInfo = getSelectedAccount();
-        String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
+        AccountInformation accInfo = getSelectedAccount();
+        String selectedAccName = (String) accInfo.getAccountName();
         AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Edit Account", true);
         accDialog.pack();
         accDialog.setLocationRelativeTo(mainWindow);
@@ -295,6 +299,7 @@ public class DatabaseActions implements ActionListener {
 
         //If the ok button was clicked then save the account to the database and update the 
         //listview with the new account name (if it's changed) 
+        DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
         if (accDialog.okClicked()) {
             accInfo = accDialog.getAccount();
             database.deleteAccount(selectedAccName);
@@ -367,7 +372,13 @@ public class DatabaseActions implements ActionListener {
 
     
     private void showAbout() {
-    	JOptionPane.showMessageDialog(mainWindow, "Universal Password Manager", "Universal Password Manager", JOptionPane.INFORMATION_MESSAGE);
+        JPanel message = new JPanel();
+        message.setBackground(Color.WHITE);
+        message.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        JTextArea text1 = new JTextArea();
+        text1.setText("Universal Password Manager");
+        message.add(text1);
+        JOptionPane.showMessageDialog(mainWindow, message, "Universal Password Manager", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MainWindow.getIconsDir() + "/upm.gif"));
     }
     
 }

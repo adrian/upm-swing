@@ -103,6 +103,8 @@ public class MainWindow extends JFrame {
     public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
     		super(title);
 
+    		setIconImage(new ImageIcon(iconsDir + "/upm.gif").getImage());
+            
         //Use the System look and feel
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
@@ -137,6 +139,11 @@ public class MainWindow extends JFrame {
         searchField.requestFocus();
     }
    
+   
+    public static String getIconsDir() {
+        return iconsDir;
+    }
+    
     
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -194,17 +201,16 @@ public class MainWindow extends JFrame {
         searchField.setEnabled(false);
         searchField.setMinimumSize(searchField.getPreferredSize());
         searchField.getDocument().addDocumentListener(new DocumentListener() {
-        	public void changedUpdate(DocumentEvent e) {
-        		//This method never seems to be called
-        	}
-        	public void insertUpdate(DocumentEvent e) {
-        		dbActions.filter();
-        	}
-        	public void removeUpdate(DocumentEvent e) {
-        		dbActions.filter();
-        	}
+            public void changedUpdate(DocumentEvent e) {
+                //This method never seems to be called
+            }
+            public void insertUpdate(DocumentEvent e) {
+                dbActions.filter();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                dbActions.filter();
+            }
         });
-		
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
@@ -270,8 +276,8 @@ public class MainWindow extends JFrame {
         // The "Add Account" button
         newAccountButton = new JButton();
         newAccountButton.setToolTipText(ADD_ACCOUNT_TXT);
-        newAccountButton.setIcon(new ImageIcon(iconsDir + "/new_document_24.gif"));
-        newAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/new_document_24_d.gif"));;
+        newAccountButton.setIcon(new ImageIcon(iconsDir + "/add_account.gif"));
+        newAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/add_account_d.gif"));;
         newAccountButton.addActionListener(dbActions);
         newAccountButton.setEnabled(false);
         newAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
@@ -280,8 +286,8 @@ public class MainWindow extends JFrame {
         // The "Edit Account" button
         editAccountButton = new JButton();
         editAccountButton.setToolTipText(EDIT_ACCOUNT_TXT);
-        editAccountButton.setIcon(new ImageIcon(iconsDir + "/cut_clipboard_24.gif"));
-        editAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/cut_clipboard_24_d.gif"));;
+        editAccountButton.setIcon(new ImageIcon(iconsDir + "/edit_account.gif"));
+        editAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/edit_account_d.gif"));;
         editAccountButton.addActionListener(dbActions);
         editAccountButton.setEnabled(false);
         editAccountButton.setActionCommand(EDIT_ACCOUNT_TXT);
@@ -290,8 +296,8 @@ public class MainWindow extends JFrame {
         // The "Delete Account" button
         deleteAccountButton = new JButton();
         deleteAccountButton.setToolTipText(DELETE_ACCOUNT_TXT);
-        deleteAccountButton.setIcon(new ImageIcon(iconsDir + "/delete_x_24.gif"));
-        deleteAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/delete_x_24_d.gif"));;
+        deleteAccountButton.setIcon(new ImageIcon(iconsDir + "/delete_account.gif"));
+        deleteAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/delete_account_d.gif"));;
         deleteAccountButton.addActionListener(dbActions);
         deleteAccountButton.setEnabled(false);
         deleteAccountButton.setActionCommand(DELETE_ACCOUNT_TXT);
@@ -302,8 +308,8 @@ public class MainWindow extends JFrame {
         // The "Copy Username" button
         copyUsernameButton = new JButton();
         copyUsernameButton.setToolTipText("Copy username to clipboard");
-        copyUsernameButton.setIcon(new ImageIcon(iconsDir + "/copy_clipboard_24.gif"));
-        copyUsernameButton.setDisabledIcon(new ImageIcon(iconsDir + "/copy_clipboard_24_d.gif"));;
+        copyUsernameButton.setIcon(new ImageIcon(iconsDir + "/copy_username.gif"));
+        copyUsernameButton.setDisabledIcon(new ImageIcon(iconsDir + "/copy_username_d.gif"));;
         copyUsernameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 copyUsernameToClipboard();
@@ -315,8 +321,8 @@ public class MainWindow extends JFrame {
         // The "Copy Password" button
         copyPasswordButton = new JButton();
         copyPasswordButton.setToolTipText("Copy password to clipboard");
-        copyPasswordButton.setIcon(new ImageIcon(iconsDir + "/copy_to_folder_24.gif"));
-        copyPasswordButton.setDisabledIcon(new ImageIcon(iconsDir + "/copy_to_folder_24_d.gif"));;
+        copyPasswordButton.setIcon(new ImageIcon(iconsDir + "/copy_password.gif"));
+        copyPasswordButton.setDisabledIcon(new ImageIcon(iconsDir + "/copy_password_d.gif"));;
         copyPasswordButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 copyPasswordToClipboard();
@@ -330,8 +336,8 @@ public class MainWindow extends JFrame {
         // The "Option" button
         optionsButton = new JButton();
         optionsButton.setToolTipText(OPTIONS_TXT);
-        optionsButton.setIcon(new ImageIcon(iconsDir + "/properties_doc_24.gif"));
-        optionsButton.setDisabledIcon(new ImageIcon(iconsDir + "/properties_doc_24_d.gif"));;
+        optionsButton.setIcon(new ImageIcon(iconsDir + "/options.gif"));
+        optionsButton.setDisabledIcon(new ImageIcon(iconsDir + "/options_d.gif"));;
         optionsButton.addActionListener(dbActions);
         optionsButton.setEnabled(true);
         optionsButton.setActionCommand(OPTIONS_TXT);
