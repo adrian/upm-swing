@@ -45,6 +45,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -80,6 +81,7 @@ public class MainWindow extends JFrame {
     public static final String DELETE_ACCOUNT_TXT = "Delete Account";
     public static final String OPTIONS_TXT = "Options";
     public static final String ABOUT_TXT = "About";
+    public static final String RESET_SEARCH_TXT = "Reset Search";
 
     private JButton newAccountButton;
     private JButton editAccountButton;
@@ -88,6 +90,8 @@ public class MainWindow extends JFrame {
     private JButton copyPasswordButton;
     private JButton optionsButton;
     private JTextField searchField;
+    private JButton resetSearchButton;
+    private JLabel searchIcon;
     
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
@@ -177,7 +181,7 @@ public class MainWindow extends JFrame {
         c.insets = new Insets(0, 0, 0, 0);
         c.weightx = 0;
         c.weighty = 0;
-        c.gridwidth = 1;
+        c.gridwidth = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
         Component toolbar = createToolBar();
         getContentPane().add(toolbar, c);
@@ -185,18 +189,31 @@ public class MainWindow extends JFrame {
         //Keep the frame background color consistent
         getContentPane().setBackground(toolbar.getBackground());
 		
-        //A seperator Row
+        //The seperator Row
         c.gridx = 0;
         c.gridy = 1;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(0, 0, 0, 0);
         c.weightx = 1;
         c.weighty = 0;
-        c.gridwidth = 1;
+        c.gridwidth = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
         getContentPane().add(new JSeparator(), c);
         
         //The search field row
+        searchIcon = new JLabel(new ImageIcon(iconsDir + "/search.gif"));
+        searchIcon.setDisabledIcon(new ImageIcon(iconsDir + "/search_d.gif"));
+        searchIcon.setEnabled(false);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(5, 1, 5, 1);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        getContentPane().add(searchIcon, c);
+        
         searchField = new JTextField(20);
         searchField.setEnabled(false);
         searchField.setMinimumSize(searchField.getPreferredSize());
@@ -211,15 +228,31 @@ public class MainWindow extends JFrame {
                 dbActions.filter();
             }
         });
-        c.gridx = 0;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(5, 1, 5, 1);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        getContentPane().add(searchField, c);
+
+        resetSearchButton = new JButton(new ImageIcon(iconsDir + "/stop.gif"));
+        resetSearchButton.setDisabledIcon(new ImageIcon(iconsDir + "/stop_d.gif"));
+        resetSearchButton.setEnabled(false);
+        resetSearchButton.setToolTipText(RESET_SEARCH_TXT);
+        resetSearchButton.setActionCommand(RESET_SEARCH_TXT);
+        resetSearchButton.addActionListener(dbActions);
+        c.gridx = 2;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(5, 1, 5, 1);
         c.weightx = 1;
         c.weighty = 0;
-        c.gridwidth = 2;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
-        getContentPane().add(searchField, c);
+        getContentPane().add(resetSearchButton, c);
 
         //The accounts listview row
         accountsListview = new JList();
@@ -260,7 +293,7 @@ public class MainWindow extends JFrame {
         c.insets = new Insets(0, 1, 1, 1);
         c.weightx = 1;
         c.weighty = 1;
-        c.gridwidth = 1;
+        c.gridwidth = 3;
         c.fill = GridBagConstraints.BOTH;
         getContentPane().add(accountsScrollList, c);
 
@@ -440,5 +473,15 @@ public class MainWindow extends JFrame {
     public JTextField getSearchField() {
         return searchField;
     }
+
     
+    public JLabel getSearchIcon() {
+        return searchIcon;
+    }
+
+    
+    public JButton getResetSearchButton() {
+        return resetSearchButton;
+    }
+
 }

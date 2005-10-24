@@ -77,6 +77,8 @@ public class DatabaseActions implements ActionListener {
                 options();
             } else if (event.getActionCommand() == MainWindow.ABOUT_TXT) {
                 showAbout();
+            } else if (event.getActionCommand() == MainWindow.RESET_SEARCH_TXT) {
+                resetSearch();
             }
         } catch (Exception e) {
             errorHandler(e);
@@ -173,6 +175,8 @@ public class DatabaseActions implements ActionListener {
         mainWindow.getSearchField().setEnabled(true);
         mainWindow.setTitle(mainWindow.getTitle() + " - " + database.getDatabaseFile());
         mainWindow.getSearchField().setText("");
+        mainWindow.getSearchIcon().setEnabled(true);
+        mainWindow.getResetSearchButton().setEnabled(true);
 
         accountNames = new ArrayList();
         ArrayList dbAccounts = database.getAccounts();
@@ -209,7 +213,7 @@ public class DatabaseActions implements ActionListener {
         }
         
         if (passwordCorrect == true) {
-        	doOpenDatabaseActions();
+            doOpenDatabaseActions();
         }
 
     }
@@ -379,6 +383,11 @@ public class DatabaseActions implements ActionListener {
         text1.setText("Universal Password Manager");
         message.add(text1);
         JOptionPane.showMessageDialog(mainWindow, message, "Universal Password Manager", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MainWindow.getIconsDir() + "/upm.gif"));
+    }
+
+    
+    private void resetSearch() {
+        mainWindow.getSearchField().setText("");
     }
     
 }
