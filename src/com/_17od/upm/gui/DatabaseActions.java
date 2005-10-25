@@ -386,7 +386,7 @@ public class DatabaseActions implements ActionListener {
     }
 
     
-    private void resetSearch() {
+    public void resetSearch() {
         mainWindow.getSearchField().setText("");
     }
     

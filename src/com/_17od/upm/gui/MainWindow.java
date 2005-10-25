@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.crypto.IllegalBlockSizeException;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -228,6 +229,13 @@ public class MainWindow extends JFrame {
                 dbActions.filter();
             }
         });
+        searchField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					dbActions.resetSearch();
+				}
+			}
+		});
         c.gridx = 1;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
@@ -244,6 +252,7 @@ public class MainWindow extends JFrame {
         resetSearchButton.setToolTipText(RESET_SEARCH_TXT);
         resetSearchButton.setActionCommand(RESET_SEARCH_TXT);
         resetSearchButton.addActionListener(dbActions);
+        resetSearchButton.setBorder(BorderFactory.createEmptyBorder());
         c.gridx = 2;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
