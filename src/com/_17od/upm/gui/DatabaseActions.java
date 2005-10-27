@@ -376,13 +376,10 @@ public class DatabaseActions implements ActionListener {
 
     
     private void showAbout() {
-        JPanel message = new JPanel();
-        message.setBackground(Color.WHITE);
-        message.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        JTextArea text1 = new JTextArea();
-        text1.setText("Universal Password Manager");
-        message.add(text1);
-        JOptionPane.showMessageDialog(mainWindow, message, "Universal Password Manager", JOptionPane.INFORMATION_MESSAGE, new ImageIcon(MainWindow.getIconsDir() + "/upm.gif"));
+        AboutDialog aboutDialog = new AboutDialog(mainWindow);
+        aboutDialog.pack();
+        aboutDialog.setLocationRelativeTo(mainWindow);
+        aboutDialog.show();
     }
 
     
