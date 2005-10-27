@@ -30,7 +30,7 @@ public class AboutDialog extends EscapeDialog {
         panel.add(logo);        
         
         Font font1 = new Font("Helvetica", Font.PLAIN,  22);
-        JLabel productLabel = new JLabel("JPM");
+        JLabel productLabel = new JLabel("UPM");
         productLabel.setFont(font1);
         productLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(productLabel);
