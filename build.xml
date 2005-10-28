@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
- $Id: build.xml 27 2005-09-03 12:14:42Z Adrian Smith $
+ $Id$
 
  Universal Password Manager
  Copyright (C) 2005 Adrian Smith
@@ -68,6 +68,10 @@
 			<classpath refid="project.class.path" />
 		</javac>
   	
+		<copy todir="${build}/com/_17od/upm/util/images">
+			<fileset dir="images" includes="*.gif"/>
+		</copy>
+		
 	</target>
 
 

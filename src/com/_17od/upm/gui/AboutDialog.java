@@ -14,6 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com._17od.upm.util.Util;
+
 public class AboutDialog extends EscapeDialog {
 
     
@@ -25,7 +27,7 @@ public class AboutDialog extends EscapeDialog {
 
         panel.add(Box.createRigidArea(new Dimension(0,5)));
 
-        JLabel logo = new JLabel(new ImageIcon(MainWindow.getIconsDir() + "/upm.gif"));
+        JLabel logo = new JLabel(Util.loadImage("upm.gif"));
         logo.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(logo);        
         

@@ -22,6 +22,10 @@
  */
 package com._17od.upm.util;
 
+import java.net.URL;
+
+import javax.swing.ImageIcon;
+
 
 public class Util {
 
@@ -41,4 +45,11 @@ public class Util {
 		return buf.toString();
 	}
 
+    
+    public static ImageIcon loadImage(String name) { 
+        URL imageURL = Util.class.getResource("images/"+ name);
+        return new ImageIcon(imageURL);
+    }
+
+    
 }

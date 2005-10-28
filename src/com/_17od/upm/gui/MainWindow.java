@@ -65,6 +65,7 @@ import javax.swing.event.ListSelectionListener;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.util.Preferences;
+import com._17od.upm.util.Util;
 
 
 /**
@@ -73,7 +74,6 @@ import com._17od.upm.util.Preferences;
 public class MainWindow extends JFrame {
 
     private static final String applicationName = "Universal Password Manager";
-    private static String iconsDir = new File("images").getAbsolutePath();
     
     public static final String NEW_DATABASE_TXT = "New Database";
     public static final String OPEN_DATABASE_TXT = "Open Database";
@@ -108,7 +108,7 @@ public class MainWindow extends JFrame {
     public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
     		super(title);
 
-    		setIconImage(new ImageIcon(iconsDir + "/upm.gif").getImage());
+    		setIconImage(Util.loadImage("upm.gif").getImage());
             
         //Use the System look and feel
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -145,11 +145,6 @@ public class MainWindow extends JFrame {
     }
    
    
-    public static String getIconsDir() {
-        return iconsDir;
-    }
-    
-    
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -202,8 +197,8 @@ public class MainWindow extends JFrame {
         getContentPane().add(new JSeparator(), c);
         
         //The search field row
-        searchIcon = new JLabel(new ImageIcon(iconsDir + "/search.gif"));
-        searchIcon.setDisabledIcon(new ImageIcon(iconsDir + "/search_d.gif"));
+        searchIcon = new JLabel(Util.loadImage("search.gif"));
+        searchIcon.setDisabledIcon(Util.loadImage("search_d.gif"));
         searchIcon.setEnabled(false);
         c.gridx = 0;
         c.gridy = 2;
@@ -246,8 +241,8 @@ public class MainWindow extends JFrame {
         c.fill = GridBagConstraints.NONE;
         getContentPane().add(searchField, c);
 
-        resetSearchButton = new JButton(new ImageIcon(iconsDir + "/stop.gif"));
-        resetSearchButton.setDisabledIcon(new ImageIcon(iconsDir + "/stop_d.gif"));
+        resetSearchButton = new JButton(Util.loadImage("stop.gif"));
+        resetSearchButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
         resetSearchButton.setEnabled(false);
         resetSearchButton.setToolTipText(RESET_SEARCH_TXT);
         resetSearchButton.setActionCommand(RESET_SEARCH_TXT);
@@ -318,8 +313,8 @@ public class MainWindow extends JFrame {
         // The "Add Account" button
         newAccountButton = new JButton();
         newAccountButton.setToolTipText(ADD_ACCOUNT_TXT);
-        newAccountButton.setIcon(new ImageIcon(iconsDir + "/add_account.gif"));
-        newAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/add_account_d.gif"));;
+        newAccountButton.setIcon(Util.loadImage("add_account.gif"));
+        newAccountButton.setDisabledIcon(Util.loadImage("add_account_d.gif"));;
         newAccountButton.addActionListener(dbActions);
         newAccountButton.setEnabled(false);
         newAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
@@ -328,8 +323,8 @@ public class MainWindow extends JFrame {
         // The "Edit Account" button
         editAccountButton = new JButton();
         editAccountButton.setToolTipText(EDIT_ACCOUNT_TXT);
-        editAccountButton.setIcon(new ImageIcon(iconsDir + "/edit_account.gif"));
-        editAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/edit_account_d.gif"));;
+        editAccountButton.setIcon(Util.loadImage("edit_account.gif"));
+        editAccountButton.setDisabledIcon(Util.loadImage("edit_account_d.gif"));;
         editAccountButton.addActionListener(dbActions);
         editAccountButton.setEnabled(false);
         editAccountButton.setActionCommand(EDIT_ACCOUNT_TXT);
@@ -338,8 +333,8 @@ public class MainWindow extends JFrame {
         // The "Delete Account" button
         deleteAccountButton = new JButton();
         deleteAccountButton.setToolTipText(DELETE_ACCOUNT_TXT);
-        deleteAccountButton.setIcon(new ImageIcon(iconsDir + "/delete_account.gif"));
-        deleteAccountButton.setDisabledIcon(new ImageIcon(iconsDir + "/delete_account_d.gif"));;
+        deleteAccountButton.setIcon(Util.loadImage("delete_account.gif"));
+        deleteAccountButton.setDisabledIcon(Util.loadImage("delete_account_d.gif"));;
         deleteAccountButton.addActionListener(dbActions);
         deleteAccountButton.setEnabled(false);
         deleteAccountButton.setActionCommand(DELETE_ACCOUNT_TXT);
@@ -350,8 +345,8 @@ public class MainWindow extends JFrame {
         // The "Copy Username" button
         copyUsernameButton = new JButton();
         copyUsernameButton.setToolTipText("Copy username to clipboard");
-        copyUsernameButton.setIcon(new ImageIcon(iconsDir + "/copy_username.gif"));
-        copyUsernameButton.setDisabledIcon(new ImageIcon(iconsDir + "/copy_username_d.gif"));;
+        copyUsernameButton.setIcon(Util.loadImage("copy_username.gif"));
+        copyUsernameButton.setDisabledIcon(Util.loadImage("copy_username_d.gif"));;
         copyUsernameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 copyUsernameToClipboard();
@@ -363,8 +358,8 @@ public class MainWindow extends JFrame {
         // The "Copy Password" button
         copyPasswordButton = new JButton();
         copyPasswordButton.setToolTipText("Copy password to clipboard");
-        copyPasswordButton.setIcon(new ImageIcon(iconsDir + "/copy_password.gif"));
-        copyPasswordButton.setDisabledIcon(new ImageIcon(iconsDir + "/copy_password_d.gif"));;
+        copyPasswordButton.setIcon(Util.loadImage("copy_password.gif"));
+        copyPasswordButton.setDisabledIcon(Util.loadImage("copy_password_d.gif"));;
         copyPasswordButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 copyPasswordToClipboard();
@@ -378,8 +373,8 @@ public class MainWindow extends JFrame {
         // The "Option" button
         optionsButton = new JButton();
         optionsButton.setToolTipText(OPTIONS_TXT);
-        optionsButton.setIcon(new ImageIcon(iconsDir + "/options.gif"));
-        optionsButton.setDisabledIcon(new ImageIcon(iconsDir + "/options_d.gif"));;
+        optionsButton.setIcon(Util.loadImage("options.gif"));
+        optionsButton.setDisabledIcon(Util.loadImage("options_d.gif"));;
         optionsButton.addActionListener(dbActions);
         optionsButton.setEnabled(true);
         optionsButton.setActionCommand(OPTIONS_TXT);
