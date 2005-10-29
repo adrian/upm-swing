@@ -94,7 +94,7 @@
 
 		<!-- build up JARs -->
 		<mkdir dir="${dist}\${version}"/>    
-		<jar destfile="${dist}\${version}\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif">
+		<jar destfile="${dist}\${version}\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif" excludes="**\invest\**">
 			<manifest>
 				<attribute name="Implementation-Title" value="${short.name}"/>
 				<attribute name="Implementation-Version" value="${version}"/>

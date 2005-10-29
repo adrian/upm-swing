@@ -210,7 +210,7 @@ public class MainWindow extends JFrame {
         c.fill = GridBagConstraints.NONE;
         getContentPane().add(searchIcon, c);
         
-        searchField = new JTextField(20);
+        searchField = new JTextField(15);
         searchField.setEnabled(false);
         searchField.setMinimumSize(searchField.getPreferredSize());
         searchField.getDocument().addDocumentListener(new DocumentListener() {
