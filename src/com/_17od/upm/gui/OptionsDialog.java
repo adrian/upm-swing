@@ -22,6 +22,8 @@
  */
 package com._17od.upm.gui;
 
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -36,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import com._17od.upm.util.Preferences;
+import com._17od.upm.util.Util;
 
 
 public class OptionsDialog extends EscapeDialog {
@@ -51,29 +54,37 @@ public class OptionsDialog extends EscapeDialog {
         parentFrame = frame;
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
-        //JPanel borderPane = new JPanel(new GridBagLayout());
         JPanel borderPane = new JPanel();
+        borderPane.setLayout(new BoxLayout(borderPane, BoxLayout.PAGE_AXIS));
 
         //Put a border on the panel
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         Border etchedBorder = BorderFactory.createEtchedBorder();
-        Border titledBorder = BorderFactory.createTitledBorder(etchedBorder, " Startup Database ");
+        Border titledBorder = BorderFactory.createTitledBorder(etchedBorder, " General ");
         Border compoundBorder = BorderFactory.createCompoundBorder(emptyBorder, titledBorder);
         borderPane.setBorder(compoundBorder);
 
-        //Add the components to the panel
         JLabel accountToLoadOnStartupLabel = new JLabel("Database To Load On Startup");
         borderPane.add(accountToLoadOnStartupLabel);
+        accountToLoadOnStartupLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JPanel inputPane = new JPanel();
+        inputPane.setLayout(new FlowLayout());
         dbToLoadOnStartup = new JTextField(Preferences.getDBToOptionOnStartup(), 25);
-        borderPane.add(dbToLoadOnStartup);
-        JButton dbToLoadOnStartupButton = new JButton("..");
+        inputPane.add(dbToLoadOnStartup);
+        JButton dbToLoadOnStartupButton = new JButton(Util.loadImage("open.gif"));
         dbToLoadOnStartupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getDBToLoadOnStartup();
             }
         });
-        borderPane.add(dbToLoadOnStartupButton);
+        inputPane.add(dbToLoadOnStartupButton);
+
+        borderPane.add(inputPane);
+        inputPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         getContentPane().add(borderPane);
+        borderPane.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         //Add the OK/Cancel buttons to the dialog
         JPanel buttonPanel = new JPanel();
@@ -92,6 +103,7 @@ public class OptionsDialog extends EscapeDialog {
         });
         buttonPanel.add(cancelButton);
         getContentPane().add(buttonPanel);
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         setResizable(false);
     }
