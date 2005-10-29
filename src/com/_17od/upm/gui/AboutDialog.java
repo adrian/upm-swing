@@ -40,7 +40,8 @@ public class AboutDialog extends EscapeDialog {
         panel.add(Box.createRigidArea(new Dimension(200,10)));
         
         Font font2 = new Font("Helvetica", Font.PLAIN,  11);
-        JLabel versionLabel = new JLabel("1.0");
+        String version = AboutDialog.class.getPackage().getImplementationVersion();
+        JLabel versionLabel = new JLabel(version);
         versionLabel.setFont(font2);
         versionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(versionLabel);
