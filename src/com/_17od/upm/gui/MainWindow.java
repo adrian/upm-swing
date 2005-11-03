@@ -43,7 +43,6 @@ import java.security.GeneralSecurityException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -51,10 +50,12 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -66,6 +67,9 @@ import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Util;
+import com.apple.eawt.Application;
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
 
 
 /**
@@ -115,6 +119,11 @@ public class MainWindow extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        //If we're running on a mac then do some mac specifc initialisation
+        if (isMAC()) {
+            doMACInitialisation();
+        }
+
         dbActions = new DatabaseActions(this);
 
         //Set up the content pane.
@@ -142,14 +151,51 @@ public class MainWindow extends JFrame {
         
         //Give the search field focus
         searchField.requestFocus();
+        
     }
    
-   
+
+    private boolean isMAC() {
+        return System.getProperty("os.name").equals("Mac OS X");
+    }
+    
+    
+    private void doMACInitialisation() {
+        Application fApplication = Application.getApplication();
+        fApplication.setEnabledPreferencesMenu(true);
+        fApplication.setEnabledAboutMenu(true);
+        fApplication.addApplicationListener(new ApplicationAdapter() {
+            public void handleAbout(ApplicationEvent e) {
+                aboutMenuItem.doClick();
+                e.setHandled(true);
+            }
+
+            public void handlePreferences(ApplicationEvent e) {
+                optionsButton.doClick();
+                e.setHandled(true);
+            }
+
+            public void handleQuit(ApplicationEvent e) {
+                exitMenuItem.doClick();
+                e.setHandled(true);
+            }
+        });
+        //Put the menu on the Mac OS X menu bar
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+    }
+    
+    
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new MainWindow(applicationName);
+                    Double jvmVersion = new Double(System.getProperty("java.specification.version"));
+                    if (jvmVersion.doubleValue() < 1.4) {
+                        JOptionPane.showMessageDialog(null, "This application requires Java 1.4 or later", "Problem...", JOptionPane.ERROR_MESSAGE);
+                        System.exit(1);
+                     } else {
+                        new MainWindow(applicationName);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -393,22 +439,31 @@ public class MainWindow extends JFrame {
         menuBar.add(fileMenu);
         
         newDatabaseMenuItem = new JMenuItem(NEW_DATABASE_TXT, KeyEvent.VK_N);
+        newDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         fileMenu.add(newDatabaseMenuItem);
         newDatabaseMenuItem.addActionListener(dbActions);
  
         openDatabaseMenuItem = new JMenuItem(OPEN_DATABASE_TXT, KeyEvent.VK_O);
+        openDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         fileMenu.add(openDatabaseMenuItem);
         openDatabaseMenuItem.addActionListener(dbActions);
 
-        fileMenu.addSeparator();
-        
         exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
-        fileMenu.add(exitMenuItem);
+        exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         exitMenuItem.addActionListener(new ActionListener() {
-        		public void actionPerformed(ActionEvent e) {
-        			System.exit(0);
-        		}
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
         });
+        //The exit menu item should only be displayed on non-MAC plaftforms
+        //On a MAC there'll be a Quit item in the Program menu
+        if (!isMAC()) {
+            fileMenu.addSeparator();
+            fileMenu.add(exitMenuItem);
+        }
 
         helpMenu = new JMenu("Help");
         helpMenu.setMnemonic(KeyEvent.VK_H);

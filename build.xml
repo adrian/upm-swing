@@ -34,6 +34,7 @@
 	<property name="test.build" value="testbuild"/>
 	<property name="dist" value="dist"/>
 	<property name="short.name" value="upm"/>
+	<property name="full.name" value="UPM"/>
 	<property name="lib" value="lib"/>
 	<property name="repos.url" value="https://opensvn.csie.org/UPM"/>
 
@@ -53,6 +54,9 @@
 		</classpath>
 	</taskdef>
 	
+
+	<taskdef name="jarbundler" classpath="${lib}/jarbundler-1.4.jar" classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
+
 
 	<!-- The clean target cleans the environment -->
 	<target name="clean">
@@ -93,14 +97,24 @@
 		<echo message="Performing the build ${version}"/>
 
 		<!-- build up JARs -->
-		<mkdir dir="${dist}\${version}"/>    
-		<jar destfile="${dist}\${version}\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif" excludes="**\invest\**">
+		<mkdir dir="${dist}\${version}\jar"/>    
+		<jar destfile="${dist}\${version}\jar\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif" excludes="**\invest\**">
 			<manifest>
 				<attribute name="Implementation-Title" value="${short.name}"/>
 				<attribute name="Implementation-Version" value="${version}"/>
 				<attribute name="Main-Class" value="com._17od.upm.gui.MainWindow"/>
 			</manifest>
 		</jar>
+
+		<!-- Build the MAC OS X application -->
+		<mkdir dir="${dist}/${version}\mac"/>
+		<jarbundler dir="${dist}/${version}/mac"
+			   jars="${dist}/${version}/jar/${short.name}.jar"
+		      mainclass="com._17od.upm.gui.MainWindow"
+			   name="${full.name}"
+			   icon="${basedir}/images/upm.icns"
+		     jvmversion="1.4+"
+			version="${version}"/>
 
 	</target>
 
