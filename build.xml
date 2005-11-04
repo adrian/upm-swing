@@ -53,8 +53,6 @@
 			<pathelement path="${svnant.home}/lib/svnClientAdapter.jar"/>
 		</classpath>
 	</taskdef>
-	
-
 	<taskdef name="jarbundler" classpath="${lib}/jarbundler-1.4.jar" classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
 
 
@@ -96,7 +94,7 @@
 
 		<echo message="Performing the build ${version}"/>
 
-		<!-- build up JARs -->
+		<!-- Build the basic JAR distribution -->
 		<mkdir dir="${dist}\${version}\jar"/>    
 		<jar destfile="${dist}\${version}\jar\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif" excludes="**\invest\**">
 			<manifest>
@@ -105,9 +103,10 @@
 				<attribute name="Main-Class" value="com._17od.upm.gui.MainWindow"/>
 			</manifest>
 		</jar>
+		<copy file="${basedir}/COPYING" todir="${dist}/${version}/jar"/>
 
 		<!-- Build the MAC OS X application -->
-		<mkdir dir="${dist}/${version}\mac"/>
+		<mkdir dir="${dist}/${version}/mac"/>
 		<jarbundler dir="${dist}/${version}/mac"
 			   jars="${dist}/${version}/jar/${short.name}.jar"
 		      mainclass="com._17od.upm.gui.MainWindow"
@@ -115,6 +114,7 @@
 			   icon="${basedir}/images/upm.icns"
 		     jvmversion="1.4+"
 			version="${version}"/>
+		<copy file="${basedir}/COPYING" todir="${dist}/${version}/mac"/>
 
 	</target>
 
