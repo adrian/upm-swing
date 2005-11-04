@@ -65,11 +65,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
+import com._17od.upm.platformspecific.PlatformSpecificCode;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Util;
-import com.apple.eawt.Application;
-import com.apple.eawt.ApplicationAdapter;
-import com.apple.eawt.ApplicationEvent;
 
 
 /**
@@ -119,10 +117,7 @@ public class MainWindow extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //If we're running on a mac then do some mac specifc initialisation
-        if (isMAC()) {
-            doMACInitialisation();
-        }
+        PlatformSpecificCode.getInstance().initialiseApplication(this);
 
         dbActions = new DatabaseActions(this);
 
@@ -155,36 +150,6 @@ public class MainWindow extends JFrame {
     }
    
 
-    private boolean isMAC() {
-        return System.getProperty("os.name").equals("Mac OS X");
-    }
-    
-    
-    private void doMACInitialisation() {
-        Application fApplication = Application.getApplication();
-        fApplication.setEnabledPreferencesMenu(true);
-        fApplication.setEnabledAboutMenu(true);
-        fApplication.addApplicationListener(new ApplicationAdapter() {
-            public void handleAbout(ApplicationEvent e) {
-                aboutMenuItem.doClick();
-                e.setHandled(true);
-            }
-
-            public void handlePreferences(ApplicationEvent e) {
-                optionsButton.doClick();
-                e.setHandled(true);
-            }
-
-            public void handleQuit(ApplicationEvent e) {
-                exitMenuItem.doClick();
-                e.setHandled(true);
-            }
-        });
-        //Put the menu on the Mac OS X menu bar
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-    }
-    
-    
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -458,9 +423,10 @@ public class MainWindow extends JFrame {
                 System.exit(0);
             }
         });
+        
         //The exit menu item should only be displayed on non-MAC plaftforms
         //On a MAC there'll be a Quit item in the Program menu
-        if (!isMAC()) {
+        if (!PlatformSpecificCode.isMAC()) {
             fileMenu.addSeparator();
             fileMenu.add(exitMenuItem);
         }
@@ -541,6 +507,16 @@ public class MainWindow extends JFrame {
     
     public JButton getResetSearchButton() {
         return resetSearchButton;
+    }
+
+    
+    public JMenuItem getAboutMenuItem() {
+        return aboutMenuItem;
+    }
+
+    
+    public JMenuItem getExitMenuItem() {
+        return exitMenuItem;
     }
 
 }

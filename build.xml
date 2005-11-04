@@ -70,7 +70,7 @@
 	<target name="compile">
 
 		<mkdir dir="${build}"/>
-		<javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true">
+		<javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" excludes="com/_17od/upm/platformspecific/**">
 			<classpath refid="project.class.path" />
 		</javac>
 
@@ -83,6 +83,19 @@
 			<fileset dir="images" includes="*.gif"/>
 		</copy>
 		
+		<!-- Compile platform specific code -->
+		<condition property="isMacOSX">
+			<os family="mac"/>
+		</condition>
+		<antcall target="compile.macosx"/>
+		
+	</target>
+
+	
+	<target name="compile.macosx" if="isMacOSX">
+		<javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" includes="com/_17od/upm/platformspecific/mac/**">
+			<classpath refid="project.class.path" />
+		</javac>
 	</target>
 
 
@@ -113,7 +126,8 @@
 			   name="${full.name}"
 			   icon="${basedir}/images/upm.icns"
 		     jvmversion="1.4+"
-			version="${version}"/>
+			version="${version}"
+		     screenmenu="true"/>
 		<copy file="${basedir}/COPYING" todir="${dist}/${version}/mac"/>
 
 	</target>
