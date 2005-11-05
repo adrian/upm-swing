@@ -458,7 +458,7 @@ public class MainWindow extends JFrame {
             }
         });
 
-        copyPasswordMenuItem = new JMenuItem(COPY_USERNAME_TXT, KeyEvent.VK_P);
+        copyPasswordMenuItem = new JMenuItem(COPY_PASSWORD_TXT, KeyEvent.VK_P);
         copyPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(copyPasswordMenuItem);
