@@ -29,10 +29,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -227,15 +225,14 @@ public class DatabaseActions implements ActionListener {
     
 
     public void deleteAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
-        DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
+        SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
         String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
 
         int buttonSelected = JOptionPane.showConfirmDialog(mainWindow, "Are you sure you want to delete the account [" + selectedAccName + "]", "Confirm delete account", JOptionPane.YES_NO_OPTION);
         if (buttonSelected == JOptionPane.OK_OPTION) {
             //Remove the account from the listview, accountNames arraylist & the database
-            int i = listview.indexOf(selectedAccName);
-            listview.remove(i);
-            i = accountNames.indexOf(selectedAccName);
+            listview.removeElement(selectedAccName);
+            int i = accountNames.indexOf(selectedAccName);
             accountNames.remove(i);
             database.deleteAccount(selectedAccName);
             database.save();
@@ -246,7 +243,7 @@ public class DatabaseActions implements ActionListener {
     
     public void addAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
 		
-        DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
+        SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
 
         //Initialise the AccountDialog
         AccountInformation accInfo = new AccountInformation();
@@ -297,17 +294,16 @@ public class DatabaseActions implements ActionListener {
 
         //If the ok button was clicked then save the account to the database and update the 
         //listview with the new account name (if it's changed) 
-        DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
+        SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
         if (accDialog.okClicked()) {
             accInfo = accDialog.getAccount();
             database.deleteAccount(selectedAccName);
             database.addAccount(accInfo);
             database.save();
             if (!accInfo.getAccountName().equals(selectedAccName)) {
-                int i = listview.indexOf(selectedAccName);
-                listview.remove(i);
-                listview.insertElementAt(accInfo.getAccountName(), i);
-                i = accountNames.indexOf(selectedAccName);
+                listview.removeElement(selectedAccName);
+                listview.addElement(accInfo.getAccountName());
+                int i = accountNames.indexOf(selectedAccName);
                 accountNames.remove(i);
                 accountNames.add(accInfo.getAccountName());
                 populateListview(accountNames);
@@ -333,10 +329,8 @@ public class DatabaseActions implements ActionListener {
 
 
     public void populateListview(ArrayList accountNames) {
-        DefaultListModel listview = (DefaultListModel) mainWindow.getAccountsListview().getModel();
+        SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
         listview.clear();
-
-        Collections.sort(accountNames);
 
         for (int i=0; i<accountNames.size(); i++) {
             listview.addElement(accountNames.get(i));

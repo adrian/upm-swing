@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -283,7 +282,7 @@ public class MainWindow extends JFrame {
         accountsListview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         accountsListview.setSelectedIndex(0);
         accountsListview.setVisibleRowCount(10);
-        accountsListview.setModel(new DefaultListModel());
+        accountsListview.setModel(new SortedListModel());
         JScrollPane accountsScrollList = new JScrollPane(accountsListview, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         accountsListview.addFocusListener(new FocusAdapter() {
         	public void focusGained(FocusEvent e) {
