@@ -100,7 +100,7 @@
 
 
 	<!-- Perform a build -->
-	<target name="build">
+	<target name="build" depends="test">
 
 		<!-- The version has to be set before we can do a build -->
 		<fail unless="version" message="Need to pass the parameter 'version' to this target"/>
@@ -117,18 +117,20 @@
 			</manifest>
 		</jar>
 		<copy file="${basedir}/COPYING" todir="${dist}/${version}/jar"/>
+		<copy file="${basedir}/README" todir="${dist}/${version}/jar"/>
 
 		<!-- Build the MAC OS X application -->
 		<mkdir dir="${dist}/${version}/mac"/>
 		<jarbundler dir="${dist}/${version}/mac"
-			   jars="${dist}/${version}/jar/${short.name}.jar"
-		      mainclass="com._17od.upm.gui.MainWindow"
-			   name="${full.name}"
-			   icon="${basedir}/images/upm.icns"
-		     jvmversion="1.4+"
-			version="${version}"
-		     screenmenu="true"/>
+				  jars="${dist}/${version}/jar/${short.name}.jar"
+			 mainclass="com._17od.upm.gui.MainWindow"
+				  name="${full.name}"
+				  icon="${basedir}/images/upm.icns"
+			jvmversion="1.4+"
+			   version="${version}"
+			screenmenu="true"/>
 		<copy file="${basedir}/COPYING" todir="${dist}/${version}/mac"/>
+		<copy file="${basedir}/README" todir="${dist}/${version}/mac"/>
 
 	</target>
 

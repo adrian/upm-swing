@@ -82,11 +82,13 @@ public class MainWindow extends JFrame {
     public static final String ADD_ACCOUNT_TXT = "Add Account";
     public static final String EDIT_ACCOUNT_TXT = "Edit Account";
     public static final String DELETE_ACCOUNT_TXT = "Delete Account";
+    public static final String COPY_USERNAME_TXT = "Copy Username";
+    public static final String COPY_PASSWORD_TXT = "Copy Password";
     public static final String OPTIONS_TXT = "Options";
     public static final String ABOUT_TXT = "About";
     public static final String RESET_SEARCH_TXT = "Reset Search";
 
-    private JButton newAccountButton;
+    private JButton addAccountButton;
     private JButton editAccountButton;
     private JButton deleteAccountButton;
     private JButton copyUsernameButton;
@@ -96,12 +98,19 @@ public class MainWindow extends JFrame {
     private JButton resetSearchButton;
     private JLabel searchIcon;
     
+    private JMenu databaseMenu;
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
     private JMenuItem exitMenuItem;
-    private JMenuItem aboutMenuItem;
-    private JMenu fileMenu;
     private JMenu helpMenu;
+    private JMenuItem aboutMenuItem;
+    private JMenu accountMenu;
+    private JMenuItem addAccountMenuItem;
+    private JMenuItem editAccountMenuItem;
+    private JMenuItem deleteAccountMenuItem;
+    private JMenuItem copyUsernameMenuItem;
+    private JMenuItem copyPasswordMenuItem;
+
     private JList accountsListview;
     
     private DatabaseActions dbActions;
@@ -278,6 +287,8 @@ public class MainWindow extends JFrame {
         JScrollPane accountsScrollList = new JScrollPane(accountsListview, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         accountsListview.addFocusListener(new FocusAdapter() {
         	public void focusGained(FocusEvent e) {
+             //If the listview gets focus, there is one ore more items in the listview and there is nothing
+             //already selected, then select the first item in the list
         		if (accountsListview.getModel().getSize() > 0 && accountsListview.getSelectedIndex() == -1) {
         			accountsListview.setSelectionInterval(0, 0);
         		}
@@ -322,14 +333,14 @@ public class MainWindow extends JFrame {
         toolbar.setRollover(true);
         
         // The "Add Account" button
-        newAccountButton = new JButton();
-        newAccountButton.setToolTipText(ADD_ACCOUNT_TXT);
-        newAccountButton.setIcon(Util.loadImage("add_account.gif"));
-        newAccountButton.setDisabledIcon(Util.loadImage("add_account_d.gif"));;
-        newAccountButton.addActionListener(dbActions);
-        newAccountButton.setEnabled(false);
-        newAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
-        toolbar.add(newAccountButton);
+        addAccountButton = new JButton();
+        addAccountButton.setToolTipText(ADD_ACCOUNT_TXT);
+        addAccountButton.setIcon(Util.loadImage("add_account.gif"));
+        addAccountButton.setDisabledIcon(Util.loadImage("add_account_d.gif"));;
+        addAccountButton.addActionListener(dbActions);
+        addAccountButton.setEnabled(false);
+        addAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
+        toolbar.add(addAccountButton);
 
         // The "Edit Account" button
         editAccountButton = new JButton();
@@ -355,7 +366,7 @@ public class MainWindow extends JFrame {
 
         // The "Copy Username" button
         copyUsernameButton = new JButton();
-        copyUsernameButton.setToolTipText("Copy username to clipboard");
+        copyUsernameButton.setToolTipText(COPY_USERNAME_TXT);
         copyUsernameButton.setIcon(Util.loadImage("copy_username.gif"));
         copyUsernameButton.setDisabledIcon(Util.loadImage("copy_username_d.gif"));;
         copyUsernameButton.addActionListener(new ActionListener() {
@@ -368,7 +379,7 @@ public class MainWindow extends JFrame {
 
         // The "Copy Password" button
         copyPasswordButton = new JButton();
-        copyPasswordButton.setToolTipText("Copy password to clipboard");
+        copyPasswordButton.setToolTipText(COPY_PASSWORD_TXT);
         copyPasswordButton.setIcon(Util.loadImage("copy_password.gif"));
         copyPasswordButton.setDisabledIcon(Util.loadImage("copy_password_d.gif"));;
         copyPasswordButton.addActionListener(new ActionListener() {
@@ -399,22 +410,66 @@ public class MainWindow extends JFrame {
 
         JMenuBar menuBar = new JMenuBar();
         
-        fileMenu = new JMenu("File");
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-        menuBar.add(fileMenu);
+        databaseMenu = new JMenu("Database");
+        databaseMenu.setMnemonic(KeyEvent.VK_D);
+        menuBar.add(databaseMenu);
         
         newDatabaseMenuItem = new JMenuItem(NEW_DATABASE_TXT, KeyEvent.VK_N);
         newDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        fileMenu.add(newDatabaseMenuItem);
+        databaseMenu.add(newDatabaseMenuItem);
         newDatabaseMenuItem.addActionListener(dbActions);
  
         openDatabaseMenuItem = new JMenuItem(OPEN_DATABASE_TXT, KeyEvent.VK_O);
         openDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        fileMenu.add(openDatabaseMenuItem);
+        databaseMenu.add(openDatabaseMenuItem);
         openDatabaseMenuItem.addActionListener(dbActions);
 
+
+        accountMenu = new JMenu("Account");
+        accountMenu.setMnemonic(KeyEvent.VK_A);
+        menuBar.add(accountMenu);
+        
+        addAccountMenuItem = new JMenuItem(ADD_ACCOUNT_TXT, KeyEvent.VK_A);
+        addAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        accountMenu.add(addAccountMenuItem);
+        addAccountMenuItem.addActionListener(dbActions);
+        
+        editAccountMenuItem = new JMenuItem(EDIT_ACCOUNT_TXT, KeyEvent.VK_E);
+        editAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        accountMenu.add(editAccountMenuItem);
+        editAccountMenuItem.addActionListener(dbActions);
+
+        deleteAccountMenuItem = new JMenuItem(DELETE_ACCOUNT_TXT, KeyEvent.VK_D);
+        deleteAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        accountMenu.add(deleteAccountMenuItem);
+        deleteAccountMenuItem.addActionListener(dbActions);
+        
+        copyUsernameMenuItem = new JMenuItem(COPY_USERNAME_TXT, KeyEvent.VK_U);
+        copyUsernameMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        accountMenu.add(copyUsernameMenuItem);
+        copyUsernameMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                copyUsernameToClipboard();
+            }
+        });
+
+        copyPasswordMenuItem = new JMenuItem(COPY_USERNAME_TXT, KeyEvent.VK_P);
+        copyPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        accountMenu.add(copyPasswordMenuItem);
+        copyPasswordMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                copyPasswordToClipboard();
+            }
+        });
+
+        
         exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -423,21 +478,22 @@ public class MainWindow extends JFrame {
                 System.exit(0);
             }
         });
-        
-        //The exit menu item should only be displayed on non-MAC plaftforms
-        //On a MAC there'll be a Quit item in the Program menu
-        if (!PlatformSpecificCode.isMAC()) {
-            fileMenu.addSeparator();
-            fileMenu.add(exitMenuItem);
-        }
-
-        helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic(KeyEvent.VK_H);
-        menuBar.add(helpMenu);
 
         aboutMenuItem = new JMenuItem(ABOUT_TXT, KeyEvent.VK_A);
-        helpMenu.add(aboutMenuItem);
         aboutMenuItem.addActionListener(dbActions);
+
+        //Because the MAC version of UPM will have a program item in the menu bar then these items
+        //only need to be added on non-mac platforms
+        if (!PlatformSpecificCode.isMAC()) {
+            databaseMenu.addSeparator();
+            databaseMenu.add(exitMenuItem);
+
+            helpMenu = new JMenu("Help");
+            helpMenu.setMnemonic(KeyEvent.VK_H);
+            menuBar.add(helpMenu);
+    
+            helpMenu.add(aboutMenuItem);
+        }
 
         return menuBar;
         
@@ -448,14 +504,16 @@ public class MainWindow extends JFrame {
     		return accountsListview;
     }
     
+    
     private void copyUsernameToClipboard() {
-    	AccountInformation accInfo = dbActions.getSelectedAccount();
-    	copyToClipboard(new String(accInfo.getUserId()));
+        AccountInformation accInfo = dbActions.getSelectedAccount();
+        copyToClipboard(new String(accInfo.getUserId()));
     }
 
+    
     private void copyPasswordToClipboard() {
-    	AccountInformation accInfo = dbActions.getSelectedAccount();
-    	copyToClipboard(new String(accInfo.getPassword()));
+        AccountInformation accInfo = dbActions.getSelectedAccount();
+        copyToClipboard(new String(accInfo.getPassword()));
     }
 
 
@@ -480,8 +538,8 @@ public class MainWindow extends JFrame {
 	}
 
 
-	public JButton getNewAccountButton() {
-		return newAccountButton;
+	public JButton getAddAccountButton() {
+		return addAccountButton;
 	}
 
 
@@ -517,6 +575,31 @@ public class MainWindow extends JFrame {
     
     public JMenuItem getExitMenuItem() {
         return exitMenuItem;
+    }
+
+
+    public JMenuItem getCopyPasswordMenuItem() {
+        return copyPasswordMenuItem;
+    }
+
+
+    public JMenuItem getCopyUsernameMenuItem() {
+        return copyUsernameMenuItem;
+    }
+
+
+    public JMenuItem getDeleteAccountMenuItem() {
+        return deleteAccountMenuItem;
+    }
+
+
+    public JMenuItem getEditAccountMenuItem() {
+        return editAccountMenuItem;
+    }
+
+
+    public static String getApplicationName() {
+        return applicationName;
     }
 
 }

@@ -36,7 +36,7 @@ public abstract class PlatformSpecificCode {
         //Use reflection to create the platform specific code because the chances are it won't compile
         //on other platforms (causing this class to also fail compilation)
         if (isMAC()) {
-            Class clazz = Class.forName("com._17od.upm.util.MACOSXSpecificCode");
+            Class clazz = Class.forName("com._17od.upm.platformspecific.mac.MACOSXSpecificCode");
             retVal = (PlatformSpecificCode) clazz.newInstance();
         }
         

@@ -165,9 +165,9 @@ public class DatabaseActions implements ActionListener {
     
     
     private void doOpenDatabaseActions() {
-        mainWindow.getNewAccountButton().setEnabled(true);
+        mainWindow.getAddAccountButton().setEnabled(true);
         mainWindow.getSearchField().setEnabled(true);
-        mainWindow.setTitle(mainWindow.getTitle() + " - " + database.getDatabaseFile());
+        mainWindow.setTitle(MainWindow.getApplicationName() + " - " + database.getDatabaseFile());
         mainWindow.getSearchField().setText("");
         mainWindow.getSearchIcon().setEnabled(true);
         mainWindow.getResetSearchButton().setEnabled(true);
@@ -352,11 +352,19 @@ public class DatabaseActions implements ActionListener {
             mainWindow.getCopyUsernameButton().setEnabled(false);
             mainWindow.getCopyPasswordButton().setEnabled(false);
             mainWindow.getDeleteAccountButton().setEnabled(false);
+            mainWindow.getEditAccountMenuItem().setEnabled(false);
+            mainWindow.getCopyUsernameMenuItem().setEnabled(false);
+            mainWindow.getCopyPasswordMenuItem().setEnabled(false);
+            mainWindow.getDeleteAccountMenuItem().setEnabled(false);
         } else {
             mainWindow.getEditAccountButton().setEnabled(true);
             mainWindow.getCopyUsernameButton().setEnabled(true);
             mainWindow.getCopyPasswordButton().setEnabled(true);
             mainWindow.getDeleteAccountButton().setEnabled(true);
+            mainWindow.getEditAccountMenuItem().setEnabled(true);
+            mainWindow.getCopyUsernameMenuItem().setEnabled(true);
+            mainWindow.getCopyPasswordMenuItem().setEnabled(true);
+            mainWindow.getDeleteAccountMenuItem().setEnabled(true);
         }
     }
 
