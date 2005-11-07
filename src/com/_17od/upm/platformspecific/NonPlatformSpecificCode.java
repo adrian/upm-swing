@@ -25,29 +25,10 @@ package com._17od.upm.platformspecific;
 import com._17od.upm.gui.MainWindow;
 
 
-public abstract class PlatformSpecificCode {
+public class NonPlatformSpecificCode extends PlatformSpecificCode {
 
-    public abstract void initialiseApplication(final MainWindow mainWindow);
-
-
-    public static PlatformSpecificCode getInstance() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        PlatformSpecificCode retVal = null;
-        
-        //Use reflection to create the platform specific code because the chances are it won't compile
-        //on other platforms (causing this class to also fail compilation)
-        if (isMAC()) {
-            Class clazz = Class.forName("com._17od.upm.platformspecific.mac.MACOSXSpecificCode");
-            retVal = (PlatformSpecificCode) clazz.newInstance();
-        } else {
-        	retVal = new NonPlatformSpecificCode();
-        }
-        
-        return retVal;
-    }
-    
-    
-    public static boolean isMAC() {
-        return System.getProperty("os.name").equals("Mac OS X");
+    public void initialiseApplication(final MainWindow mainWindow) {
+    	//Do nothing
     }
 
 }
