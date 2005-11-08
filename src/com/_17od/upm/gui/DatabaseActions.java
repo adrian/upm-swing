@@ -164,6 +164,7 @@ public class DatabaseActions implements ActionListener {
     
     private void doOpenDatabaseActions() {
         mainWindow.getAddAccountButton().setEnabled(true);
+        mainWindow.getAddAccountMenuItem().setEnabled(true);
         mainWindow.getSearchField().setEnabled(true);
         mainWindow.setTitle(MainWindow.getApplicationName() + " - " + database.getDatabaseFile());
         mainWindow.getSearchField().setText("");

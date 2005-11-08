@@ -116,10 +116,10 @@ public class MainWindow extends JFrame {
     
     
     public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
-    		super(title);
+        super(title);
 
-    		setIconImage(Util.loadImage("upm.gif").getImage());
-            
+        setIconImage(Util.loadImage("upm.gif").getImage());
+
         //Use the System look and feel
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
@@ -435,18 +435,21 @@ public class MainWindow extends JFrame {
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(addAccountMenuItem);
         addAccountMenuItem.addActionListener(dbActions);
+        addAccountMenuItem.setEnabled(false);
         
         editAccountMenuItem = new JMenuItem(EDIT_ACCOUNT_TXT, KeyEvent.VK_E);
         editAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(editAccountMenuItem);
         editAccountMenuItem.addActionListener(dbActions);
+        editAccountMenuItem.setEnabled(false);
 
         deleteAccountMenuItem = new JMenuItem(DELETE_ACCOUNT_TXT, KeyEvent.VK_D);
         deleteAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(deleteAccountMenuItem);
         deleteAccountMenuItem.addActionListener(dbActions);
+        deleteAccountMenuItem.setEnabled(false);
         
         copyUsernameMenuItem = new JMenuItem(COPY_USERNAME_TXT, KeyEvent.VK_U);
         copyUsernameMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
@@ -457,6 +460,7 @@ public class MainWindow extends JFrame {
                 copyUsernameToClipboard();
             }
         });
+        copyUsernameMenuItem.setEnabled(false);
 
         copyPasswordMenuItem = new JMenuItem(COPY_PASSWORD_TXT, KeyEvent.VK_P);
         copyPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
@@ -467,6 +471,7 @@ public class MainWindow extends JFrame {
                 copyPasswordToClipboard();
             }
         });
+        copyPasswordMenuItem.setEnabled(false);
 
         
         exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
@@ -599,6 +604,11 @@ public class MainWindow extends JFrame {
 
     public static String getApplicationName() {
         return applicationName;
+    }
+
+
+    public JMenuItem getAddAccountMenuItem() {
+        return addAccountMenuItem;
     }
 
 }
