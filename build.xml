@@ -56,6 +56,13 @@
 	<taskdef name="jarbundler" classpath="${lib}\jarbundler-1.4.jar" classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
 
 
+	<target name="init">
+		<condition property="isMacOSX">
+			<os family="mac"/>
+		</condition>
+	</target>
+
+
 	<!-- The clean target cleans the environment -->
 	<target name="clean">
 		<delete dir="${build}"/>
@@ -67,7 +74,7 @@
 
 
 	<!-- The compile target compiles the source -->
-	<target name="compile">
+	<target name="compile" depends="init">
 
 		<mkdir dir="${build}"/>
 		<javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" excludes="com\_17od\upm\platformspecific\**">
@@ -84,9 +91,6 @@
 		</copy>
 		
 		<!-- Compile platform specific code -->
-		<condition property="isMacOSX">
-			<os family="mac"/>
-		</condition>
 		<antcall target="compile.macosx"/>
 		
 	</target>
@@ -126,20 +130,6 @@
 		<gzip src="${dist}\${short.name}-${version}.tar" destfile="${dist}\${short.name}-${version}.tar.gz"/>
 		<delete file="${dist}\${short.name}-${version}.tar"/>
 
-		<!-- Build the MAC OS X application -->
-		<mkdir dir="${dist}\mac"/>
-		<jarbundler dir="${dist}\mac"
-				   jars="${dist}/jar/${short.name}.jar"
-			  mainclass="com._17od.upm.gui.MainWindow"
-				   name="${full.name}"
-				   icon="${basedir}\images\upm.icns"
-			 jvmversion="1.4+"
-				version="${version}"
-			 screenmenu="true"/>
-		<copy file="${basedir}\COPYING" todir="${dist}\mac"/>
-		<copy file="${basedir}\README" todir="${dist}\mac"/>
-		<echo message="Use the MAC 'Disk Utility' to build a .DMG file with the contents of the directory ${basedir}\${dist}\mac"/>
-
 		<!-- Build the source distribution -->
 		<tar destfile="${dist}\${short.name}-${version}.src.tar">
 			<tarfileset dir="${basedir}" prefix="${short.name}-${version}-src">
@@ -156,6 +146,28 @@
 		</tar>
 		<gzip src="${dist}\${short.name}-${version}.src.tar" destfile="${dist}\${short.name}-${version}.src.tar.gz"/>
 		<delete file="${dist}\${short.name}-${version}.src.tar"/>
+
+	        <!-- Build the Mac OS X distribution -->
+		<antcall target="build.macosx"/>
+
+	</target>
+
+
+	<target name="build.macosx" if="isMacOSX">
+
+		<!-- Build the MAC OS X application -->
+		<mkdir dir="${dist}\mac"/>
+		<jarbundler dir="${dist}\mac"
+				   jars="${dist}/jar/${short.name}.jar"
+			  mainclass="com._17od.upm.gui.MainWindow"
+				   name="${full.name}"
+				   icon="${basedir}\images\upm.icns"
+			 jvmversion="1.4+"
+				version="${version}"
+			 screenmenu="true"/>
+		<copy file="${basedir}\COPYING" todir="${dist}\mac"/>
+		<copy file="${basedir}\README" todir="${dist}\mac"/>
+		<echo message="Use the MAC 'Disk Utility' to build a .DMG file with the contents of the directory ${basedir}\${dist}\mac"/>
 
 	</target>
 

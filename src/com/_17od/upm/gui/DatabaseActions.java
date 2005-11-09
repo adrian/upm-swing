@@ -331,7 +331,9 @@ public class DatabaseActions implements ActionListener {
 
     public void populateListview(ArrayList accountNames) {
         SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
+        
         listview.clear();
+        mainWindow.getAccountsListview().clearSelection();
 
         for (int i=0; i<accountNames.size(); i++) {
             listview.addElement(accountNames.get(i));
@@ -342,7 +344,7 @@ public class DatabaseActions implements ActionListener {
 
     
     public void setButtonState() {
-        if (mainWindow.getAccountsListview().getSelectedValue() == null || mainWindow.getAccountsListview().getSelectedValue().equals("")) {
+    	if (mainWindow.getAccountsListview().getSelectedValue() == null) {
             mainWindow.getEditAccountButton().setEnabled(false);
             mainWindow.getCopyUsernameButton().setEnabled(false);
             mainWindow.getCopyPasswordButton().setEnabled(false);

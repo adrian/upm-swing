@@ -120,9 +120,6 @@ public class MainWindow extends JFrame {
 
         setIconImage(Util.loadImage("upm.gif").getImage());
 
-        //Use the System look and feel
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         PlatformSpecificCode.getInstance().initialiseApplication(this);
@@ -162,6 +159,9 @@ public class MainWindow extends JFrame {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
+                    //Use the System look and feel
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
                     Double jvmVersion = new Double(System.getProperty("java.specification.version"));
                     if (jvmVersion.doubleValue() < 1.4) {
                         JOptionPane.showMessageDialog(null, "This application requires Java 1.4 or later", "Problem...", JOptionPane.ERROR_MESSAGE);
@@ -505,7 +505,7 @@ public class MainWindow extends JFrame {
     
     
     public JList getAccountsListview() {
-    		return accountsListview;
+    	return accountsListview;
     }
     
     
