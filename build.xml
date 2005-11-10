@@ -142,6 +142,8 @@
 				<include name="images\**"/>
 				<include name="test\**"/>
 				<include name="lib\**"/>
+				<include name="www\**"/>
+				<include name="nsis\**"/>
 			</tarfileset>
 		</tar>
 		<gzip src="${dist}\${short.name}-${version}.src.tar" destfile="${dist}\${short.name}-${version}.src.tar.gz"/>
