@@ -22,54 +22,96 @@
  */
 
 ;--------------------------------
-;Include Modern UI
-
-;  !include "MUI.nsh"
-
-;--------------------------------
 ;General
 
+  !define UPM_VERSION "1.0"
+
+  ;Name and file
   Name "Universal Password Manager"
-  OutFile upm-1.0.exe
+
+  ;The file to write
+  OutFile "upm-${UPM_VERSION}.exe"
+
+  XPStyle on
+
+  ;Default installation folder
   InstallDir "$PROGRAMFILES\UPM"
+
+  ;Registry key to check for directory (so if you install again, it will 
+  ;overwrite the old one automatically)
+  InstallDirRegKey HKLM "Software\UPM" "Install_Dir"
+
+;--------------------------------
+;Version Information
+
+  VIProductVersion "${UPM_VERSION}.0.0"
+  VIAddVersionKey "ProductName" "Universal Password Manager"
+  VIAddVersionKey "FileVersion" "${UPM_VERSION}"
 
 ;--------------------------------
 ;Installer Pages
-  
+
+  Page components
   Page directory
   Page instfiles
+
   UninstPage uninstConfirm
   UninstPage instfiles
 
 ;--------------------------------
 ;Installer Sections
 
-Section "Core Files"
+Section "Universal Password Manager"
 
+  ;Set output path to the installation directory.
   SetOutPath "$INSTDIR"
   
-  ;ADD YOUR OWN FILES HERE...
-  
-  ;Store installation folder
-  WriteRegStr HKCU "Software\UPM" "" $INSTDIR
-  
-  ;Create uninstaller
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
+  ;Files to install
+  File ..\bin\upm.bat
+  File ..\images\upm.ico
+  File ..\dist\jar\upm.jar
+  File ..\dist\jar\COPYING
+  File ..\dist\jar\README
 
+  ;Write the installation path into the registry
+  WriteRegStr HKLM SOFTWARE\UPM "Install_Dir" "$INSTDIR"
+
+  ;Write the uninstall keys for Windows
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "DisplayName" "Universal Password Manager"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "NoRepair" 1
+  WriteUninstaller "uninstall.exe"
+ 
 SectionEnd
 
 ;--------------------------------
-;Uninstaller Section
+;Optional section (can be disabled by the user)
+Section "Start Menu Shortcuts"
 
+  CreateDirectory "$SMPROGRAMS\UPM"
+  CreateShortCut "$SMPROGRAMS\UPM\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\UPM\UPM.lnk" "$INSTDIR\upm.bat" "" "$INSTDIR\upm.ico" 0
+  
+SectionEnd
+
+;--------------------------------
+; Uninstaller
 Section "Uninstall"
+  
+  ;Remove registry keys
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM"
+  DeleteRegKey HKLM SOFTWARE\UPM
 
-  ;ADD YOUR OWN FILES HERE...
+  ;Remove files and uninstaller
+  Delete $INSTDIR\*.*
 
-  Delete "$INSTDIR\Uninstall.exe"
+  ;Remove shortcuts, if any
+  Delete "$SMPROGRAMS\UPM\*.*"
 
+  ;Remove directories used
+  RMDir "$SMPROGRAMS\UPM"
   RMDir "$INSTDIR"
-
-  DeleteRegKey /ifempty HKCU "Software\UPM"
 
 SectionEnd
 
