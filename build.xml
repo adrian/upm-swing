@@ -122,8 +122,8 @@
 				<attribute name="Main-Class" value="com._17od.upm.gui.MainWindow"/>
 			</manifest>
 		</jar>
-		<copy file="${basedir}\COPYING" todir="${dist}\jar"/>
-		<copy file="${basedir}\README" todir="${dist}\jar"/>
+		<copy file="${basedir}\COPYING.txt" todir="${dist}\jar"/>
+		<copy file="${basedir}\README.txt" todir="${dist}\jar"/>
 		<tar destfile="${dist}\${short.name}-${version}.tar">
 			<tarfileset dir="${dist}\jar" prefix="${short.name}-${version}"/>
 		</tar>
@@ -135,8 +135,8 @@
 			<tarfileset dir="${basedir}" prefix="${short.name}-${version}-src">
 				<include name="build.xml"/>
 				<include name="build.properties.tmpl"/>
-				<include name="COPYING"/>
-				<include name="README"/>
+				<include name="COPYING.txt"/>
+				<include name="README.txt"/>
 				<include name="src\**"/>
 				<exclude name="src\**\invest\**"/>
 				<include name="images\**"/>
@@ -167,8 +167,8 @@
 			 jvmversion="1.4+"
 				version="${version}"
 			 screenmenu="true"/>
-		<copy file="${basedir}\COPYING" todir="${dist}\mac"/>
-		<copy file="${basedir}\README" todir="${dist}\mac"/>
+		<copy file="${basedir}\COPYING.txt" todir="${dist}\mac"/>
+		<copy file="${basedir}\README.txt" todir="${dist}\mac"/>
 		<echo message="Use the MAC 'Disk Utility' to build a .DMG file with the contents of the directory ${basedir}\${dist}\mac"/>
 
 	</target>

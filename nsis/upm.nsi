@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  * 
  * Universal Password Manager
  * Copyright (C) 2005 Adrian Smith
@@ -41,6 +41,8 @@
   ;overwrite the old one automatically)
   InstallDirRegKey HKLM "Software\UPM" "Install_Dir"
 
+  LicenseData "..\dist\jar\COPYING.txt"
+
 ;--------------------------------
 ;Version Information
 
@@ -51,6 +53,7 @@
 ;--------------------------------
 ;Installer Pages
 
+  Page license
   Page components
   Page directory
   Page instfiles
@@ -70,8 +73,8 @@ Section "Universal Password Manager"
   File ..\bin\upm.bat
   File ..\images\upm.ico
   File ..\dist\jar\upm.jar
-  File ..\dist\jar\COPYING
-  File ..\dist\jar\README
+  File ..\dist\jar\COPYING.txt
+  File ..\dist\jar\README.txt
 
   ;Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\UPM "Install_Dir" "$INSTDIR"
@@ -92,6 +95,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\UPM"
   CreateShortCut "$SMPROGRAMS\UPM\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\UPM\UPM.lnk" "$INSTDIR\upm.bat" "" "$INSTDIR\upm.ico" 0
+  CreateShortCut "$SMPROGRAMS\UPM\README.lnk" "$INSTDIR\README.txt" "" "$INSTDIR\README.txt" 0
   
 SectionEnd
 
