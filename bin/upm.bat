@@ -1,6 +1,6 @@
 @echo off
 
-REM $Id:$
+REM $Id$
 REM
 REM Universal Password Manager
 REM Copyright (C) 2005 Adrian Smith
@@ -21,5 +21,5 @@ REM You should have received a copy of the GNU General Public License
 REM along with Universal Password Manager; if not, write to the Free Software
 REM Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-start javaw -jar upm.jar
+start /B javaw -jar upm.jar
 
