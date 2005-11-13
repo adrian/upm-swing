@@ -247,6 +247,13 @@ public class MainWindow extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					dbActions.resetSearch();
+				} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				    //If the user hits the enter key in the search field and there's only one item 
+				    //in the listview then open that item 
+				    if (accountsListview.getModel().getSize() == 1) {
+                        accountsListview.setSelectedIndex(0);
+                        editAccountButton.doClick();
+				    }
 				}
 			}
 		});
@@ -267,6 +274,7 @@ public class MainWindow extends JFrame {
         resetSearchButton.setActionCommand(RESET_SEARCH_TXT);
         resetSearchButton.addActionListener(dbActions);
         resetSearchButton.setBorder(BorderFactory.createEmptyBorder());
+        resetSearchButton.setFocusable(false);
         c.gridx = 2;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
