@@ -26,6 +26,6 @@ Future Features
 History
 -------
 
-05-Oct-2005 : Version 1.0
+18-Nov-2005 : Version 1.0b1
 
    First release.
