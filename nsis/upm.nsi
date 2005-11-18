@@ -24,7 +24,7 @@
 ;--------------------------------
 ;General
 
-  !define UPM_VERSION "1.0"
+  !define UPM_VERSION "1.0b1"
 
   ;Name and file
   Name "Universal Password Manager"
@@ -42,13 +42,6 @@
   InstallDirRegKey HKLM "Software\UPM" "Install_Dir"
 
   LicenseData "..\dist\jar\COPYING.txt"
-
-;--------------------------------
-;Version Information
-
-  VIProductVersion "${UPM_VERSION}.0.0"
-  VIAddVersionKey "ProductName" "Universal Password Manager"
-  VIAddVersionKey "FileVersion" "${UPM_VERSION}"
 
 ;--------------------------------
 ;Installer Pages
