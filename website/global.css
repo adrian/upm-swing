@@ -1,0 +1,20 @@
+/*
+ $Id:$
+ */
+
+.logo {
+	padding-left : 10px;
+	font-weight : bold;
+	font-size : 26pt;
+	font-family : Verdana,Arial,Helvetica,sans-serif;
+}
+
+body {
+	font-size : 12px;
+	font-family : Verdana,Arial,Helvetica,sans-serif;
+}
+
+.navlink {
+	text-decoration : none;
+}
+
