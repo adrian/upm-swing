@@ -70,7 +70,7 @@ public class AboutDialog extends EscapeDialog {
 
         panel.add(Box.createRigidArea(new Dimension(0,5)));
 
-        JLabel textLabel = new JLabel("http://www.17od.com/upm");
+        JLabel textLabel = new JLabel("http://upm.sourceforge.net");
         textLabel.setFont(font2);
         textLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(textLabel);
