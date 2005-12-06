@@ -249,9 +249,10 @@ public class MainWindow extends JFrame {
 					dbActions.resetSearch();
 				} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 				    //If the user hits the enter key in the search field and there's only one item 
-				    //in the listview then open that item 
+				    //in the listview then open that item (this code assumes that the one item in 
+					//the listview has already been selected. this is done automatically in the 
+					//DatabaseActions.filter() method)
 				    if (accountsListview.getModel().getSize() == 1) {
-                        accountsListview.setSelectedIndex(0);
                         editAccountButton.doClick();
 				    }
 				}

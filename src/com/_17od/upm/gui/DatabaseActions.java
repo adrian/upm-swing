@@ -326,6 +326,11 @@ public class DatabaseActions implements ActionListener {
         }
         
         populateListview(filteredAccountsList);
+        
+        //If there's only one item in the listview then select it 
+	    if (mainWindow.getAccountsListview().getModel().getSize() == 1) {
+	    	mainWindow.getAccountsListview().setSelectedIndex(0);
+	    }
     }
 
 
