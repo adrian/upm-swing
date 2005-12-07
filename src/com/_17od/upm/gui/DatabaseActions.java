@@ -237,15 +237,15 @@ public class DatabaseActions implements ActionListener {
             accountNames.remove(i);
             database.deleteAccount(selectedAccName);
             database.save();
-            setButtonState();
+            //[1375385] Call the filter method so that the listview is 
+            //reinitialised with the remaining matching items
+            filter();
         }
     }
     
     
     public void addAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
 		
-        SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
-
         //Initialise the AccountDialog
         AccountInformation accInfo = new AccountInformation();
         AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Add Account", true);
@@ -258,7 +258,9 @@ public class DatabaseActions implements ActionListener {
             accDialog.show();
             if (accDialog.okClicked()) {
                 accInfo = accDialog.getAccount();
-                if (listview.contains(accInfo.getAccountName())) {
+                //[1375397] Ensure that an account with the name name doesn't already exist
+                //(by checking 'accountNames' we're checking both visible and filtered accounts 
+                if (accountNames.indexOf(accInfo.getAccountName()) != -1) {
                     JOptionPane.showMessageDialog(mainWindow, "An account with the name [" + accInfo.getAccountName() + "] already exists", "Account already exists...", JOptionPane.ERROR_MESSAGE);
                 } else {
                     validAccount = true;
@@ -272,7 +274,8 @@ public class DatabaseActions implements ActionListener {
             database.addAccount(accInfo);
             database.save();
             accountNames.add(accInfo.getAccountName());
-            populateListview(accountNames);
+            //[1375390] Ensure that the listview is properly filtered after an add
+            filter();
         }
 
     }
@@ -295,19 +298,19 @@ public class DatabaseActions implements ActionListener {
 
         //If the ok button was clicked then save the account to the database and update the 
         //listview with the new account name (if it's changed) 
-        SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
         if (accDialog.okClicked()) {
             accInfo = accDialog.getAccount();
             database.deleteAccount(selectedAccName);
             database.addAccount(accInfo);
             database.save();
+            //If the new account name is different to the old account name then update the
+            //accountNames array and refilter the listview  
             if (!accInfo.getAccountName().equals(selectedAccName)) {
-                listview.removeElement(selectedAccName);
-                listview.addElement(accInfo.getAccountName());
                 int i = accountNames.indexOf(selectedAccName);
                 accountNames.remove(i);
                 accountNames.add(accInfo.getAccountName());
-                populateListview(accountNames);
+                //[1375390] Ensure that the listview is properly filtered after an edit
+                filter();
             }
         }
 
