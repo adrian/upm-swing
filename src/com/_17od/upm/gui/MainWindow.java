@@ -78,6 +78,7 @@ public class MainWindow extends JFrame {
     
     public static final String NEW_DATABASE_TXT = "New Database";
     public static final String OPEN_DATABASE_TXT = "Open Database";
+    public static final String CHANGE_MASTER_PASSWORD_TXT = "Change Password";
     public static final String ADD_ACCOUNT_TXT = "Add Account";
     public static final String EDIT_ACCOUNT_TXT = "Edit Account";
     public static final String DELETE_ACCOUNT_TXT = "Delete Account";
@@ -100,6 +101,7 @@ public class MainWindow extends JFrame {
     private JMenu databaseMenu;
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
+    private JMenuItem changeMasterPasswordMenuItem;
     private JMenuItem exitMenuItem;
     private JMenu helpMenu;
     private JMenuItem aboutMenuItem;
@@ -421,7 +423,7 @@ public class MainWindow extends JFrame {
         databaseMenu = new JMenu("Database");
         databaseMenu.setMnemonic(KeyEvent.VK_D);
         menuBar.add(databaseMenu);
-        
+
         newDatabaseMenuItem = new JMenuItem(NEW_DATABASE_TXT, KeyEvent.VK_N);
         newDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -434,6 +436,11 @@ public class MainWindow extends JFrame {
         databaseMenu.add(openDatabaseMenuItem);
         openDatabaseMenuItem.addActionListener(dbActions);
 
+        changeMasterPasswordMenuItem = new JMenuItem(CHANGE_MASTER_PASSWORD_TXT, KeyEvent.VK_G);
+        changeMasterPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        databaseMenu.add(changeMasterPasswordMenuItem);
+        changeMasterPasswordMenuItem.addActionListener(dbActions);
 
         accountMenu = new JMenu("Account");
         accountMenu.setMnemonic(KeyEvent.VK_A);

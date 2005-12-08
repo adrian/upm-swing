@@ -75,6 +75,10 @@ public class PasswordDatabase {
 	}
 
 
+	public void changePassword(char[] password) throws GeneralSecurityException {
+		encryptionService = new EncryptionService(password);
+	}
+	
 	private void load(char[] password) throws IOException, GeneralSecurityException, ProblemReadingDatabaseFile, IllegalBlockSizeException, InvalidPasswordException {
 		
 		//Read the encrypted bytes into an in memory object (the ByteArrayOutputStream)

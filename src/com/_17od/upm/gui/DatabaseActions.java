@@ -71,6 +71,8 @@ public class DatabaseActions implements ActionListener {
                 showAbout();
             } else if (event.getActionCommand() == MainWindow.RESET_SEARCH_TXT) {
                 resetSearch();
+            } else if (event.getActionCommand() == MainWindow.CHANGE_MASTER_PASSWORD_TXT) {
+                changeMasterPassword();
             }
         } catch (Exception e) {
             errorHandler(e);
@@ -151,7 +153,43 @@ public class DatabaseActions implements ActionListener {
     
     }
 
-	
+
+    private void changeMasterPassword() throws GeneralSecurityException, IllegalBlockSizeException, BadPaddingException, IOException {
+        
+        JPasswordField masterPassword;
+        boolean passwordsMatch = false;
+        Object buttonClicked;
+        
+        //Ask the user for the new master password
+        //This loop will continue until the two passwords entered match or until the user hits the cancel button
+        do {
+
+            masterPassword = new JPasswordField("");
+            JPasswordField confirmedMasterPassword = new JPasswordField("");
+            JOptionPane pane = new JOptionPane(new Object[] {"Please enter a new master password for your database...", masterPassword, "Confirmation...", confirmedMasterPassword},	JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+            JDialog dialog = pane.createDialog(mainWindow, "Change Master Password...");
+            dialog.show();
+            
+            buttonClicked = pane.getValue();
+            if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION))) {
+                if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
+                    JOptionPane.showMessageDialog(mainWindow, "The two passwords you entered don't match");
+                } else {
+                    passwordsMatch = true;
+                }
+            }
+        
+        } while (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && !passwordsMatch);
+
+        //If the user clicked OK and the passwords match then change the database password
+        if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && passwordsMatch) {
+	        database.changePassword(masterPassword.getPassword());
+	        database.save();
+        }
+        
+    }
+
+
     public void errorHandler(Exception e) {
         e.printStackTrace();
         String errorMessage = e.getMessage();
