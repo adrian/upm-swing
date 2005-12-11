@@ -234,6 +234,7 @@ public class DatabaseActions implements ActionListener {
         mainWindow.getSearchField().setText("");
         mainWindow.getSearchIcon().setEnabled(true);
         mainWindow.getResetSearchButton().setEnabled(true);
+        mainWindow.getChangeMasterPasswordMenuItem().setEnabled(true);
 
         accountNames = new ArrayList();
         ArrayList dbAccounts = database.getAccounts();

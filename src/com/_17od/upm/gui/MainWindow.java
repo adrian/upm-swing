@@ -441,6 +441,7 @@ public class MainWindow extends JFrame {
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(changeMasterPasswordMenuItem);
         changeMasterPasswordMenuItem.addActionListener(dbActions);
+        changeMasterPasswordMenuItem.setEnabled(false);
 
         accountMenu = new JMenu("Account");
         accountMenu.setMnemonic(KeyEvent.VK_A);
@@ -625,6 +626,11 @@ public class MainWindow extends JFrame {
 
     public JMenuItem getAddAccountMenuItem() {
         return addAccountMenuItem;
+    }
+
+
+    public JMenuItem getChangeMasterPasswordMenuItem() {
+        return changeMasterPasswordMenuItem;
     }
 
 }
