@@ -1,8 +1,6 @@
 package com._17od.upm.invest;
 
-import javax.crypto.*;
 import java.security.*;
-import java.security.spec.*;
  
 public class ListAlgorithms
 {

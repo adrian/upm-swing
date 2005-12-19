@@ -3,7 +3,6 @@ package com._17od.upm.invest;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.event.MouseListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;

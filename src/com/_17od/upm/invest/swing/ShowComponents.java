@@ -9,7 +9,6 @@ package com._17od.upm.invest.swing;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
