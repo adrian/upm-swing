@@ -246,7 +246,7 @@ public class AccountDialog extends EscapeDialog {
     private void okButtonAction() {
         //[1375397] Ensure that an account with the name name doesn't already exist
         //(by checking 'accountNames' we're checking both visible and filtered accounts 
-        if (accNameEditable && existingAccounts.indexOf(accountName.getText()) > 0) {
+        if (accNameEditable && existingAccounts.indexOf(accountName.getText()) > -1) {
             JOptionPane.showMessageDialog(parentWindow, "An account with the name [" + accountName.getText() + "] already exists", "Account already exists...", JOptionPane.ERROR_MESSAGE);
         } else {
             pAccount.setAccountName(accountName.getText());
