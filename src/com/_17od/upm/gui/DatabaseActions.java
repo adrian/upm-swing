@@ -313,25 +313,10 @@ public class DatabaseActions implements ActionListener {
 		
         //Initialise the AccountDialog
         AccountInformation accInfo = new AccountInformation();
-        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Add Account", true);
+        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Add Account", true, accountNames);
         accDialog.pack();
         accDialog.setLocationRelativeTo(mainWindow);
-
-        //Keep looping until the user provides a non-existant account or they hit cancel
-        boolean validAccount = false;
-        do {
-            accDialog.show();
-            if (accDialog.okClicked()) {
-                accInfo = accDialog.getAccount();
-                //[1375397] Ensure that an account with the name name doesn't already exist
-                //(by checking 'accountNames' we're checking both visible and filtered accounts 
-                if (accountNames.indexOf(accInfo.getAccountName()) != -1) {
-                    JOptionPane.showMessageDialog(mainWindow, "An account with the name [" + accInfo.getAccountName() + "] already exists", "Account already exists...", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    validAccount = true;
-                }
-            }
-        } while (!validAccount && accDialog.okClicked());
+        accDialog.show();
 
         //If the user press OK then save the new account to the database
         if (accDialog.okClicked()) {
@@ -356,7 +341,7 @@ public class DatabaseActions implements ActionListener {
 
         AccountInformation accInfo = getSelectedAccount();
         String selectedAccName = (String) accInfo.getAccountName();
-        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Edit Account", true);
+        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Edit Account", false, accountNames);
         accDialog.pack();
         accDialog.setLocationRelativeTo(mainWindow);
         accDialog.show();

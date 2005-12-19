@@ -28,9 +28,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -48,12 +51,18 @@ public class AccountDialog extends EscapeDialog {
     private JTextField url;
     private JTextField accountName;
     private boolean okClicked = false;
+    private ArrayList existingAccounts;
+    private boolean accNameEditable;
+    private JFrame parentWindow;
     
     
-    public AccountDialog(AccountInformation account, JFrame frame, String title, boolean accNameEditable) {
-        super(frame, title, true);
+    public AccountDialog(AccountInformation account, JFrame parentWindow, String title, boolean accNameEditable, ArrayList existingAccounts) {
+        super(parentWindow, title, true);
 
-        pAccount = account;
+        this.pAccount = account;
+        this.existingAccounts = existingAccounts;
+        this.accNameEditable = accNameEditable;
+        this.parentWindow = parentWindow;
         
         getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -235,14 +244,20 @@ public class AccountDialog extends EscapeDialog {
     
     
     private void okButtonAction() {
-        pAccount.setAccountName(accountName.getText());
-        pAccount.setUserId(userId.getText().getBytes());
-        pAccount.setPassword(password.getText().getBytes());
-        pAccount.setUrl(url.getText().getBytes());
-        pAccount.setNotes(notes.getText().getBytes());
-        setVisible(false);
-        dispose();
-        okClicked = true;
+        //[1375397] Ensure that an account with the name name doesn't already exist
+        //(by checking 'accountNames' we're checking both visible and filtered accounts 
+        if (accNameEditable && existingAccounts.indexOf(accountName.getText()) > 0) {
+            JOptionPane.showMessageDialog(parentWindow, "An account with the name [" + accountName.getText() + "] already exists", "Account already exists...", JOptionPane.ERROR_MESSAGE);
+        } else {
+            pAccount.setAccountName(accountName.getText());
+            pAccount.setUserId(userId.getText().getBytes());
+            pAccount.setPassword(password.getText().getBytes());
+            pAccount.setUrl(url.getText().getBytes());
+            pAccount.setNotes(notes.getText().getBytes());
+            setVisible(false);
+            dispose();
+            okClicked = true;
+        }
     }
 
     
