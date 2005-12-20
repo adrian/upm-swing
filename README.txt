@@ -20,10 +20,21 @@ Roadmap
 .Password generator
 .Linux distributions (RPM, DEB)
 .Internationalisation
+.Commandline interface
 
 
 History
 -------
+
+19-Dec-2005 : Version 1.0
+   First stable Release
+
+   Bugs Fixed
+   [1375407] - Possible to change account name to existing account name
+   [1375397] - Possible to add duplicate account when account name filtered
+   [1375390] - Incorrect items listed after an add when list is filtered
+   [1375385] - Error deleting last account in the listview
+   [1374280] - Wrong URL on About page
 
 5-Dec-2005 : Version 1.0b1
    First release.

@@ -49,8 +49,9 @@
 	
 	<taskdef resource="svntask.properties">
 		<classpath>
-			<pathelement path="${svnant.home}\lib\svnant.jar"/>
-			<pathelement path="${svnant.home}\lib\svnClientAdapter.jar"/>
+			<pathelement location="${svnant.home}\lib\svnant.jar"/>
+			<pathelement location="${svnant.home}\lib\svnClientAdapter.jar"/>
+			<pathelement location="${svnant.home}\lib\svnjavahl.jar"/>
 		</classpath>
 	</taskdef>
 	<taskdef name="jarbundler" classpath="${lib}\jarbundler-1.4.jar" classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
@@ -104,7 +105,7 @@
 
 
 	<!-- Perform a build -->
-	<target name="build" depends="test">
+	<target name="build" depends="clean, test">
 
 		<!-- The version has to be set before we can do a build -->
 		<fail unless="version" message="Need to pass the parameter 'version' to this target"/>
