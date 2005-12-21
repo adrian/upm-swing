@@ -25,9 +25,8 @@ Roadmap
 
 History
 -------
-
-19-Dec-2005 : Version 1.0
-   First stable Release
+21-Dec-2005 : Version 1.0
+   This is first stable release of UPM. It's a bugfix release only and has no functional differences to version 1.0b1. Databases created with 1.0b1 are fully compatible with 1.0.
 
    Bugs Fixed
    [1375407] - Possible to change account name to existing account name
@@ -35,6 +34,7 @@ History
    [1375390] - Incorrect items listed after an add when list is filtered
    [1375385] - Error deleting last account in the listview
    [1374280] - Wrong URL on About page
+
 
 5-Dec-2005 : Version 1.0b1
    First release.
