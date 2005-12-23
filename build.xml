@@ -68,6 +68,7 @@
 	<target name="clean">
 		<delete dir="${build}"/>
 		<delete dir="${test.build}"/>
+		<delete dir="${dist}"/>
 		<delete>
 			<fileset dir="${basedir}" includes="TEST-*"/>
 		</delete>
