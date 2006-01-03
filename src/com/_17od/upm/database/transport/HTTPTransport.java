@@ -37,14 +37,19 @@ import com._17od.upm.util.Preferences;
 
 public class HTTPTransport implements Transport {
 
-    public void put(String location, String name, File file) throws TransportException {
+    public void put(String targetLocation, File file) throws TransportException {
 
         HttpClient client = new HttpClient();
-        client.getHostConfiguration().setProxy(Preferences.get(Preferences.ApplicationOptions.PROXY_HOST), 
-                Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.PROXY_PORT)));
 
-        PostMethod post = new PostMethod(Preferences.get(Preferences.ApplicationOptions.UPLOAD_URL));
-        
+        //Get the proxy settings
+        String proxyHost = Preferences.get(Preferences.ApplicationOptions.PROXY_HOST);
+        if (proxyHost != null) {
+            int proxyPort = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.PROXY_PORT));
+            client.getHostConfiguration().setProxy(proxyHost, proxyPort);
+        }
+
+        PostMethod post = new PostMethod(targetLocation);
+
         //This part is wrapped in a try/finally so that we can ensure
         //the connection to the HTTP server is always closed cleanly 
         try {
@@ -76,8 +81,13 @@ public class HTTPTransport implements Transport {
         byte[] retVal = null;
         
         HttpClient client = new HttpClient();
-        client.getHostConfiguration().setProxy(Preferences.get(Preferences.ApplicationOptions.PROXY_HOST), 
-                Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.PROXY_PORT)));
+
+        //Get the proxy settings
+        String proxyHost = Preferences.get(Preferences.ApplicationOptions.PROXY_HOST);
+        if (proxyHost != null) {
+            int proxyPort = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.PROXY_PORT));
+            client.getHostConfiguration().setProxy(proxyHost, proxyPort);
+        }
 
         GetMethod method = new GetMethod(url);
         
@@ -100,6 +110,7 @@ public class HTTPTransport implements Transport {
         }
 
         return retVal;
+
     }
 
 

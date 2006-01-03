@@ -31,7 +31,7 @@ import java.io.File;
  */
 public interface Transport {
 
-    public void put(String location, String name, File file) throws TransportException;
+    public void put(String targetLocation, File file) throws TransportException;
     
     public byte[] get(String url) throws TransportException;
     

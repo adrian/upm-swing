@@ -40,27 +40,30 @@ if ($file->isError()) {
 // Check if the file is a valid upload
 if ($file->isValid()) {
 
-	// If the file already exists throw an error
-    if (file_exists('../upload/'.$file->getProp('name'))) {
+    // If the file already exists throw an error
+    if (file_exists('./upload/'.$file->getProp('name'))) {
         die (FILE_ALREADY_EXISTS);
     }
     
     // Move the file
-    $file_name = $file->moveTo('../upload/');
+    $file_name = $file->moveTo('./upload/');
     
     // If there was an error or the uploaded file doesn't exist then throw an error
     if (PEAR::isError($file_name)) {
-	    die (GENERAL_ERROR . " - " . $file->getMessage());
+        die (GENERAL_ERROR . " - " . $file->getMessage());
     }
-    if (!file_exists('../upload/'.$file->getProp('name'))) {
+    if (!file_exists('./upload/'.$file->getProp('name'))) {
         die (FILE_WASNT_MOVED);
     }
 
-	// Looks like the upload was successful so return a success message
+    // Set the correct permissions on the file
+    chmod('./upload/'.$file->getProp('name'), 0744);
+
+    // Looks like the upload was successful so return a success message
     echo OK;
     
 } else {
-	die (FILE_WASNT_UPLOADED);
+    die (FILE_WASNT_UPLOADED);
 }
 
 ?>
