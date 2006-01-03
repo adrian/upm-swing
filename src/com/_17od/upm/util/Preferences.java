@@ -22,10 +22,14 @@
  */
 package com._17od.upm.util;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.prefs.BackingStoreException;
+import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -33,24 +37,62 @@ import java.util.prefs.BackingStoreException;
  */
 public class Preferences {
 
-    private static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
-    private static final String PREF_FILE = System.getProperty("user.dir") + "/upm.xml";
-
-    private static java.util.prefs.Preferences pref = java.util.prefs.Preferences.userNodeForPackage(Preferences.class);
-
+    private static Log log = LogFactory.getLog(Preferences.class); 
     
-    public static String getDBToOptionOnStartup() {
-        return pref.get(DB_TO_LOAD_ON_STARTUP, null);
+    public class ApplicationOptions {
+        public static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
+
+        public static final String PROXY_HOST="http.proxy.host";
+        public static final String PROXY_PORT="http.proxy.port";
+        public static final String UPLOAD_URL="http.upload.url";
+    }
+
+    public class DatabaseOptions {
     }
 
     
-    public static void setDBToOptionOnStartup(String dbToOptionOnStartup) {
-        pref.put(DB_TO_LOAD_ON_STARTUP, dbToOptionOnStartup);
+    private static final String PREF_FILE = System.getProperty("user.dir") + "\\upm.properties";
+    private static Properties preferences; 
+
+
+    public static String get(String name) {
+        String retVal = preferences.getProperty(name); 
+        if (log.isDebugEnabled()) {
+            log.debug("Returning the property, name=" + name + ", value=" + retVal);
+        }
+        return retVal;
     }
 
     
-    public static void save() throws FileNotFoundException, IOException, BackingStoreException {
-        pref.exportNode(new FileOutputStream(PREF_FILE));
+    public static void set(String name, String value) {
+        if (log.isDebugEnabled()) {
+            log.debug("Setting the property, name=" + name + ", value=" + value);
+        }
+        preferences.setProperty(name, value);
+    }
+
+    
+    public static void load() throws FileNotFoundException, IOException {
+        if (log.isInfoEnabled()) {
+            log.info("Loading the properties file [" + PREF_FILE + "]");
+        }
+        preferences = new Properties();
+        
+        try {
+            preferences.load(new FileInputStream(PREF_FILE));
+        } catch (FileNotFoundException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Property file not found. Will be created the next time the properties are saved.");
+            }
+        }
+    }
+
+
+    public static void save() throws IOException  {
+        if (log.isDebugEnabled()) {
+            log.debug("Saving properties to the file [" + PREF_FILE + "]");
+        }
+        preferences.store(new FileOutputStream(PREF_FILE), "Universal Password Manager Preferences");
     }
     
 }

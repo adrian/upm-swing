@@ -43,7 +43,9 @@
 	<path id="project.class.path">
 		<pathelement path="${build}"/>
 		<pathelement path="${test.build}"/>
-		<pathelement location="${lib}\junit.jar"/>
+		<fileset dir="${lib}">
+			<include name="*.jar"/>
+		</fileset>
 	</path>
 
 	

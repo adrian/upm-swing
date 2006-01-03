@@ -120,6 +120,8 @@ public class MainWindow extends JFrame {
     public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
         super(title);
 
+        Preferences.load();
+        
         setIconImage(Util.loadImage("upm.gif").getImage());
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -138,7 +140,7 @@ public class MainWindow extends JFrame {
         
         try {
             //Load the startup database if it's configured
-            String db = Preferences.getDBToOptionOnStartup();
+            String db = Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP);
             if (db != null && !db.equals("")) {
 	            File dbFile = new File(db);
 	            if (!dbFile.exists()) {

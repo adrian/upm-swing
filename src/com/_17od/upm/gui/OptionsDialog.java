@@ -70,7 +70,7 @@ public class OptionsDialog extends EscapeDialog {
 
         JPanel inputPane = new JPanel();
         inputPane.setLayout(new FlowLayout());
-        dbToLoadOnStartup = new JTextField(Preferences.getDBToOptionOnStartup(), 25);
+        dbToLoadOnStartup = new JTextField(Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP), 25);
         inputPane.add(dbToLoadOnStartup);
         JButton dbToLoadOnStartupButton = new JButton(Util.loadImage("open.gif"));
         dbToLoadOnStartupButton.addActionListener(new ActionListener() {
@@ -116,7 +116,7 @@ public class OptionsDialog extends EscapeDialog {
     
     private void okButtonAction() {
         try {
-        	Preferences.setDBToOptionOnStartup(dbToLoadOnStartup.getText());
+        	Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
         	Preferences.save();
             setVisible(false);
             dispose();
