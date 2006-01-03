@@ -25,182 +25,182 @@
 
 <project name="Universal Password Manager" default="compile" basedir=".">
 
-	<property file="build.properties"/>
-	
-	<!-- Set all the project properties -->
-	<property name="src" value="src"/>
-	<property name="test.src" value="test"/>
-	<property name="build" value="build"/>
-	<property name="test.build" value="testbuild"/>
-	<property name="dist" value="dist"/>
-	<property name="short.name" value="upm"/>
-	<property name="full.name" value="UPM"/>
-	<property name="lib" value="lib"/>
-	<property name="repos.url" value="https://opensvn.csie.org/UPM"/>
+    <property file="build.properties"/>
+    
+    <!-- Set all the project properties -->
+    <property name="src" value="src"/>
+    <property name="test.src" value="test"/>
+    <property name="build" value="build"/>
+    <property name="test.build" value="testbuild"/>
+    <property name="dist" value="dist"/>
+    <property name="short.name" value="upm"/>
+    <property name="full.name" value="UPM"/>
+    <property name="lib" value="lib"/>
+    <property name="repos.url" value="https://opensvn.csie.org/UPM"/>
 
 
-	<!-- Define a classpath for use later on -->
-	<path id="project.class.path">
-		<pathelement path="${build}"/>
-		<pathelement path="${test.build}"/>
-		<fileset dir="${lib}">
-			<include name="*.jar"/>
-		</fileset>
-	</path>
+    <!-- Define a classpath for use later on -->
+    <path id="project.class.path">
+        <pathelement path="${build}"/>
+        <pathelement path="${test.build}"/>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
 
-	
-	<taskdef resource="svntask.properties">
-		<classpath>
-			<pathelement location="${svnant.home}\lib\svnant.jar"/>
-			<pathelement location="${svnant.home}\lib\svnClientAdapter.jar"/>
-			<pathelement location="${svnant.home}\lib\svnjavahl.jar"/>
-		</classpath>
-	</taskdef>
-	<taskdef name="jarbundler" classpath="${lib}\jarbundler-1.4.jar" classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
-
-
-	<target name="init">
-		<condition property="isMacOSX">
-			<os family="mac"/>
-		</condition>
-	</target>
+    
+    <taskdef resource="svntask.properties">
+        <classpath>
+            <pathelement location="${svnant.home}\lib\svnant.jar"/>
+            <pathelement location="${svnant.home}\lib\svnClientAdapter.jar"/>
+            <pathelement location="${svnant.home}\lib\svnjavahl.jar"/>
+        </classpath>
+    </taskdef>
+    <taskdef name="jarbundler" classpath="${lib}\jarbundler-1.4.jar" classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
 
 
-	<!-- The clean target cleans the environment -->
-	<target name="clean">
-		<delete dir="${build}"/>
-		<delete dir="${test.build}"/>
-		<delete dir="${dist}"/>
-		<delete>
-			<fileset dir="${basedir}" includes="TEST-*"/>
-		</delete>
-	</target>
+    <target name="init">
+        <condition property="isMacOSX">
+            <os family="mac"/>
+        </condition>
+    </target>
 
 
-	<!-- The compile target compiles the source -->
-	<target name="compile" depends="init">
-
-		<mkdir dir="${build}"/>
-		<javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" excludes="com\_17od\upm\platformspecific\**">
-			<classpath refid="project.class.path"/>
-		</javac>
-
-		<mkdir dir="${test.build}"/>
-		<javac srcdir="${test.src}" destdir="${test.build}" debug="on" failonerror="true">
-			<classpath refid="project.class.path"/>
-		</javac>
-  	
-		<copy todir="${build}\com\_17od\upm\util\images">
-			<fileset dir="images" includes="*.gif"/>
-		</copy>
-		
-		<!-- Compile platform specific code -->
-		<antcall target="compile.macosx"/>
-		
-	</target>
-
-	
-	<target name="compile.macosx" if="isMacOSX">
-		<javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" includes="com\_17od\upm\platformspecific\mac\**">
-			<classpath refid="project.class.path"/>
-		</javac>
-	</target>
+    <!-- The clean target cleans the environment -->
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${test.build}"/>
+        <delete dir="${dist}"/>
+        <delete>
+            <fileset dir="${basedir}" includes="TEST-*"/>
+        </delete>
+    </target>
 
 
-	<!-- Perform a build -->
-	<target name="build" depends="clean, test">
+    <!-- The compile target compiles the source -->
+    <target name="compile" depends="init">
 
-		<!-- The version has to be set before we can do a build -->
-		<fail unless="version" message="Need to pass the parameter 'version' to this target"/>
+        <mkdir dir="${build}"/>
+        <javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" excludes="com\_17od\upm\platformspecific\**">
+            <classpath refid="project.class.path"/>
+        </javac>
 
-		<delete dir="${dist}"/>
+        <mkdir dir="${test.build}"/>
+        <javac srcdir="${test.src}" destdir="${test.build}" debug="on" failonerror="true">
+            <classpath refid="project.class.path"/>
+        </javac>
+      
+        <copy todir="${build}\com\_17od\upm\util\images">
+            <fileset dir="images" includes="*.gif"/>
+        </copy>
+        
+        <!-- Compile platform specific code -->
+        <antcall target="compile.macosx"/>
+        
+    </target>
 
-		<echo message="Performing the build ${version}"/>
-
-		<!-- Build the basic JAR distribution -->
-		<mkdir dir="${dist}\jar"/>    
-		<jar destfile="${dist}\jar\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif" excludes="**\invest\**">
-			<manifest>
-				<attribute name="Implementation-Title" value="${short.name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-				<attribute name="Main-Class" value="com._17od.upm.gui.MainWindow"/>
-			</manifest>
-		</jar>
-		<copy file="${basedir}\COPYING.txt" todir="${dist}\jar"/>
-		<copy file="${basedir}\README.txt" todir="${dist}\jar"/>
-		<tar destfile="${dist}\${short.name}-${version}.tar">
-			<tarfileset dir="${dist}\jar" prefix="${short.name}-${version}"/>
-		</tar>
-		<gzip src="${dist}\${short.name}-${version}.tar" destfile="${dist}\${short.name}-${version}.tar.gz"/>
-		<delete file="${dist}\${short.name}-${version}.tar"/>
-
-		<!-- Build the source distribution -->
-		<tar destfile="${dist}\${short.name}-${version}.src.tar">
-			<tarfileset dir="${basedir}" prefix="${short.name}-${version}-src">
-				<include name="build.xml"/>
-				<include name="build.properties.tmpl"/>
-				<include name="COPYING.txt"/>
-				<include name="README.txt"/>
-				<include name="src\**"/>
-				<exclude name="src\**\invest\**"/>
-				<include name="images\**"/>
-				<include name="test\**"/>
-				<include name="lib\**"/>
-				<include name="www\**"/>
-				<include name="nsis\**"/>
-			</tarfileset>
-		</tar>
-		<gzip src="${dist}\${short.name}-${version}.src.tar" destfile="${dist}\${short.name}-${version}.src.tar.gz"/>
-		<delete file="${dist}\${short.name}-${version}.src.tar"/>
-
-	        <!-- Build the Mac OS X distribution -->
-		<antcall target="build.macosx"/>
-
-	</target>
+    
+    <target name="compile.macosx" if="isMacOSX">
+        <javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" includes="com\_17od\upm\platformspecific\mac\**">
+            <classpath refid="project.class.path"/>
+        </javac>
+    </target>
 
 
-	<target name="build.macosx" if="isMacOSX">
+    <!-- Perform a build -->
+    <target name="build" depends="clean, test">
 
-		<!-- Build the MAC OS X application -->
-		<mkdir dir="${dist}\mac"/>
-		<jarbundler dir="${dist}\mac"
-				   jars="${dist}/jar/${short.name}.jar"
-			  mainclass="com._17od.upm.gui.MainWindow"
-				   name="${full.name}"
-				   icon="${basedir}\images\upm.icns"
-			 jvmversion="1.4+"
-				version="${version}"
-			 screenmenu="true"/>
-		<copy file="${basedir}\COPYING.txt" todir="${dist}\mac"/>
-		<copy file="${basedir}\README.txt" todir="${dist}\mac"/>
-		<echo message="Use the MAC 'Disk Utility' to build a .DMG file with the contents of the directory ${basedir}\${dist}\mac"/>
+        <!-- The version has to be set before we can do a build -->
+        <fail unless="version" message="Need to pass the parameter 'version' to this target"/>
 
-	</target>
+        <delete dir="${dist}"/>
+
+        <echo message="Performing the build ${version}"/>
+
+        <!-- Build the basic JAR distribution -->
+        <mkdir dir="${dist}\jar"/>    
+        <jar destfile="${dist}\jar\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif" excludes="**\invest\**">
+            <manifest>
+                <attribute name="Implementation-Title" value="${short.name}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="Main-Class" value="com._17od.upm.gui.MainWindow"/>
+            </manifest>
+        </jar>
+        <copy file="${basedir}\COPYING.txt" todir="${dist}\jar"/>
+        <copy file="${basedir}\README.txt" todir="${dist}\jar"/>
+        <tar destfile="${dist}\${short.name}-${version}.tar">
+            <tarfileset dir="${dist}\jar" prefix="${short.name}-${version}"/>
+        </tar>
+        <gzip src="${dist}\${short.name}-${version}.tar" destfile="${dist}\${short.name}-${version}.tar.gz"/>
+        <delete file="${dist}\${short.name}-${version}.tar"/>
+
+        <!-- Build the source distribution -->
+        <tar destfile="${dist}\${short.name}-${version}.src.tar">
+            <tarfileset dir="${basedir}" prefix="${short.name}-${version}-src">
+                <include name="build.xml"/>
+                <include name="build.properties.tmpl"/>
+                <include name="COPYING.txt"/>
+                <include name="README.txt"/>
+                <include name="src\**"/>
+                <exclude name="src\**\invest\**"/>
+                <include name="images\**"/>
+                <include name="test\**"/>
+                <include name="lib\**"/>
+                <include name="www\**"/>
+                <include name="nsis\**"/>
+            </tarfileset>
+        </tar>
+        <gzip src="${dist}\${short.name}-${version}.src.tar" destfile="${dist}\${short.name}-${version}.src.tar.gz"/>
+        <delete file="${dist}\${short.name}-${version}.src.tar"/>
+
+            <!-- Build the Mac OS X distribution -->
+        <antcall target="build.macosx"/>
+
+    </target>
 
 
-	<target name="release">
-		<fail unless="svn.username" message="Need to pass the parameter 'svn.username' to this target"/>
-		<fail unless="svn.password" message="Need to pass the parameter 'svn.password' to this target"/>
-		<fail unless="version" message="Need to pass the parameter 'version' to this target"/>
+    <target name="build.macosx" if="isMacOSX">
 
-		<svn username="${svn.username}" password="${svn.password}">
-			<copy srcUrl="${repos.url}\trunk" destUrl="${repos.url}\tags\${version}" message="Release ${version}"/>
-		</svn>
-	</target>
+        <!-- Build the MAC OS X application -->
+        <mkdir dir="${dist}\mac"/>
+        <jarbundler dir="${dist}\mac"
+                   jars="${dist}/jar/${short.name}.jar"
+              mainclass="com._17od.upm.gui.MainWindow"
+                   name="${full.name}"
+                   icon="${basedir}\images\upm.icns"
+             jvmversion="1.4+"
+                version="${version}"
+             screenmenu="true"/>
+        <copy file="${basedir}\COPYING.txt" todir="${dist}\mac"/>
+        <copy file="${basedir}\README.txt" todir="${dist}\mac"/>
+        <echo message="Use the MAC 'Disk Utility' to build a .DMG file with the contents of the directory ${basedir}\${dist}\mac"/>
 
-	
-	<target name="test" depends="compile">
-		<!-- I had to put the junit.jar file into my ANT_HOME\lib in order for
-		     the junit task to work -->
-		<junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on">
-			<classpath refid="project.class.path"/>
-			<formatter type="plain"/>
-			<batchtest>
-				<fileset dir="${test.build}">
-					<include name="**\*.class"/>
-				</fileset>
-			</batchtest>
-		</junit>
-	</target>
+    </target>
+
+
+    <target name="release">
+        <fail unless="svn.username" message="Need to pass the parameter 'svn.username' to this target"/>
+        <fail unless="svn.password" message="Need to pass the parameter 'svn.password' to this target"/>
+        <fail unless="version" message="Need to pass the parameter 'version' to this target"/>
+
+        <svn username="${svn.username}" password="${svn.password}">
+            <copy srcUrl="${repos.url}\trunk" destUrl="${repos.url}\tags\${version}" message="Release ${version}"/>
+        </svn>
+    </target>
+
+    
+    <target name="test" depends="compile">
+        <!-- I had to put the junit.jar file into my ANT_HOME\lib in order for
+             the junit task to work -->
+        <junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on">
+            <classpath refid="project.class.path"/>
+            <formatter type="plain"/>
+            <batchtest>
+                <fileset dir="${test.build}">
+                    <include name="**\*.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
 
 </project>
