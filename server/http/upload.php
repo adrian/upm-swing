@@ -21,49 +21,57 @@
  * along with Universal Password Manager; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-require 'HTTP/Upload.php';
 
-// Some error constants
-define("GENERAL_ERROR", "GENERAL_ERROR");
-define("FILE_ALREADY_EXISTS", "FILE_ALREADY_EXISTS");
-define("FILE_WASNT_MOVED", "FILE_WASNT_MOVED");
-define("FILE_WASNT_UPLOADED", "FILE_WASNT_UPLOADED");
-define("OK", "OK");
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-// Get a reference to the uploaded file
-$upload = new HTTP_Upload('en');
-$file = $upload->getFiles('userfile');
-if ($file->isError()) {
-    die (GENERAL_ERROR . " - " . $file->getMessage());
-}
+        // Some error constants
+        define("FILE_ALREADY_EXISTS", "FILE_ALREADY_EXISTS");
+        define("FILE_WASNT_MOVED", "FILE_WASNT_MOVED");
+        define("FILE_WASNT_UPLOADED", "FILE_WASNT_UPLOADED");
+        define("OK", "OK");
 
-// Check if the file is a valid upload
-if ($file->isValid()) {
+        // First of all check that the file was uploaded successfully
+        if (is_uploaded_file($_FILES['userfile']['tmp_name'])) {
 
-    // If the file already exists throw an error
-    if (file_exists('./upload/'.$file->getProp('name'))) {
-        die (FILE_ALREADY_EXISTS);
+            // Get the name of the file that was uploaded
+            $uploadedFileName = basename($_FILES['userfile']['name']);
+
+            // If the file already exists throw an error
+            if (file_exists('./'.$uploadedFileName)) {
+                die(FILE_ALREADY_EXISTS);
+            } else {
+                move_uploaded_file($_FILES['userfile']['tmp_name'], "./$uploadedFileName");
+                
+                // Check to ensure the file was uploaded
+                if (!file_exists('./'.$uploadedFileName)) {
+                    die(FILE_WASNT_MOVED);
+                }
+                
+                // Set the correct permissions on the file
+                chmod('./'.$uploadedFileName, 0744);
+
+                // Looks like the upload was successful so return a success message
+                echo OK;
+            }
+
+        } else {
+            die(FILE_WASNT_UPLOADED);
+        }
+
+    } else {
+
+?>
+
+    <html>
+        <head><title>Upload File</title></head>
+        <body>
+            <form enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+                <input type="file" name="userfile"/>
+                <input type="submit" name="Upload"/>
+            </form>
+        </body>
+    </html>
+
+<?php
     }
-    
-    // Move the file
-    $file_name = $file->moveTo('./upload/');
-    
-    // If there was an error or the uploaded file doesn't exist then throw an error
-    if (PEAR::isError($file_name)) {
-        die (GENERAL_ERROR . " - " . $file->getMessage());
-    }
-    if (!file_exists('./upload/'.$file->getProp('name'))) {
-        die (FILE_WASNT_MOVED);
-    }
-
-    // Set the correct permissions on the file
-    chmod('./upload/'.$file->getProp('name'), 0744);
-
-    // Looks like the upload was successful so return a success message
-    echo OK;
-    
-} else {
-    die (FILE_WASNT_UPLOADED);
-}
-
 ?>

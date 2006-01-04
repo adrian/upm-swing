@@ -35,6 +35,6 @@ public interface Transport {
     
     public byte[] get(String url) throws TransportException;
     
-    public void delete(String location, String name);
+    public void delete(String targetLocation, String name) throws TransportException;
     
 }

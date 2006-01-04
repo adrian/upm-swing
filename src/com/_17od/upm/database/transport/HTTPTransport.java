@@ -114,8 +114,33 @@ public class HTTPTransport implements Transport {
     }
 
 
-    public void delete(String location, String name) {
-        // TODO Auto-generated method stub
+    public void delete(String targetLocation, String name) throws TransportException {
+
+        HttpClient client = new HttpClient();
+
+        //Get the proxy settings
+        String proxyHost = Preferences.get(Preferences.ApplicationOptions.PROXY_HOST);
+        if (proxyHost != null) {
+            int proxyPort = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.PROXY_PORT));
+            client.getHostConfiguration().setProxy(proxyHost, proxyPort);
+        }
+
+        PostMethod post = new PostMethod(targetLocation);
+        post.addParameter("fileToDelete", name);
+
+        //This part is wrapped in a try/finally so that we can ensure
+        //the connection to the HTTP server is always closed cleanly 
+        try {
+            int status = client.executeMethod(post);
+            if (status != HttpStatus.SC_OK || !post.getResponseBodyAsString().equals("OK") ) {
+                throw new TransportException("There's been some kind of problem deleting a file to the HTTP server. The return code returned was [" + post.getResponseBodyAsString() + "]");
+            }
+        } catch (Exception e) {
+            throw new TransportException(e);
+        } finally {
+            post.releaseConnection();
+        }
+
     }
 
 }

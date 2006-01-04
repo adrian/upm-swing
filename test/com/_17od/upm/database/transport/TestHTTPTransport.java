@@ -32,43 +32,48 @@ import java.lang.RuntimeException;
 
 
 public class TestHTTPTransport extends TestCase {
+    
+    private File fileToUpload;
+    private byte[] fileContents;
+    private HTTPTransport transport;
+
 
     public void setUp() throws Exception {
         Preferences.load();
-    }
-    
-    
-    public void testPut() throws Exception {
-
+        
         //Create a test file to upload
-        File fileToUpload = File.createTempFile("tmp", ".txt");
+        fileToUpload = File.createTempFile("tmp", ".txt");
         FileOutputStream fos = new FileOutputStream(fileToUpload);
-        fos.write("Sample File Contents".getBytes());
+        fileContents = (new Date()).toString().getBytes();
+        fos.write(fileContents);
         fos.close();
         
-        //Upload the file
-        HTTPTransport transport = new HTTPTransport();
-        transport.put("http://www.17od.com/upload.php", fileToUpload);
+        transport = new HTTPTransport();
+    }
 
+
+    public void tearDown() throws Exception {
+        try {
+            transport.delete("http://www.17od.com/upload/deletefile.php", fileToUpload.getName());
+        } catch (Exception e) {
+            //Don't worry about errors here
+        }
+    }
+
+
+    public void testPut() throws Exception {
+        //Upload the file
+        transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
     }
 
 
     public void testPutExistingFile() throws Exception {
-
-        //Create a test file to upload
-        File fileToUpload = File.createTempFile("tmp", ".txt");
-        FileOutputStream fos = new FileOutputStream(fileToUpload);
-        byte[] b1 = (new Date()).toString().getBytes();
-        fos.write(b1);
-        fos.close();
-        
         //Upload the file
-        HTTPTransport transport = new HTTPTransport();
-        transport.put("http://www.17od.com/upload.php", fileToUpload);
+        transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
 
         try {
             //Now attempt to upload the file again
-            transport.put("http://www.17od.com/upload.php", fileToUpload);
+            transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
 
             //Should have got an error here
             fail("Should have got an error when uploading an existing file");
@@ -79,28 +84,41 @@ public class TestHTTPTransport extends TestCase {
         }
     }
 
-    
-    public void testGet() throws Exception {
 
-        //Create a test file to upload
-        File fileToUpload = File.createTempFile("tmp", ".txt");
-        FileOutputStream fos = new FileOutputStream(fileToUpload);
-        byte[] b1 = (new Date()).toString().getBytes();
-        fos.write(b1);
-        fos.close();
+    public void testGet() throws Exception {
+        //Upload the file
+        transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
+
+        //Get the file back
+        byte[] retrievedFileContents = transport.get("http://www.17od.com/upload/" + fileToUpload.getName());
+
+        //Compare before and after file
+        if (!Arrays.equals(fileContents, retrievedFileContents)) {
+            fail("Before and after files are not the same");
+        }
+    }
+    
+    
+    public void testDelete() throws Exception {
         
         //Upload the file
-        HTTPTransport transport = new HTTPTransport();
-        transport.put("http://www.17od.com/upload.php", fileToUpload);
+        transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
 
-        //Now get it back
-        byte[] b2 = transport.get("http://www.17od.com/upload/" + fileToUpload.getName());
+        //Delete the file
+        transport.delete("http://www.17od.com/upload/deletefile.php", fileToUpload.getName());
 
-        //Check that the before and after byte arrays are the same
-        if (!Arrays.equals(b1, b2)) {
-            fail("The files are not the same");
+        try {
+            //Now try to get the file back
+            transport.get("http://www.17od.com/upload/" + fileToUpload.getName());
+
+            //Should have got an error here
+            fail("Should have got an error when uploading an existing file");
+        } catch (Exception e) {
+            if (!(e.getMessage().indexOf("404") > 0)) {
+                fail("Should have got a HTTP 404 error when uploading an existing file");
+            }
         }
 
     }
-
+    
 }
