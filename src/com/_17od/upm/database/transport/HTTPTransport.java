@@ -23,30 +23,40 @@
 package com._17od.upm.database.transport;
 
 import java.io.File;
+import java.net.URL;
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
-import org.apache.commons.httpclient.methods.multipart.StringPart;
-
 import com._17od.upm.util.Preferences;
 
 
 public class HTTPTransport implements Transport {
 
-    public void put(String targetLocation, File file) throws TransportException {
+    private HttpClient client;
 
-        HttpClient client = new HttpClient();
+
+    public HTTPTransport() {
+
+        client = new HttpClient();
 
         //Get the proxy settings
-        String proxyHost = Preferences.get(Preferences.ApplicationOptions.PROXY_HOST);
+        String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
         if (proxyHost != null) {
-            int proxyPort = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.PROXY_PORT));
+            int proxyPort = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT));
             client.getHostConfiguration().setProxy(proxyHost, proxyPort);
         }
+
+    }
+
+
+    public void put(String targetLocation, File file, byte[] username, byte[] password) throws TransportException {
 
         PostMethod post = new PostMethod(targetLocation);
 
@@ -55,12 +65,20 @@ public class HTTPTransport implements Transport {
         try {
             
             Part[] parts = {
-                    new FilePart("userfile", file),
-                    new StringPart("MAX_FILE_SIZE", "999999999")
+                    new FilePart("userfile", file)
             };
             post.setRequestEntity(
                     new MultipartRequestEntity(parts, post.getParams())
             );
+
+            //Set the authentication details
+            if (username != null) {
+                Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
+                URL url = new URL(targetLocation);
+                AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
+                client.getState().setCredentials(authScope, creds);
+                client.getParams().setAuthenticationPreemptive(true);
+            }
 
             int status = client.executeMethod(post);
             if (status != HttpStatus.SC_OK || !post.getResponseBodyAsString().equals("OK") ) {
@@ -76,25 +94,25 @@ public class HTTPTransport implements Transport {
     }
 
 
-    public byte[] get(String url) throws TransportException {
+    public byte[] get(String url, byte[] username, byte[] password) throws TransportException {
 
         byte[] retVal = null;
         
-        HttpClient client = new HttpClient();
-
-        //Get the proxy settings
-        String proxyHost = Preferences.get(Preferences.ApplicationOptions.PROXY_HOST);
-        if (proxyHost != null) {
-            int proxyPort = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.PROXY_PORT));
-            client.getHostConfiguration().setProxy(proxyHost, proxyPort);
-        }
-
         GetMethod method = new GetMethod(url);
         
         //This part is wrapped in a try/finally so that we can ensure
         //the connection to the HTTP server is always closed cleanly 
         try {
 
+            //Set the authentication details
+            if (username != null) {
+                Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
+                URL urlObj = new URL(url);
+                AuthScope authScope = new AuthScope(urlObj.getHost(), urlObj.getPort());
+                client.getState().setCredentials(authScope, creds);
+                client.getParams().setAuthenticationPreemptive(true);
+            }
+            
             int statusCode = client.executeMethod(method);
 
             if (statusCode != HttpStatus.SC_OK) {
@@ -114,16 +132,7 @@ public class HTTPTransport implements Transport {
     }
 
 
-    public void delete(String targetLocation, String name) throws TransportException {
-
-        HttpClient client = new HttpClient();
-
-        //Get the proxy settings
-        String proxyHost = Preferences.get(Preferences.ApplicationOptions.PROXY_HOST);
-        if (proxyHost != null) {
-            int proxyPort = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.PROXY_PORT));
-            client.getHostConfiguration().setProxy(proxyHost, proxyPort);
-        }
+    public void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException {
 
         PostMethod post = new PostMethod(targetLocation);
         post.addParameter("fileToDelete", name);
@@ -131,6 +140,15 @@ public class HTTPTransport implements Transport {
         //This part is wrapped in a try/finally so that we can ensure
         //the connection to the HTTP server is always closed cleanly 
         try {
+            //Set the authentication details
+            if (username != null) {
+                Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
+                URL url = new URL(targetLocation);
+                AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
+                client.getState().setCredentials(authScope, creds);
+                client.getParams().setAuthenticationPreemptive(true);
+            }
+
             int status = client.executeMethod(post);
             if (status != HttpStatus.SC_OK || !post.getResponseBodyAsString().equals("OK") ) {
                 throw new TransportException("There's been some kind of problem deleting a file to the HTTP server. The return code returned was [" + post.getResponseBodyAsString() + "]");

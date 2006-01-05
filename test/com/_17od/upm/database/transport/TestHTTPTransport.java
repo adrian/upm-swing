@@ -23,12 +23,13 @@
 package com._17od.upm.database.transport;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import com._17od.upm.util.Preferences;
 import junit.framework.TestCase;
 import java.util.Arrays;
 import java.util.Date;
-import java.lang.RuntimeException;
+import java.util.Properties;
 
 
 public class TestHTTPTransport extends TestCase {
@@ -36,25 +37,36 @@ public class TestHTTPTransport extends TestCase {
     private File fileToUpload;
     private byte[] fileContents;
     private HTTPTransport transport;
+    private byte[] httpUsername;
+    private byte[] httpPassword;
 
 
     public void setUp() throws Exception {
         Preferences.load();
-        
+
+        transport = new HTTPTransport();
+
         //Create a test file to upload
         fileToUpload = File.createTempFile("tmp", ".txt");
         FileOutputStream fos = new FileOutputStream(fileToUpload);
         fileContents = (new Date()).toString().getBytes();
         fos.write(fileContents);
         fos.close();
-        
-        transport = new HTTPTransport();
+
+        //Load the properties file
+        String propertiesFile = System.getProperty("junit.properties");
+        if (propertiesFile != null) {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(propertiesFile));
+            httpUsername = properties.getProperty("junit.http.username").getBytes();
+            httpPassword = properties.getProperty("junit.http.password").getBytes();
+        }
     }
 
 
     public void tearDown() throws Exception {
         try {
-            transport.delete("http://www.17od.com/upload/deletefile.php", fileToUpload.getName());
+            transport.delete("http://www.17od.com/upload/deletefile.php", fileToUpload.getName(), httpUsername, httpPassword);
         } catch (Exception e) {
             //Don't worry about errors here
         }
@@ -63,17 +75,17 @@ public class TestHTTPTransport extends TestCase {
 
     public void testPut() throws Exception {
         //Upload the file
-        transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
+        transport.put("http://www.17od.com/upload/upload.php", fileToUpload, httpUsername, httpPassword);
     }
 
 
     public void testPutExistingFile() throws Exception {
         //Upload the file
-        transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
+        transport.put("http://www.17od.com/upload/upload.php", fileToUpload, httpUsername, httpPassword);
 
         try {
             //Now attempt to upload the file again
-            transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
+            transport.put("http://www.17od.com/upload/upload.php", fileToUpload, httpUsername, httpPassword);
 
             //Should have got an error here
             fail("Should have got an error when uploading an existing file");
@@ -87,10 +99,10 @@ public class TestHTTPTransport extends TestCase {
 
     public void testGet() throws Exception {
         //Upload the file
-        transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
+        transport.put("http://www.17od.com/upload/upload.php", fileToUpload, httpUsername, httpPassword);
 
         //Get the file back
-        byte[] retrievedFileContents = transport.get("http://www.17od.com/upload/" + fileToUpload.getName());
+        byte[] retrievedFileContents = transport.get("http://www.17od.com/upload/" + fileToUpload.getName(), httpUsername, httpPassword);
 
         //Compare before and after file
         if (!Arrays.equals(fileContents, retrievedFileContents)) {
@@ -102,14 +114,14 @@ public class TestHTTPTransport extends TestCase {
     public void testDelete() throws Exception {
         
         //Upload the file
-        transport.put("http://www.17od.com/upload/upload.php", fileToUpload);
+        transport.put("http://www.17od.com/upload/upload.php", fileToUpload, httpUsername, httpPassword);
 
         //Delete the file
-        transport.delete("http://www.17od.com/upload/deletefile.php", fileToUpload.getName());
+        transport.delete("http://www.17od.com/upload/deletefile.php", fileToUpload.getName(), httpUsername, httpPassword);
 
         try {
             //Now try to get the file back
-            transport.get("http://www.17od.com/upload/" + fileToUpload.getName());
+            transport.get("http://www.17od.com/upload/" + fileToUpload.getName(), httpUsername, httpPassword);
 
             //Should have got an error here
             fail("Should have got an error when uploading an existing file");

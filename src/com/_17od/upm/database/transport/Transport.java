@@ -31,10 +31,10 @@ import java.io.File;
  */
 public interface Transport {
 
-    public void put(String targetLocation, File file) throws TransportException;
+    public void put(String targetLocation, File file, byte[] username, byte[] password) throws TransportException;
     
-    public byte[] get(String url) throws TransportException;
+    public byte[] get(String url, byte[] username, byte[] password) throws TransportException;
     
-    public void delete(String targetLocation, String name) throws TransportException;
+    public void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException;
     
 }

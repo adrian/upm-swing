@@ -42,9 +42,9 @@ public class Preferences {
     public class ApplicationOptions {
         public static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
 
-        public static final String PROXY_HOST="http.proxy.host";
-        public static final String PROXY_PORT="http.proxy.port";
-        public static final String UPLOAD_URL="http.upload.url";
+        public static final String HTTP_PROXY_HOST="http.proxy.host";
+        public static final String HTTP_PROXY_PORT="http.proxy.port";
+        public static final String HTTP_UPLOAD_URL="http.upload.url";
     }
 
     public class DatabaseOptions {
