@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,8 +49,9 @@ public class Preferences {
     public class DatabaseOptions {
     }
 
-    
-    private static final String PREF_FILE = System.getProperty("user.dir") + "\\upm.properties";
+
+    private static final String PREF_FILE = System.getProperty("user.home") + "\\upm.properties";
+    private static final String PREF_FILE_SYS_PROP = "upm.properties";
     private static Properties preferences; 
 
 
@@ -73,13 +73,22 @@ public class Preferences {
 
     
     public static void load() throws FileNotFoundException, IOException {
-        if (log.isInfoEnabled()) {
-            log.info("Loading the properties file [" + PREF_FILE + "]");
+
+        //Check for the system property PREF_FILE_SYS_PROP. If supplied it will give the name
+        //of the properties file to use. If it's not given then use the properties file in the
+        //user's home directory (which may or may not exist)
+        String propertiesFile = System.getProperty(PREF_FILE_SYS_PROP);
+        if (propertiesFile == null || propertiesFile.trim().equals("")) {
+            propertiesFile = PREF_FILE;
         }
-        preferences = new Properties();
-        
+
+        //Attempt to load the properties
         try {
-            preferences.load(new FileInputStream(PREF_FILE));
+            if (log.isInfoEnabled()) {
+                log.info("Loading the properties file [" + propertiesFile + "]");
+            }
+            preferences = new Properties();
+            preferences.load(new FileInputStream(propertiesFile));
         } catch (FileNotFoundException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Property file not found. Will be created the next time the properties are saved.");

@@ -93,6 +93,8 @@
         <copy todir="${build}\com\_17od\upm\util\images">
             <fileset dir="images" includes="*.gif"/>
         </copy>
+
+        <copy file="${src}\simplelog.properties" todir="${build}"/>
         
         <!-- Compile platform specific code -->
         <antcall target="compile.macosx"/>
@@ -192,9 +194,10 @@
     <target name="test" depends="compile">
         <!-- I had to put the junit.jar file into my ANT_HOME\lib in order for
              the junit task to work -->
-        <junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on">
+        <junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on" fork="yes">
             <classpath refid="project.class.path"/>
             <jvmarg value="-Djunit.properties=${basedir}\build.properties"/>
+            <jvmarg value="-Dupm.properties=${basedir}\upm.properties"/>
             <formatter type="plain"/>
             <batchtest>
                 <fileset dir="${test.build}">
