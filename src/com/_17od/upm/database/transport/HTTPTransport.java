@@ -48,8 +48,12 @@ public class HTTPTransport implements Transport {
 
         //Get the proxy settings
         String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
-        if (proxyHost != null) {
-            int proxyPort = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT));
+        if (proxyHost != null && !proxyHost.trim().equals("")) {
+            String proxyPortStr = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
+            int proxyPort = 0;
+            if (proxyPortStr != null && !proxyPortStr.trim().equals("")) {
+                proxyPort = Integer.parseInt(proxyPortStr);
+            }
             client.getHostConfiguration().setProxy(proxyHost, proxyPort);
         }
 

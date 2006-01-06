@@ -194,6 +194,7 @@
              the junit task to work -->
         <junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on">
             <classpath refid="project.class.path"/>
+            <jvmarg value="-Djunit.properties=${basedir}\build.properties"/>
             <formatter type="plain"/>
             <batchtest>
                 <fileset dir="${test.build}">
