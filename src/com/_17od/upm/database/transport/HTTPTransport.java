@@ -76,7 +76,7 @@ public class HTTPTransport implements Transport {
             );
 
             //Set the authentication details
-            if (username != null) {
+            if (username.length > 0) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
                 URL url = new URL(targetLocation);
                 AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
@@ -85,6 +85,13 @@ public class HTTPTransport implements Transport {
             }
 
             int status = client.executeMethod(post);
+            
+            // I've noticed on Windows (at least) that PHP seems to fail when moving files on the first attempt
+            // The second attempt works so lets just do that
+            if (status == HttpStatus.SC_OK && post.getResponseBodyAsString().equals("FILE_WASNT_MOVED")) {
+            	status = client.executeMethod(post);            	
+            }
+
             if (status != HttpStatus.SC_OK || !post.getResponseBodyAsString().equals("OK") ) {
                 throw new TransportException("There's been some kind of problem uploading a file to the HTTP server. The return code returned was [" + post.getResponseBodyAsString() + "]");
             }
@@ -109,7 +116,7 @@ public class HTTPTransport implements Transport {
         try {
 
             //Set the authentication details
-            if (username != null) {
+            if (username.length > 0) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
                 URL urlObj = new URL(url);
                 AuthScope authScope = new AuthScope(urlObj.getHost(), urlObj.getPort());
@@ -144,8 +151,9 @@ public class HTTPTransport implements Transport {
         //This part is wrapped in a try/finally so that we can ensure
         //the connection to the HTTP server is always closed cleanly 
         try {
+
             //Set the authentication details
-            if (username != null) {
+            if (username.length > 0) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
                 URL url = new URL(targetLocation);
                 AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
@@ -157,6 +165,7 @@ public class HTTPTransport implements Transport {
             if (status != HttpStatus.SC_OK || !post.getResponseBodyAsString().equals("OK") ) {
                 throw new TransportException("There's been some kind of problem deleting a file to the HTTP server. The return code returned was [" + post.getResponseBodyAsString() + "]");
             }
+
         } catch (Exception e) {
             throw new TransportException(e);
         } finally {
