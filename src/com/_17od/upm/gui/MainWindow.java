@@ -87,6 +87,7 @@ public class MainWindow extends JFrame {
     public static final String OPTIONS_TXT = "Options";
     public static final String ABOUT_TXT = "About";
     public static final String RESET_SEARCH_TXT = "Reset Search";
+    public static final String DOWNLOAD_DB = "Download Latest Database";
 
     private JButton addAccountButton;
     private JButton editAccountButton;

@@ -113,6 +113,11 @@ public abstract class FlatPackObject {
 	}
 	
 	
+	public int getInt(InputStream is) throws IOException, ProblemReadingDatabaseFile {
+		return Integer.parseInt(getString(is));
+	}
+
+	
 	public String getString(InputStream is) throws IOException, ProblemReadingDatabaseFile {
 		return new String(getBytes(is));
 	}

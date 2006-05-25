@@ -29,9 +29,9 @@ import java.io.OutputStream;
 
 public class DatabaseHeader extends FlatPackObject {
 
-	private String majorVersion;
-	private String minorVersion;
-	private String patchVersion;
+	private int majorVersion;
+	private int minorVersion;
+	private int patchVersion;
 	
 	
 	public DatabaseHeader(InputStream is) throws IOException, ProblemReadingDatabaseFile {
@@ -39,7 +39,7 @@ public class DatabaseHeader extends FlatPackObject {
 	}
 	
 	
-	public DatabaseHeader(String majorVersion, String minorVersion, String patchVersion) {
+	public DatabaseHeader(int majorVersion, int minorVersion, int patchVersion) {
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
 		this.patchVersion = patchVersion;
@@ -47,16 +47,16 @@ public class DatabaseHeader extends FlatPackObject {
 	
 	
 	public void flatPack(OutputStream os) throws IOException {
-		os.write(flatPack(majorVersion));
-		os.write(flatPack(minorVersion));
-		os.write(flatPack(patchVersion));
+		os.write(flatPack(String.valueOf(majorVersion)));
+		os.write(flatPack(String.valueOf(minorVersion)));
+		os.write(flatPack(String.valueOf(patchVersion)));
 	}
 
 	
 	private void assemble(InputStream is) throws IOException, ProblemReadingDatabaseFile {
-		majorVersion = getString(is);
-		minorVersion = getString(is);
-		patchVersion = getString(is);
+		majorVersion = getInt(is);
+		minorVersion = getInt(is);
+		patchVersion = getInt(is);
 	}	
 
 	public String getVersion() {
@@ -70,32 +70,32 @@ public class DatabaseHeader extends FlatPackObject {
 	}
 
 
-	public String getMajorVersion() {
+	public int getMajorVersion() {
 		return majorVersion;
 	}
 
 
-	public void setMajorVersion(String majorVersion) {
+	public void setMajorVersion(int majorVersion) {
 		this.majorVersion = majorVersion;
 	}
 
 
-	public String getMinorVersion() {
+	public int getMinorVersion() {
 		return minorVersion;
 	}
 
 
-	public void setMinorVersion(String minorVersion) {
+	public void setMinorVersion(int minorVersion) {
 		this.minorVersion = minorVersion;
 	}
 
 
-	public String getPatchVersion() {
+	public int getPatchVersion() {
 		return patchVersion;
 	}
 
 
-	public void setPatchVersion(String patchVersion) {
+	public void setPatchVersion(int patchVersion) {
 		this.patchVersion = patchVersion;
 	}
 

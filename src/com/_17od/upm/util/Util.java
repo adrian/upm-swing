@@ -46,8 +46,8 @@ public class Util {
 	}
 
     
-    public static ImageIcon loadImage(String name) { 
-        URL imageURL = Util.class.getResource("images/"+ name);
+    public static ImageIcon loadImage(String name) {
+        URL imageURL = Util.class.getResource("images/" + name);
         return new ImageIcon(imageURL);
     }
 

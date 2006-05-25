@@ -36,7 +36,7 @@ public class TestDatabaseHeader extends TestCase {
 	public void testFlatPack() throws IOException {
 		
 		//Create a new DatabaseHeader
-		DatabaseHeader dh = new DatabaseHeader("0", "1", "3");
+		DatabaseHeader dh = new DatabaseHeader(0, 1, 3);
 		
 		//Flat pack it
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -59,9 +59,9 @@ public class TestDatabaseHeader extends TestCase {
 		ByteArrayInputStream is = new ByteArrayInputStream(b);
 		DatabaseHeader dh = new DatabaseHeader(is);
 		
-		assertEquals("0", dh.getMajorVersion());
-		assertEquals("1", dh.getMinorVersion());
-		assertEquals("3", dh.getPatchVersion());
+		assertEquals(0, dh.getMajorVersion());
+		assertEquals(1, dh.getMinorVersion());
+		assertEquals(3, dh.getPatchVersion());
 	}
 	
 }

@@ -45,12 +45,13 @@ import com._17od.upm.crypto.InvalidPasswordException;
  */
 public class PasswordDatabase {
 
-	private static final String MAJOR_VERSION = "1"; 
-	private static final String MINOR_VERSION = "0"; 
-	private static final String PATCH_VERSION = "0";
+	private static final int MAJOR_VERSION = 1; 
+	private static final int MINOR_VERSION = 1; 
+	private static final int PATCH_VERSION = 0;
 
 	private File databaseFile;
 	private DatabaseHeader dh;
+	private Revision revision;
 	private HashMap accounts;
 	private EncryptionService encryptionService;
 
@@ -67,6 +68,7 @@ public class PasswordDatabase {
 			databaseFile.delete();
 			databaseFile.createNewFile();
 			dh = new DatabaseHeader(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
+			revision = new Revision();
 			accounts = new HashMap();
 			encryptionService = new EncryptionService(password);
 		} else {
@@ -104,7 +106,7 @@ public class PasswordDatabase {
 		byte[] encryptedBytes = new byte[encryptedBytesLength]; 
 		System.arraycopy(saltAndKeyBytes, EncryptionService.SALT_LENGTH, encryptedBytes, 0, encryptedBytesLength);
 
-		//Attempt to dencrypt the database information
+		//Attempt to decrypt the database information
 		encryptionService = new EncryptionService(password, salt);
 		byte[] decryptedBytes = encryptionService.decrypt(encryptedBytes);
 		
@@ -112,6 +114,16 @@ public class PasswordDatabase {
 		ByteArrayInputStream is = new ByteArrayInputStream(decryptedBytes);
 		dh = new DatabaseHeader(is);
 		accounts = new HashMap();
+		
+		// At this point we'll check to see what version the database is and load it accordingly
+		if (dh.getVersion().equals("1.1.0")) {
+			// Version 1.1.0 introduced a revision number so read that in now
+			revision = new Revision(is);
+		} else {
+			revision = new Revision();
+		}
+
+		// Read the remainder of the database in now
 		try {
 			while (true) { //keep loading accounts until an EOFException is thrown
 				AccountInformation ai = new AccountInformation(is);
@@ -143,8 +155,13 @@ public class PasswordDatabase {
 	public void save() throws IOException, IllegalBlockSizeException, BadPaddingException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-		//Build up a byte array of all the data to be encrypted
+		// Flatpack the header and revision
+		dh = new DatabaseHeader(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
 		dh.flatPack(os);
+		revision.increment();
+		revision.flatPack(os);
+		
+		// Flatpack the accounts
 		Iterator it = accounts.values().iterator();
 		while (it.hasNext()) {
 			AccountInformation ai = (AccountInformation) it.next();

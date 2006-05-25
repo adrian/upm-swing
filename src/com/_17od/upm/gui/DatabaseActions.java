@@ -73,6 +73,8 @@ public class DatabaseActions implements ActionListener {
                 resetSearch();
             } else if (event.getActionCommand() == MainWindow.CHANGE_MASTER_PASSWORD_TXT) {
                 changeMasterPassword();
+            } else if (event.getActionCommand() == MainWindow.DOWNLOAD_DB) {
+                downLoadDB();
             }
         } catch (Exception e) {
             errorHandler(e);
@@ -442,6 +444,16 @@ public class DatabaseActions implements ActionListener {
     
     public void resetSearch() {
         mainWindow.getSearchField().setText("");
+    }
+    
+    
+    /**
+     * Download the database from the share location
+     * Before making the downloaded database the new master, a check is done to
+     * ensure it is indeed a newer version   
+     */
+    private void downLoadDB() {
+    	
     }
     
 }
