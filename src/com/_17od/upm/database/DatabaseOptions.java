@@ -26,37 +26,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class Revision extends FlatPackObject {
+public class DatabaseOptions extends FlatPackObject {
 
-	private int revision;
-	
-	
-	public Revision() {
-		revision = 0;
-	}
-	
-	
-	public int increment() {
-		return ++revision;
-	}
-	
-	public Revision(InputStream is) throws IOException, ProblemReadingDatabaseFile {
-		revision = getInt(is);
-	}
+	private String remoteLocation;
 
+	
+	public DatabaseOptions() {
+		remoteLocation = "";
+	}
+	
+	
+	public DatabaseOptions(InputStream is) throws IOException, ProblemReadingDatabaseFile {
+		remoteLocation = getString(is);
+	}
+	
+	public void setRemoteLocation(String remoteLocation) {
+		this.remoteLocation = remoteLocation;
+	}
+	
+	
+	public String getRemoteLocation() {
+		return remoteLocation;
+	}
+	
 	
 	public void flatPack(OutputStream os) throws IOException {
-		os.write(flatPack(String.valueOf(revision)));
-	}
-
-	
-	public int getRevision() {
-		return revision;
-	}
-	
-	
-	public void setRevision(int revision) {
-		this.revision = revision;
+		os.write(flatPack(remoteLocation));
 	}
 
 }

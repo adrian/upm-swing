@@ -46,12 +46,13 @@ import com._17od.upm.crypto.InvalidPasswordException;
 public class PasswordDatabase {
 
 	private static final int MAJOR_VERSION = 1; 
-	private static final int MINOR_VERSION = 1; 
+	private static final int MINOR_VERSION = 2; 
 	private static final int PATCH_VERSION = 0;
 
 	private File databaseFile;
 	private DatabaseHeader dh;
 	private Revision revision;
+	private DatabaseOptions dbOptions;
 	private HashMap accounts;
 	private EncryptionService encryptionService;
 
@@ -69,6 +70,7 @@ public class PasswordDatabase {
 			databaseFile.createNewFile();
 			dh = new DatabaseHeader(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
 			revision = new Revision();
+			dbOptions = new DatabaseOptions();
 			accounts = new HashMap();
 			encryptionService = new EncryptionService(password);
 		} else {
@@ -119,8 +121,16 @@ public class PasswordDatabase {
 		if (dh.getVersion().equals("1.1.0")) {
 			// Version 1.1.0 introduced a revision number so read that in now
 			revision = new Revision(is);
-		} else {
+			dbOptions = new DatabaseOptions();
+		} else if (dh.getVersion().equals("1.2.0")) {
+			// Version 1.2.0 introduced database options
+			revision = new Revision(is);
+			dbOptions = new DatabaseOptions(is);
+		} else if (dh.getVersion().equals("1.0.0")) {
 			revision = new Revision();
+			dbOptions = new DatabaseOptions();
+		} else {
+			throw new ProblemReadingDatabaseFile("Don't know what to do with this database version [" + dh.getVersion() + "]");
 		}
 
 		// Read the remainder of the database in now
@@ -160,6 +170,7 @@ public class PasswordDatabase {
 		dh.flatPack(os);
 		revision.increment();
 		revision.flatPack(os);
+		dbOptions.flatPack(os);
 		
 		// Flatpack the accounts
 		Iterator it = accounts.values().iterator();
