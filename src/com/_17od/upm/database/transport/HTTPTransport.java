@@ -23,6 +23,8 @@
 package com._17od.upm.database.transport;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
@@ -37,7 +39,7 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import com._17od.upm.util.Preferences;
 
 
-public class HTTPTransport implements Transport {
+public class HTTPTransport extends Transport {
 
     private HttpClient client;
 
@@ -139,6 +141,18 @@ public class HTTPTransport implements Transport {
         }
 
         return retVal;
+
+    }
+
+    
+    public File getRemoteFile(String remoteLocation, String httpUsername, String httpPassword) throws TransportException, IOException {
+    	byte[] remoteFile = get(remoteLocation, httpUsername.getBytes(), httpPassword.getBytes());
+    	File downloadedFile = File.createTempFile("upm", null);
+    	FileOutputStream fos = new FileOutputStream(downloadedFile);
+    	fos.write(remoteFile);
+    	fos.close();
+    	
+    	return downloadedFile;
 
     }
 

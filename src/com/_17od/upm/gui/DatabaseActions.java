@@ -39,9 +39,11 @@ import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
+import com._17od.upm.database.transport.Transport;
+import com._17od.upm.database.transport.TransportException;
 
 
-public class DatabaseActions implements ActionListener {
+public class DatabaseActions {
 
     private MainWindow mainWindow;
     private PasswordDatabase database;
@@ -53,35 +55,6 @@ public class DatabaseActions implements ActionListener {
     }
 
 	
-    public void actionPerformed(ActionEvent event) {
-        try {
-            if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
-                newDatabase();
-            } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_TXT) {
-                openDatabase();
-            } else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
-                addAccount();
-            } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
-                editAccount();
-            } else if (event.getActionCommand() == MainWindow.DELETE_ACCOUNT_TXT) {
-                deleteAccount();
-            } else if (event.getActionCommand() == MainWindow.OPTIONS_TXT) {
-                options();
-            } else if (event.getActionCommand() == MainWindow.ABOUT_TXT) {
-                showAbout();
-            } else if (event.getActionCommand() == MainWindow.RESET_SEARCH_TXT) {
-                resetSearch();
-            } else if (event.getActionCommand() == MainWindow.CHANGE_MASTER_PASSWORD_TXT) {
-                changeMasterPassword();
-            } else if (event.getActionCommand() == MainWindow.DOWNLOAD_DB) {
-                downLoadDB();
-            }
-        } catch (Exception e) {
-            errorHandler(e);
-        }
-    }
-
-
     /**
      * This method asks the user for the name of a new database and then creates
      * it. If the file already exists then the user is asked if they'd like to
@@ -93,7 +66,7 @@ public class DatabaseActions implements ActionListener {
      * @throws InvalidPasswordException
      * @throws IllegalBlockSizeException
      */
-    private void newDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
+    public void newDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
     
         File newDatabaseFile;
         boolean gotValidFile = false;
@@ -156,7 +129,7 @@ public class DatabaseActions implements ActionListener {
     }
 
 
-    private void changeMasterPassword() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+    public void changeMasterPassword() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
 
     	//The first task is to get the current master password
         boolean passwordCorrect = false;
@@ -237,6 +210,7 @@ public class DatabaseActions implements ActionListener {
         mainWindow.getSearchIcon().setEnabled(true);
         mainWindow.getResetSearchButton().setEnabled(true);
         mainWindow.getChangeMasterPasswordMenuItem().setEnabled(true);
+        mainWindow.getDatabasePropertiesMenuItem().setEnabled(true);
 
         accountNames = new ArrayList();
         ArrayList dbAccounts = database.getAccounts();
@@ -279,7 +253,7 @@ public class DatabaseActions implements ActionListener {
     }
     
     
-    private void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+    public void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Open Password Database...");
         int returnVal = fc.showOpenDialog(mainWindow);
@@ -339,7 +313,7 @@ public class DatabaseActions implements ActionListener {
     }
     
     
-    private void editAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
+    public void editAccount() throws IllegalBlockSizeException, BadPaddingException, IOException {
 
         AccountInformation accInfo = getSelectedAccount();
         String selectedAccName = (String) accInfo.getAccountName();
@@ -434,7 +408,7 @@ public class DatabaseActions implements ActionListener {
     }
 
     
-    private void showAbout() {
+    public void showAbout() {
         AboutDialog aboutDialog = new AboutDialog(mainWindow);
         aboutDialog.pack();
         aboutDialog.setLocationRelativeTo(mainWindow);
@@ -451,9 +425,41 @@ public class DatabaseActions implements ActionListener {
      * Download the database from the share location
      * Before making the downloaded database the new master, a check is done to
      * ensure it is indeed a newer version   
+     * @throws InvalidPasswordException 
+     * @throws ProblemReadingDatabaseFile 
+     * @throws GeneralSecurityException 
+     * @throws IOException 
+     * @throws IllegalBlockSizeException 
+     * @throws TransportException 
+     * @throws PasswordDatabaseException 
      */
-    private void downLoadDB() {
+    public void downLoadDB() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+
+    	// Get the remote database options
+    	String remoteLocation = database.getDbOptions().getRemoteLocation();
+    	String httpUsername = database.getDbOptions().getHttpUsername();
+    	String httpPassword = database.getDbOptions().getHttpPassword();
+
+    	// Download the database
+    	Transport transport = Transport.getTransportForURL(remoteLocation);
+    	File newDatabaseFile = transport.getRemoteFile(remoteLocation, httpUsername, httpPassword);
     	
+    	// Create a PasswordDatabase using the file just downloaded 
+    	PasswordDatabase downloadedDatabase = new PasswordDatabase(newDatabaseFile, database.getPassword());
+    	
+    	// If the downloaded database is newer than the existing one then replace the existing one
+    	if (downloadedDatabase.getRevision() > database.getRevision()) {
+    		DatabaseActionsHelper.replaceDatabase(database, downloadedDatabase);
+    		database = downloadedDatabase;
+    	} else {
+    		JOptionPane.showMessageDialog(mainWindow, "The current database is newer [" + database.getRevision() + "] than the downloaded database [" + downloadedDatabase.getRevision() + "]");
+    	}
+
+    }
+    
+    
+    public void showDatabaseProperties() {
+    	System.out.println("DB Properties");
     }
     
 }

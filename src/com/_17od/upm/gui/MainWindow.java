@@ -72,13 +72,14 @@ import com._17od.upm.util.Util;
 /**
  * This is the main application entry class
  */
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ActionListener {
 
     private static final String applicationName = "Universal Password Manager";
     
     public static final String NEW_DATABASE_TXT = "New Database";
     public static final String OPEN_DATABASE_TXT = "Open Database";
     public static final String CHANGE_MASTER_PASSWORD_TXT = "Change Password";
+    public static final String DATABASE_PROPERTIES_TXT = "Database Properties";
     public static final String ADD_ACCOUNT_TXT = "Add Account";
     public static final String EDIT_ACCOUNT_TXT = "Edit Account";
     public static final String DELETE_ACCOUNT_TXT = "Delete Account";
@@ -103,6 +104,7 @@ public class MainWindow extends JFrame {
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
     private JMenuItem changeMasterPasswordMenuItem;
+    private JMenuItem databasePropertiesMenuItem;
     private JMenuItem exitMenuItem;
     private JMenu helpMenu;
     private JMenuItem aboutMenuItem;
@@ -278,7 +280,7 @@ public class MainWindow extends JFrame {
         resetSearchButton.setEnabled(false);
         resetSearchButton.setToolTipText(RESET_SEARCH_TXT);
         resetSearchButton.setActionCommand(RESET_SEARCH_TXT);
-        resetSearchButton.addActionListener(dbActions);
+        resetSearchButton.addActionListener(this);
         resetSearchButton.setBorder(BorderFactory.createEmptyBorder());
         resetSearchButton.setFocusable(false);
         c.gridx = 2;
@@ -350,7 +352,7 @@ public class MainWindow extends JFrame {
         addAccountButton.setToolTipText(ADD_ACCOUNT_TXT);
         addAccountButton.setIcon(Util.loadImage("add_account.gif"));
         addAccountButton.setDisabledIcon(Util.loadImage("add_account_d.gif"));;
-        addAccountButton.addActionListener(dbActions);
+        addAccountButton.addActionListener(this);
         addAccountButton.setEnabled(false);
         addAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
         toolbar.add(addAccountButton);
@@ -360,7 +362,7 @@ public class MainWindow extends JFrame {
         editAccountButton.setToolTipText(EDIT_ACCOUNT_TXT);
         editAccountButton.setIcon(Util.loadImage("edit_account.gif"));
         editAccountButton.setDisabledIcon(Util.loadImage("edit_account_d.gif"));;
-        editAccountButton.addActionListener(dbActions);
+        editAccountButton.addActionListener(this);
         editAccountButton.setEnabled(false);
         editAccountButton.setActionCommand(EDIT_ACCOUNT_TXT);
         toolbar.add(editAccountButton);
@@ -370,7 +372,7 @@ public class MainWindow extends JFrame {
         deleteAccountButton.setToolTipText(DELETE_ACCOUNT_TXT);
         deleteAccountButton.setIcon(Util.loadImage("delete_account.gif"));
         deleteAccountButton.setDisabledIcon(Util.loadImage("delete_account_d.gif"));;
-        deleteAccountButton.addActionListener(dbActions);
+        deleteAccountButton.addActionListener(this);
         deleteAccountButton.setEnabled(false);
         deleteAccountButton.setActionCommand(DELETE_ACCOUNT_TXT);
         toolbar.add(deleteAccountButton);
@@ -410,7 +412,7 @@ public class MainWindow extends JFrame {
         optionsButton.setToolTipText(OPTIONS_TXT);
         optionsButton.setIcon(Util.loadImage("options.gif"));
         optionsButton.setDisabledIcon(Util.loadImage("options_d.gif"));;
-        optionsButton.addActionListener(dbActions);
+        optionsButton.addActionListener(this);
         optionsButton.setEnabled(true);
         optionsButton.setActionCommand(OPTIONS_TXT);
         toolbar.add(optionsButton);
@@ -431,20 +433,28 @@ public class MainWindow extends JFrame {
         newDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(newDatabaseMenuItem);
-        newDatabaseMenuItem.addActionListener(dbActions);
+        newDatabaseMenuItem.addActionListener(this);
  
         openDatabaseMenuItem = new JMenuItem(OPEN_DATABASE_TXT, KeyEvent.VK_O);
         openDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(openDatabaseMenuItem);
-        openDatabaseMenuItem.addActionListener(dbActions);
+        openDatabaseMenuItem.addActionListener(this);
 
         changeMasterPasswordMenuItem = new JMenuItem(CHANGE_MASTER_PASSWORD_TXT, KeyEvent.VK_G);
         changeMasterPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(changeMasterPasswordMenuItem);
-        changeMasterPasswordMenuItem.addActionListener(dbActions);
+        changeMasterPasswordMenuItem.addActionListener(this);
         changeMasterPasswordMenuItem.setEnabled(false);
+
+
+        databasePropertiesMenuItem = new JMenuItem(DATABASE_PROPERTIES_TXT, KeyEvent.VK_I);
+        databasePropertiesMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        databaseMenu.add(databasePropertiesMenuItem);
+        databasePropertiesMenuItem.addActionListener(this);
+        databasePropertiesMenuItem.setEnabled(false);
 
         accountMenu = new JMenu("Account");
         accountMenu.setMnemonic(KeyEvent.VK_A);
@@ -454,21 +464,21 @@ public class MainWindow extends JFrame {
         addAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(addAccountMenuItem);
-        addAccountMenuItem.addActionListener(dbActions);
+        addAccountMenuItem.addActionListener(this);
         addAccountMenuItem.setEnabled(false);
         
         editAccountMenuItem = new JMenuItem(EDIT_ACCOUNT_TXT, KeyEvent.VK_E);
         editAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(editAccountMenuItem);
-        editAccountMenuItem.addActionListener(dbActions);
+        editAccountMenuItem.addActionListener(this);
         editAccountMenuItem.setEnabled(false);
 
         deleteAccountMenuItem = new JMenuItem(DELETE_ACCOUNT_TXT, KeyEvent.VK_D);
         deleteAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(deleteAccountMenuItem);
-        deleteAccountMenuItem.addActionListener(dbActions);
+        deleteAccountMenuItem.addActionListener(this);
         deleteAccountMenuItem.setEnabled(false);
         
         copyUsernameMenuItem = new JMenuItem(COPY_USERNAME_TXT, KeyEvent.VK_U);
@@ -504,7 +514,7 @@ public class MainWindow extends JFrame {
         });
 
         aboutMenuItem = new JMenuItem(ABOUT_TXT, KeyEvent.VK_A);
-        aboutMenuItem.addActionListener(dbActions);
+        aboutMenuItem.addActionListener(this);
 
         //Because the MAC version of UPM will have a program item in the menu bar then these items
         //only need to be added on non-mac platforms
@@ -634,6 +644,39 @@ public class MainWindow extends JFrame {
 
     public JMenuItem getChangeMasterPasswordMenuItem() {
         return changeMasterPasswordMenuItem;
+    }
+
+    public JMenuItem getDatabasePropertiesMenuItem() {
+        return databasePropertiesMenuItem;
+    }
+
+    
+    public void actionPerformed(ActionEvent event) {
+        try {
+            if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
+                dbActions.newDatabase();
+            } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_TXT) {
+                dbActions.openDatabase();
+            } else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
+                dbActions.addAccount();
+            } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
+                dbActions.editAccount();
+            } else if (event.getActionCommand() == MainWindow.DELETE_ACCOUNT_TXT) {
+                dbActions.deleteAccount();
+            } else if (event.getActionCommand() == MainWindow.OPTIONS_TXT) {
+                dbActions.options();
+            } else if (event.getActionCommand() == MainWindow.ABOUT_TXT) {
+                dbActions.showAbout();
+            } else if (event.getActionCommand() == MainWindow.RESET_SEARCH_TXT) {
+                dbActions.resetSearch();
+            } else if (event.getActionCommand() == MainWindow.CHANGE_MASTER_PASSWORD_TXT) {
+                dbActions.changeMasterPassword();
+            } else if (event.getActionCommand() == MainWindow.DATABASE_PROPERTIES_TXT) {
+                dbActions.showDatabaseProperties();
+            }
+        } catch (Exception e) {
+            dbActions.errorHandler(e);
+        }
     }
 
 }

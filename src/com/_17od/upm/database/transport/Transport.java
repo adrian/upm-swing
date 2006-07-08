@@ -23,18 +23,25 @@
 package com._17od.upm.database.transport;
 
 import java.io.File;
+import java.io.IOException;
 
 
 /**
  * This interface allows the PasswordDatabase to communicate with a remote location
  * without having to know what the underlying transport or remote filesystem is
  */
-public interface Transport {
+public abstract class Transport {
 
-    public void put(String targetLocation, File file, byte[] username, byte[] password) throws TransportException;
+    public abstract void put(String targetLocation, File file, byte[] username, byte[] password) throws TransportException;
     
-    public byte[] get(String url, byte[] username, byte[] password) throws TransportException;
+    public abstract byte[] get(String url, byte[] username, byte[] password) throws TransportException;
     
-    public void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException;
+    public abstract void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException;
     
+    public abstract File getRemoteFile(String remoteLocation, String httpUsername, String httpPassword) throws TransportException, IOException;
+    
+    public static Transport getTransportForURL(String url) {
+    	return new HTTPTransport();
+    }
+
 }

@@ -199,7 +199,12 @@
             <jvmarg value="-Djunit.properties=${basedir}\build.properties"/>
             <jvmarg value="-Dupm.properties=${basedir}\upm.properties"/>
             <formatter type="plain"/>
-            <batchtest>
+            <batchtest if="test">
+                <fileset dir="${test.build}">
+                    <include name="**\${test}.class"/>
+                </fileset>
+            </batchtest>
+            <batchtest unless="test">
                 <fileset dir="${test.build}">
                     <include name="**\*.class"/>
                 </fileset>

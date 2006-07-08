@@ -46,7 +46,7 @@ import com._17od.upm.crypto.InvalidPasswordException;
 public class PasswordDatabase {
 
 	private static final int MAJOR_VERSION = 1; 
-	private static final int MINOR_VERSION = 2; 
+	private static final int MINOR_VERSION = 1; 
 	private static final int PATCH_VERSION = 0;
 
 	private File databaseFile;
@@ -55,6 +55,7 @@ public class PasswordDatabase {
 	private DatabaseOptions dbOptions;
 	private HashMap accounts;
 	private EncryptionService encryptionService;
+	private char[] password;
 
 	
 	public PasswordDatabase(File dbFile, char[] password) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
@@ -113,17 +114,13 @@ public class PasswordDatabase {
 		byte[] decryptedBytes = encryptionService.decrypt(encryptedBytes);
 		
 		//We'll get to here if the password was correct so load up the decryped byte
+		this.password = password;
 		ByteArrayInputStream is = new ByteArrayInputStream(decryptedBytes);
 		dh = new DatabaseHeader(is);
-		accounts = new HashMap();
 		
 		// At this point we'll check to see what version the database is and load it accordingly
 		if (dh.getVersion().equals("1.1.0")) {
-			// Version 1.1.0 introduced a revision number so read that in now
-			revision = new Revision(is);
-			dbOptions = new DatabaseOptions();
-		} else if (dh.getVersion().equals("1.2.0")) {
-			// Version 1.2.0 introduced database options
+			// Version 1.1.0 introduced a revision number & database options so read that in now
 			revision = new Revision(is);
 			dbOptions = new DatabaseOptions(is);
 		} else if (dh.getVersion().equals("1.0.0")) {
@@ -134,6 +131,7 @@ public class PasswordDatabase {
 		}
 
 		// Read the remainder of the database in now
+		accounts = new HashMap();
 		try {
 			while (true) { //keep loading accounts until an EOFException is thrown
 				AccountInformation ai = new AccountInformation(is);
@@ -200,6 +198,26 @@ public class PasswordDatabase {
 	
 	public File getDatabaseFile() {
 		return databaseFile;
+	}
+
+
+	public DatabaseOptions getDbOptions() {
+		return dbOptions;
+	}
+
+
+	public int getRevision() {
+		return revision.getRevision();
+	}
+
+
+	public char[] getPassword() {
+		return password;
+	}
+
+
+	public void setPassword(char[] password) {
+		this.password = password;
 	}
 	
 }
