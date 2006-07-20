@@ -22,10 +22,9 @@
  */
 package com._17od.upm.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,8 +47,9 @@ public class DatabaseActions {
     private MainWindow mainWindow;
     private PasswordDatabase database;
     private ArrayList accountNames;
-    
-    	
+    private boolean latestVersionDownloaded = false;
+
+
     public DatabaseActions(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
     }
@@ -122,7 +122,7 @@ public class DatabaseActions {
         }
         
         database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());
-        database.save();
+        saveDatabase();
         accountNames = new ArrayList();
         doOpenDatabaseActions();
     
@@ -183,7 +183,7 @@ public class DatabaseActions {
 	        //If the user clicked OK and the passwords match then change the database password
 	        if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && passwordsMatch) {
 		        database.changePassword(masterPassword.getPassword());
-		        database.save();
+		        saveDatabase();
 	        }
 
         }
@@ -205,22 +205,33 @@ public class DatabaseActions {
         mainWindow.getAddAccountButton().setEnabled(true);
         mainWindow.getAddAccountMenuItem().setEnabled(true);
         mainWindow.getSearchField().setEnabled(true);
-        mainWindow.setTitle(MainWindow.getApplicationName() + " - " + database.getDatabaseFile());
         mainWindow.getSearchField().setText("");
         mainWindow.getSearchIcon().setEnabled(true);
         mainWindow.getResetSearchButton().setEnabled(true);
         mainWindow.getChangeMasterPasswordMenuItem().setEnabled(true);
         mainWindow.getDatabasePropertiesMenuItem().setEnabled(true);
+        mainWindow.getGetLatestDBVersionButton().setEnabled(true);
+        setTitle();
 
-        accountNames = new ArrayList();
+        accountNames = getAccountNames();
+        populateListview(accountNames);
+    }
+    
+    
+    private void setTitle() {
+        mainWindow.setTitle("DB Revision: " + database.getRevision() + " - " + MainWindow.getApplicationName() + " - " + database.getDatabaseFile());
+    }
+    
+    
+    public ArrayList getAccountNames() {
         ArrayList dbAccounts = database.getAccounts();
+        ArrayList accountNames = new ArrayList();
         for (int i=0; i<dbAccounts.size(); i++) {
             AccountInformation ai = (AccountInformation) dbAccounts.get(i);
             String accountName = (String) ai.getAccountName();
             accountNames.add(accountName);
         }
-
-        populateListview(accountNames);
+        return accountNames;
     }
     
     
@@ -277,7 +288,7 @@ public class DatabaseActions {
             int i = accountNames.indexOf(selectedAccName);
             accountNames.remove(i);
             database.deleteAccount(selectedAccName);
-            database.save();
+            saveDatabase();
             //[1375385] Call the filter method so that the listview is 
             //reinitialised with the remaining matching items
             filter();
@@ -298,7 +309,7 @@ public class DatabaseActions {
         if (accDialog.okClicked()) {
             database.deleteAccount(accInfo.getAccountName());
             database.addAccount(accInfo);
-            database.save();
+            saveDatabase();
             accountNames.add(accInfo.getAccountName());
             //[1375390] Ensure that the listview is properly filtered after an add
             filter();
@@ -328,7 +339,7 @@ public class DatabaseActions {
             accInfo = accDialog.getAccount();
             database.deleteAccount(selectedAccName);
             database.addAccount(accInfo);
-            database.save();
+            saveDatabase();
             //If the new account name is different to the old account name then update the
             //accountNames array and refilter the listview  
             if (!accInfo.getAccountName().equals(selectedAccName)) {
@@ -437,11 +448,12 @@ public class DatabaseActions {
 
     	// Get the remote database options
     	String remoteLocation = database.getDbOptions().getRemoteLocation();
-    	String httpUsername = database.getDbOptions().getHttpUsername();
-    	String httpPassword = database.getDbOptions().getHttpPassword();
+        String authDBEntry = database.getDbOptions().getAuthDBEntry();
+    	String httpUsername = new String(database.getAccount(authDBEntry).getUserId());
+    	String httpPassword = new String(database.getAccount(authDBEntry).getPassword());
 
     	// Download the database
-    	Transport transport = Transport.getTransportForURL(remoteLocation);
+    	Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
     	File newDatabaseFile = transport.getRemoteFile(remoteLocation, httpUsername, httpPassword);
     	
     	// Create a PasswordDatabase using the file just downloaded 
@@ -458,8 +470,27 @@ public class DatabaseActions {
     }
     
     
-    public void showDatabaseProperties() {
-    	System.out.println("DB Properties");
+    public void getLatestDatabaseVersion() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+        if (!database.getDbOptions().getRemoteLocation().equals("")) {
+            downLoadDB();
+        }
+    }
+    
+    
+    public void showDatabaseProperties() throws IllegalBlockSizeException, BadPaddingException, IOException {
+        DatabasePropertiesDialog dbPropsDialog = new DatabasePropertiesDialog(mainWindow, getAccountNames(), database);
+        dbPropsDialog.pack();
+        dbPropsDialog.setLocationRelativeTo(mainWindow);
+        dbPropsDialog.show();
+        if (dbPropsDialog.getDatabaseNeedsSaving()) {
+            saveDatabase();
+        }
+    }
+    
+    
+    private void saveDatabase() throws IllegalBlockSizeException, BadPaddingException, IOException {
+        database.save();
+        setTitle();
     }
     
 }

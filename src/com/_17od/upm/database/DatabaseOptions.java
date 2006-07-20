@@ -29,25 +29,25 @@ import java.io.OutputStream;
 public class DatabaseOptions extends FlatPackObject {
 
 	private String remoteLocation;
-	private String httpUsername;
-	private String httpPassword;
+	private String authDBEntry;
 
 	
 	public DatabaseOptions() {
 		remoteLocation = "";
-		httpUsername = "";
-		httpPassword = "";
+        authDBEntry = "";
 	}
 	
 	
 	public DatabaseOptions(InputStream is) throws IOException, ProblemReadingDatabaseFile {
 		remoteLocation = getString(is);
-		httpUsername = getString(is);
-		httpPassword = getString(is);
+        authDBEntry = getString(is);
 	}
 	
 	
 	public void setRemoteLocation(String remoteLocation) {
+        if (remoteLocation == null) {
+            remoteLocation = "";
+        }
 		this.remoteLocation = remoteLocation;
 	}
 	
@@ -59,28 +59,20 @@ public class DatabaseOptions extends FlatPackObject {
 	
 	public void flatPack(OutputStream os) throws IOException {
 		os.write(flatPack(remoteLocation));
-		os.write(flatPack(httpUsername));
-		os.write(flatPack(httpPassword));
+		os.write(flatPack(authDBEntry));
 	}
 
 
-	public String getHttpPassword() {
-		return httpPassword;
+	public String getAuthDBEntry() {
+		return authDBEntry;
 	}
 
 
-	public void setHttpPassword(String httpPassword) {
-		this.httpPassword = httpPassword;
-	}
-
-
-	public String getHttpUsername() {
-		return httpUsername;
-	}
-
-
-	public void setHttpUsername(String httpUsername) {
-		this.httpUsername = httpUsername;
+	public void setAuthDBEntry(String authDBEntry) {
+        if (authDBEntry == null) {
+            authDBEntry = "";
+        }
+		this.authDBEntry = authDBEntry;
 	}
 
 }

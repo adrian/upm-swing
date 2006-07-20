@@ -88,7 +88,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String OPTIONS_TXT = "Options";
     public static final String ABOUT_TXT = "About";
     public static final String RESET_SEARCH_TXT = "Reset Search";
-    public static final String DOWNLOAD_DB = "Download Latest Database";
+    public static final String GET_LATEST_DB_VERSION = "Get the latest database version";
 
     private JButton addAccountButton;
     private JButton editAccountButton;
@@ -96,6 +96,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JButton copyUsernameButton;
     private JButton copyPasswordButton;
     private JButton optionsButton;
+    private JButton getLatestDBVersionButton;
     private JTextField searchField;
     private JButton resetSearchButton;
     private JLabel searchIcon;
@@ -417,6 +418,18 @@ public class MainWindow extends JFrame implements ActionListener {
         optionsButton.setActionCommand(OPTIONS_TXT);
         toolbar.add(optionsButton);
 
+        toolbar.addSeparator();
+
+        // The "Get Latest Database Version" button
+        getLatestDBVersionButton = new JButton();
+        getLatestDBVersionButton.setToolTipText(GET_LATEST_DB_VERSION);
+        getLatestDBVersionButton.setIcon(Util.loadImage("options.gif"));
+        getLatestDBVersionButton.setDisabledIcon(Util.loadImage("options_d.gif"));;
+        getLatestDBVersionButton.addActionListener(this);
+        getLatestDBVersionButton.setEnabled(false);
+        getLatestDBVersionButton.setActionCommand(GET_LATEST_DB_VERSION);
+        toolbar.add(getLatestDBVersionButton);
+
         return toolbar;
     }
 
@@ -447,7 +460,6 @@ public class MainWindow extends JFrame implements ActionListener {
         databaseMenu.add(changeMasterPasswordMenuItem);
         changeMasterPasswordMenuItem.addActionListener(this);
         changeMasterPasswordMenuItem.setEnabled(false);
-
 
         databasePropertiesMenuItem = new JMenuItem(DATABASE_PROPERTIES_TXT, KeyEvent.VK_I);
         databasePropertiesMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
@@ -673,10 +685,17 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.changeMasterPassword();
             } else if (event.getActionCommand() == MainWindow.DATABASE_PROPERTIES_TXT) {
                 dbActions.showDatabaseProperties();
+            } else if (event.getActionCommand() == MainWindow.GET_LATEST_DB_VERSION) {
+                dbActions.getLatestDatabaseVersion();
             }
         } catch (Exception e) {
             dbActions.errorHandler(e);
         }
+    }
+
+
+    public JButton getGetLatestDBVersionButton() {
+        return getLatestDBVersionButton;
     }
 
 }

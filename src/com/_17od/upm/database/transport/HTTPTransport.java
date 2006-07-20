@@ -62,8 +62,15 @@ public class HTTPTransport extends Transport {
     }
 
 
+    public void put(String targetLocation, File file) throws TransportException {
+        put(targetLocation, file, null, null);
+    }
+    
+    
     public void put(String targetLocation, File file, byte[] username, byte[] password) throws TransportException {
 
+        targetLocation = addTrailingSlash(targetLocation) + "upload.php";
+        
         PostMethod post = new PostMethod(targetLocation);
 
         //This part is wrapped in a try/finally so that we can ensure
@@ -78,7 +85,7 @@ public class HTTPTransport extends Transport {
             );
 
             //Set the authentication details
-            if (username.length > 0) {
+            if (username != null) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
                 URL url = new URL(targetLocation);
                 AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
@@ -107,6 +114,11 @@ public class HTTPTransport extends Transport {
     }
 
 
+    public byte[] get(String url) throws TransportException {
+        return get(url, null, null);
+    }
+    
+    
     public byte[] get(String url, byte[] username, byte[] password) throws TransportException {
 
         byte[] retVal = null;
@@ -159,6 +171,8 @@ public class HTTPTransport extends Transport {
 
     public void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException {
 
+        targetLocation = addTrailingSlash(targetLocation) + "deletefile.php";
+
         PostMethod post = new PostMethod(targetLocation);
         post.addParameter("fileToDelete", name);
 
@@ -188,4 +202,11 @@ public class HTTPTransport extends Transport {
 
     }
 
+    
+    private String addTrailingSlash(String url) {
+        if (url.charAt(url.length() - 1) != '/') {
+            url = url + '/';
+        }
+        return url;
+    }
 }
