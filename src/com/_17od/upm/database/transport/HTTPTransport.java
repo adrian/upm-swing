@@ -165,7 +165,6 @@ public class HTTPTransport extends Transport {
     	fos.close();
     	
     	return downloadedFile;
-
     }
 
 
@@ -202,11 +201,4 @@ public class HTTPTransport extends Transport {
 
     }
 
-    
-    private String addTrailingSlash(String url) {
-        if (url.charAt(url.length() - 1) != '/') {
-            url = url + '/';
-        }
-        return url;
-    }
 }

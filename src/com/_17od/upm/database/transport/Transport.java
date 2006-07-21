@@ -43,7 +43,7 @@ public abstract class Transport {
 
     public abstract void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException;
     
-    public abstract File getRemoteFile(String remoteLocation, String httpUsername, String httpPassword) throws TransportException, IOException;
+    public abstract File getRemoteFile(String remoteLocation, String username, String password) throws TransportException, IOException;
     
     public static Transport getTransportForURL(URL url) {
         Transport retVal = null;
@@ -51,6 +51,13 @@ public abstract class Transport {
             retVal = new HTTPTransport();
         }
         return retVal;
+    }
+
+    public String addTrailingSlash(String url) {
+        if (url.charAt(url.length() - 1) != '/') {
+            url = url + '/';
+        }
+        return url;
     }
 
 }
