@@ -29,7 +29,7 @@ public class FileTransport extends Transport {
 
     
     public void put(String targetLocation, File file) throws TransportException {
-        put(null, null);
+        put(targetLocation, file, null, null);
     }
 
     
