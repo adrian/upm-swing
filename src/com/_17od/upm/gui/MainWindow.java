@@ -78,6 +78,7 @@ public class MainWindow extends JFrame implements ActionListener {
     
     public static final String NEW_DATABASE_TXT = "New Database";
     public static final String OPEN_DATABASE_TXT = "Open Database";
+    public static final String OPEN_DATABASE_FROM_URL_TXT = "Open Database From URL";
     public static final String CHANGE_MASTER_PASSWORD_TXT = "Change Password";
     public static final String DATABASE_PROPERTIES_TXT = "Database Properties";
     public static final String ADD_ACCOUNT_TXT = "Add Account";
@@ -104,6 +105,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenu databaseMenu;
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
+    private JMenuItem openDatabaseFromURLMenuItem;
     private JMenuItem changeMasterPasswordMenuItem;
     private JMenuItem databasePropertiesMenuItem;
     private JMenuItem exitMenuItem;
@@ -454,6 +456,12 @@ public class MainWindow extends JFrame implements ActionListener {
         databaseMenu.add(openDatabaseMenuItem);
         openDatabaseMenuItem.addActionListener(this);
 
+        openDatabaseFromURLMenuItem = new JMenuItem(OPEN_DATABASE_FROM_URL_TXT, KeyEvent.VK_L);
+        openDatabaseFromURLMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        databaseMenu.add(openDatabaseFromURLMenuItem);
+        openDatabaseFromURLMenuItem.addActionListener(this);
+        
         changeMasterPasswordMenuItem = new JMenuItem(CHANGE_MASTER_PASSWORD_TXT, KeyEvent.VK_G);
         changeMasterPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -669,6 +677,8 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.newDatabase();
             } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_TXT) {
                 dbActions.openDatabase();
+            } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_FROM_URL_TXT) {
+                dbActions.openDatabaseFromURL();
             } else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
                 dbActions.addAccount();
             } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
@@ -697,5 +707,6 @@ public class MainWindow extends JFrame implements ActionListener {
     public JButton getGetLatestDBVersionButton() {
         return getLatestDBVersionButton;
     }
+
 
 }

@@ -23,6 +23,7 @@
 package com._17od.upm.gui;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -40,6 +41,7 @@ import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.database.transport.Transport;
 import com._17od.upm.database.transport.TransportException;
+import com._17od.upm.util.Util;
 
 
 public class DatabaseActions {
@@ -68,30 +70,10 @@ public class DatabaseActions {
      */
     public void newDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
     
-        File newDatabaseFile;
-        boolean gotValidFile = false;
-        do {
-            JFileChooser fc = new JFileChooser();
-            fc.setDialogTitle("New Password Database...");
-            int returnVal = fc.showSaveDialog(mainWindow);
-        
-            if (returnVal != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-        
-            newDatabaseFile = fc.getSelectedFile();
-        
-            //Warn the user if the database file already exists
-            if (newDatabaseFile.exists()) {
-                int i = JOptionPane.showConfirmDialog(mainWindow, "The file " + newDatabaseFile.getAbsolutePath() + " already exists.\nDo you want to overwrite it?", "File Already Exists...", JOptionPane.YES_NO_OPTION);
-                if (i == JOptionPane.YES_OPTION) {
-                    gotValidFile = true;
-                }
-            } else {
-                gotValidFile = true;
-            }
-        
-        } while (!gotValidFile);
+        File newDatabaseFile = getSaveAsFile("New Password Database...");
+        if (newDatabaseFile == null) {
+            return;
+        }
         
         JPasswordField masterPassword;
         boolean passwordsMatch = false;
@@ -235,25 +217,65 @@ public class DatabaseActions {
     }
     
     
+    
+    /**
+     * Prompt the user to enter a password
+     * @return The password entered by the user or null of this hit escape/cancel
+     */
+    private char[] askUserForPassword() {
+        char[] password = null; 
+            
+        JPasswordField masterPassword = new JPasswordField("");
+        JOptionPane pane = new JOptionPane(new Object[] {"Please enter your master password", masterPassword }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
+        dialog.show();
+        
+        if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
+            password = masterPassword.getPassword();
+        }
+        
+        return password;
+    }
+    
+
     public void openDatabase(String databaseFilename) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+        openDatabase(databaseFilename, null);
+    }
+    
+    
+    public void openDatabase(String databaseFilename, char[] password) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
 
         boolean passwordCorrect = false;
         boolean okClicked = true;
         while (!passwordCorrect && okClicked) {
-            JPasswordField masterPassword = new JPasswordField("");
-            JOptionPane pane = new JOptionPane(new Object[] {"Please enter your master password", masterPassword }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-            JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
-            dialog.show();
+            // If we weren't given a password then ask the user to enter one
+            if (password == null) {
+                password = askUserForPassword();
+                /*JPasswordField masterPassword = new JPasswordField("");
+                JOptionPane pane = new JOptionPane(new Object[] {"Please enter your master password", masterPassword }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+                JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
+                dialog.show();
+                
+                if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
+                    password = masterPassword.getPassword();
+                    okClicked = true;
+                } else {
+                    okClicked = false;
+                }*/
+                if (password == null) {
+                    okClicked = false;
+                }
+            } else {
+                okClicked = true;
+            }
             
-            if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
+            if (okClicked) {
                 try {
-                    database = new PasswordDatabase(new File(databaseFilename), masterPassword.getPassword());
+                    database = new PasswordDatabase(new File(databaseFilename), password);
                     passwordCorrect = true;
                 } catch (InvalidPasswordException e) {
                     JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
                 }
-            } else {
-                okClicked = false;
             }
         }
         
@@ -444,7 +466,7 @@ public class DatabaseActions {
      * @throws TransportException 
      * @throws PasswordDatabaseException 
      */
-    public void downLoadDB() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+    private void downLoadDB() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
 
     	// Get the remote database options
     	String remoteLocation = database.getDbOptions().getRemoteLocation();
@@ -456,9 +478,10 @@ public class DatabaseActions {
     	Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
     	File newDatabaseFile = transport.getRemoteFile(remoteLocation, httpUsername, httpPassword);
     	
-    	// Create a PasswordDatabase using the file just downloaded 
-    	PasswordDatabase downloadedDatabase = new PasswordDatabase(newDatabaseFile, database.getPassword());
-    	
+        // Get the master password from the user 
+        char[] password = askUserForPassword();
+        PasswordDatabase downloadedDatabase = new PasswordDatabase(newDatabaseFile, password);
+        
     	// If the downloaded database is newer than the existing one then replace the existing one
     	if (downloadedDatabase.getRevision() > database.getRevision()) {
     		DatabaseActionsHelper.replaceDatabase(database, downloadedDatabase);
@@ -466,6 +489,9 @@ public class DatabaseActions {
     	} else {
     		JOptionPane.showMessageDialog(mainWindow, "The current database is newer [" + database.getRevision() + "] than the downloaded database [" + downloadedDatabase.getRevision() + "]");
     	}
+
+        // Now open the downloaded database 
+        openDatabase(newDatabaseFile.getAbsolutePath());
 
     }
     
@@ -488,9 +514,86 @@ public class DatabaseActions {
     }
     
     
+    public void openDatabaseFromURL() throws TransportException, IOException, IllegalBlockSizeException, GeneralSecurityException, ProblemReadingDatabaseFile {
+        
+        // Ask the user for the remote database location
+        OpenDatabaseFromURLDialog openDBDialog = new OpenDatabaseFromURLDialog(mainWindow);
+        openDBDialog.pack();
+        openDBDialog.setLocationRelativeTo(mainWindow);
+        openDBDialog.show();
+        
+        if (openDBDialog.getOkClicked()) {
+            // Get the remote database options
+            String remoteLocation = openDBDialog.getUrlTextField().getText();
+            String username = openDBDialog.getUsernameTextField().getText();
+            String password = openDBDialog.getPasswordTextField().getText();
+
+            // Ask the user for a location to save the database file to
+            File saveDatabaseTo = getSaveAsFile("Save Database as...");
+            
+            if (saveDatabaseTo != null) {
+                // Download the database
+                Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
+                File newDatabaseFile = transport.getRemoteFile(remoteLocation, username, password);
+
+                // Delete the file is it already exists
+                if (saveDatabaseTo.exists()) {
+                    saveDatabaseTo.delete();
+                }
+
+                // Save the downloaded database file to the new location
+                Util.copy(newDatabaseFile, saveDatabaseTo);
+                
+                // Now open the downloaded database 
+                openDatabase(newDatabaseFile.getAbsolutePath());
+                
+            }
+        }
+        
+    }
+
+    
+    /**
+     * This method prompts the user for the name of a file.
+     * If the file exists then it will ask if they want to overwrite (the file isn't overwritten though,
+     * that would be done by the calling method)
+     * @param title The string title to put on the dialog
+     * @return The file to save to or null
+     */
+    private File getSaveAsFile(String title) {
+        File newDatabaseFile;
+        
+        boolean gotValidFile = false;
+        do {
+            JFileChooser fc = new JFileChooser();
+            fc.setDialogTitle(title);
+            int returnVal = fc.showSaveDialog(mainWindow);
+        
+            if (returnVal != JFileChooser.APPROVE_OPTION) {
+                return null;
+            }
+        
+            newDatabaseFile = fc.getSelectedFile();
+        
+            //Warn the user if the database file already exists
+            if (newDatabaseFile.exists()) {
+                int i = JOptionPane.showConfirmDialog(mainWindow, "The file " + newDatabaseFile.getAbsolutePath() + " already exists.\nDo you want to overwrite it?", "File Already Exists...", JOptionPane.YES_NO_OPTION);
+                if (i == JOptionPane.YES_OPTION) {
+                    gotValidFile = true;
+                }
+            } else {
+                gotValidFile = true;
+            }
+        
+        } while (!gotValidFile);
+        
+        return newDatabaseFile;
+    }
+    
+    
     private void saveDatabase() throws IllegalBlockSizeException, BadPaddingException, IOException {
         database.save();
         setTitle();
     }
-    
+
 }
