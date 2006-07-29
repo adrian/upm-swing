@@ -10,12 +10,16 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 
 
 public class OpenDatabaseFromURLDialog extends EscapeDialog {
@@ -28,11 +32,24 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
     
     public OpenDatabaseFromURLDialog(final JFrame frame) {
         super(frame, "Open Database From URL", true);
-        
+
         Container container = getContentPane();
 
+        // Create a pane with an empty border for spacing
+        Border emptyBorder = BorderFactory.createEmptyBorder(2, 5, 5, 5);
+        JPanel emptyBorderPanel = new JPanel();
+        emptyBorderPanel.setLayout(new BoxLayout(emptyBorderPanel, BoxLayout.Y_AXIS));
+        emptyBorderPanel.setBorder(emptyBorder);
+        container.add(emptyBorderPanel);
+
+        // Create a pane with an title etched border
+        Border etchedBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+        Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, " Remote Location ");
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(etchedTitleBorder);
+        emptyBorderPanel.add(mainPanel);
+        
         GridBagConstraints c = new GridBagConstraints();
-        container.setLayout(new GridBagLayout());
 
         // The URL Label row
         JLabel urlLabel = new JLabel("URL");
@@ -44,7 +61,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(urlLabel, c);
+        mainPanel.add(urlLabel, c);
 
         // The Remote URL input field row
         urlTextField = new JTextField(20);
@@ -56,7 +73,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(urlTextField, c);
+        mainPanel.add(urlTextField, c);
 
         // The username label field
         JLabel usernameLabel = new JLabel("User Name");
@@ -68,7 +85,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(usernameLabel, c);
+        mainPanel.add(usernameLabel, c);
 
         // The username inpur field
         usernameTextField = new JTextField(10);
@@ -80,7 +97,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
-        container.add(usernameTextField, c);
+        mainPanel.add(usernameTextField, c);
 
         // The password label field
         JLabel passwordLabel = new JLabel("Password");
@@ -92,7 +109,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(passwordLabel, c);
+        mainPanel.add(passwordLabel, c);
 
         // The username inpur field
         passwordTextField = new JTextField(10);
@@ -104,13 +121,13 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
-        container.add(passwordTextField, c);
+        mainPanel.add(passwordTextField, c);
 
         // Some spacing
         Component verticalSpace = Box.createVerticalGlue();
         c.gridy = 6;
         c.weighty = 1;
-        container.add(verticalSpace, c);
+        mainPanel.add(verticalSpace, c);
 
         // The buttons row
         JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -119,6 +136,8 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 okClicked = true;
+                setVisible(false);
+                dispose();
             }
         });
         buttonPanel.add(okButton);
@@ -132,10 +151,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         });
         buttonPanel.add(cancelButton);
 
-        c.gridy = 7;
-        c.weighty = 1;
-        c.anchor = GridBagConstraints.CENTER;
-        container.add(buttonPanel, c);
+        emptyBorderPanel.add(buttonPanel);
 
     }
 

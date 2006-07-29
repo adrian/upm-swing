@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 
 
 public class FileTransport extends Transport {
@@ -33,12 +34,12 @@ public class FileTransport extends Transport {
     }
 
     
-    public byte[] get(String url, byte[] username, byte[] password) throws TransportException {
+    public byte[] get(String fileToGet, byte[] username, byte[] password) throws TransportException {
         
         byte[] retVal;
         
         try {
-            InputStream in = new FileInputStream(url);
+            InputStream in = new FileInputStream(fileToGet);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             
             // Read from the URL and write the bytes read to a ByteArrayOutputStream
@@ -67,27 +68,37 @@ public class FileTransport extends Transport {
     }
 
     
-    public void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException {
+    public void delete(String uploadArea, String name, byte[] username, byte[] password) throws TransportException {
         // Create a new file at the target location
-        targetLocation = addTrailingSlash(targetLocation);
-        File targetFile = new File(targetLocation + name);
+        uploadArea = addTrailingSlash(uploadArea);
+        File targetFile = new File(uploadArea + name);
         
         // Delete the file
         targetFile.delete();
     }
 
+
+    public void delete(String uploadArea, String name) throws TransportException {
+        delete(uploadArea, name, null, null);
+    }
     
-    public File getRemoteFile(String remoteLocation, String username, String password) throws TransportException, IOException {
-        byte[] remoteFile = get(remoteLocation, username.getBytes(), password.getBytes());
+    
+    public File getRemoteFile(String remoteFile, byte[] username, byte[] password) throws TransportException, IOException {
+        byte[] remoteFileBytes = get(remoteFile, username, password);
         File downloadedFile = File.createTempFile("upm", null);
         FileOutputStream fos = new FileOutputStream(downloadedFile);
-        fos.write(remoteFile);
+        fos.write(remoteFileBytes);
         fos.close();
         
         return downloadedFile;
     }
 
 
+    public File getRemoteFile(String remoteFile) throws TransportException, IOException {
+        return getRemoteFile(remoteFile, null, null);
+    }
+    
+    
     /**
      * Copy a src file to a destination file
      * @param src

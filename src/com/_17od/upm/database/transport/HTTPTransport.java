@@ -130,7 +130,7 @@ public class HTTPTransport extends Transport {
         try {
 
             //Set the authentication details
-            if (username.length > 0) {
+            if (username != null) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
                 URL urlObj = new URL(url);
                 AuthScope authScope = new AuthScope(urlObj.getHost(), urlObj.getPort());
@@ -157,8 +157,8 @@ public class HTTPTransport extends Transport {
     }
 
     
-    public File getRemoteFile(String remoteLocation, String httpUsername, String httpPassword) throws TransportException, IOException {
-    	byte[] remoteFile = get(remoteLocation, httpUsername.getBytes(), httpPassword.getBytes());
+    public File getRemoteFile(String remoteLocation, byte[] httpUsername, byte[] httpPassword) throws TransportException, IOException {
+    	byte[] remoteFile = get(remoteLocation, httpUsername, httpPassword);
     	File downloadedFile = File.createTempFile("upm", null);
     	FileOutputStream fos = new FileOutputStream(downloadedFile);
     	fos.write(remoteFile);
@@ -180,7 +180,7 @@ public class HTTPTransport extends Transport {
         try {
 
             //Set the authentication details
-            if (username.length > 0) {
+            if (username != null) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
                 URL url = new URL(targetLocation);
                 AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
@@ -199,6 +199,16 @@ public class HTTPTransport extends Transport {
             post.releaseConnection();
         }
 
+    }
+
+
+    public void delete(String targetLocation, String name) throws TransportException {
+        delete(targetLocation, name, null, null);
+    }
+
+
+    public File getRemoteFile(String remoteLocation) throws TransportException, IOException {
+        return getRemoteFile(remoteLocation, null, null);
     }
 
 }

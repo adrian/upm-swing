@@ -189,7 +189,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
             if (url != null) {
 
                 // Only allow supported protocols
-                if (url.getProtocol().equals("http")) {
+                if (Transport.isASupportedProtocol(url.getProtocol())) {
 
                     // If the remote location has changed then upload the database
                     if (!database.getDbOptions().getRemoteLocation().equals(remoteLocation)) {

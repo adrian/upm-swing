@@ -42,13 +42,19 @@ public abstract class Transport {
     public abstract byte[] get(String url) throws TransportException;
 
     public abstract void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException;
+
+    public abstract void delete(String targetLocation, String name) throws TransportException;
+
+    public abstract File getRemoteFile(String remoteLocation, byte[] username, byte[] password) throws TransportException, IOException;
     
-    public abstract File getRemoteFile(String remoteLocation, String username, String password) throws TransportException, IOException;
-    
+    public abstract File getRemoteFile(String remoteLocation) throws TransportException, IOException;
+
     public static Transport getTransportForURL(URL url) {
         Transport retVal = null;
         if (url.getProtocol().equals("http")) {
             retVal = new HTTPTransport();
+        } else if (url.getProtocol().equals("file")) {
+            retVal = new FileTransport();
         }
         return retVal;
     }
@@ -60,4 +66,14 @@ public abstract class Transport {
         return url;
     }
 
+    
+    public static boolean isASupportedProtocol(String protocol) {
+        boolean supported = false;
+        if (protocol.equals("http")) {
+            supported = true;
+        } else if (protocol.equals("file")) {
+            supported = true;
+        }
+        return supported;
+    }
 }

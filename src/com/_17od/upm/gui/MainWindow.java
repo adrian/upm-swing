@@ -79,6 +79,8 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String NEW_DATABASE_TXT = "New Database";
     public static final String OPEN_DATABASE_TXT = "Open Database";
     public static final String OPEN_DATABASE_FROM_URL_TXT = "Open Database From URL";
+    public static final String DOWNLOAD_DATABASE_TXT = "Download Database";
+    public static final String UPLOAD_DATABASE_TXT = "Upload Database";
     public static final String CHANGE_MASTER_PASSWORD_TXT = "Change Password";
     public static final String DATABASE_PROPERTIES_TXT = "Database Properties";
     public static final String ADD_ACCOUNT_TXT = "Add Account";
@@ -106,6 +108,8 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
     private JMenuItem openDatabaseFromURLMenuItem;
+    private JMenuItem downloadDatabaseMenuItem;
+    private JMenuItem uploadDatabaseMenuItem;
     private JMenuItem changeMasterPasswordMenuItem;
     private JMenuItem databasePropertiesMenuItem;
     private JMenuItem exitMenuItem;
@@ -461,6 +465,22 @@ public class MainWindow extends JFrame implements ActionListener {
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(openDatabaseFromURLMenuItem);
         openDatabaseFromURLMenuItem.addActionListener(this);
+
+        databaseMenu.addSeparator();
+
+        downloadDatabaseMenuItem = new JMenuItem(DOWNLOAD_DATABASE_TXT, KeyEvent.VK_S);
+        downloadDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        databaseMenu.add(downloadDatabaseMenuItem);
+        downloadDatabaseMenuItem.addActionListener(this);
+        downloadDatabaseMenuItem.setEnabled(false);
+        
+        uploadDatabaseMenuItem = new JMenuItem(UPLOAD_DATABASE_TXT, KeyEvent.VK_T);
+        uploadDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        databaseMenu.add(uploadDatabaseMenuItem);
+        uploadDatabaseMenuItem.addActionListener(this);
+        uploadDatabaseMenuItem.setEnabled(false);
         
         changeMasterPasswordMenuItem = new JMenuItem(CHANGE_MASTER_PASSWORD_TXT, KeyEvent.VK_G);
         changeMasterPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
@@ -679,6 +699,10 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.openDatabase();
             } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_FROM_URL_TXT) {
                 dbActions.openDatabaseFromURL();
+            } else if (event.getActionCommand() == MainWindow.DOWNLOAD_DATABASE_TXT) {
+                dbActions.downloadDatabase();
+            } else if (event.getActionCommand() == MainWindow.UPLOAD_DATABASE_TXT) {
+                dbActions.uploadDatabase();
             } else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
                 dbActions.addAccount();
             } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
@@ -708,5 +732,14 @@ public class MainWindow extends JFrame implements ActionListener {
         return getLatestDBVersionButton;
     }
 
+
+    public JMenuItem getDownloadDatabaseMenuItem() {
+        return downloadDatabaseMenuItem;
+    }
+
+    
+    public JMenuItem getUploadDatabaseMenuItem() {
+        return uploadDatabaseMenuItem;
+    }
 
 }
