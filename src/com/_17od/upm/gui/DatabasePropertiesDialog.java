@@ -148,6 +148,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                databaseNeedsSaving = false;
                 setVisible(false);
                 dispose();
             }
@@ -171,16 +172,16 @@ public class DatabasePropertiesDialog extends EscapeDialog {
     private void saveDatabaseOptions(JFrame parentFrame, String remoteLocation, String authEntry, PasswordDatabase database) {
 
         boolean canCloseWindow = false;
-        
+
         // If either the url or authentication entry to use has changes then flag that the database needs to be saved
         if (!database.getDbOptions().getRemoteLocation().equals(remoteLocation) ||
-                !database.getDbOptions().getAuthDBEntry().equals(database.getDbOptions())) {
+                !database.getDbOptions().getAuthDBEntry().equals(authEntry)) {
             databaseNeedsSaving = true;
         } else {
             // If the db doesn't need to be saved then we can close this window
             canCloseWindow = true;
         }
-    
+
         // If the url/remoteLocation is not empty then we need to validate the URL and upload the database
         if (!remoteLocation.equals("")) {
 

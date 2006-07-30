@@ -22,6 +22,7 @@
  */
 package com._17od.upm.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -79,9 +80,8 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String NEW_DATABASE_TXT = "New Database";
     public static final String OPEN_DATABASE_TXT = "Open Database";
     public static final String OPEN_DATABASE_FROM_URL_TXT = "Open Database From URL";
-    public static final String DOWNLOAD_DATABASE_TXT = "Download Database";
-    public static final String UPLOAD_DATABASE_TXT = "Upload Database";
-    public static final String CHANGE_MASTER_PASSWORD_TXT = "Change Password";
+    public static final String SYNC_DATABASE_TXT = "Sync with Remote Database";
+    public static final String CHANGE_MASTER_PASSWORD_TXT = "Change Master Password";
     public static final String DATABASE_PROPERTIES_TXT = "Database Properties";
     public static final String ADD_ACCOUNT_TXT = "Add Account";
     public static final String EDIT_ACCOUNT_TXT = "Edit Account";
@@ -91,7 +91,6 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String OPTIONS_TXT = "Options";
     public static final String ABOUT_TXT = "About";
     public static final String RESET_SEARCH_TXT = "Reset Search";
-    public static final String GET_LATEST_DB_VERSION = "Get the latest database version";
 
     private JButton addAccountButton;
     private JButton editAccountButton;
@@ -99,7 +98,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JButton copyUsernameButton;
     private JButton copyPasswordButton;
     private JButton optionsButton;
-    private JButton getLatestDBVersionButton;
+    private JButton syncDatabaseButton;
     private JTextField searchField;
     private JButton resetSearchButton;
     private JLabel searchIcon;
@@ -108,8 +107,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
     private JMenuItem openDatabaseFromURLMenuItem;
-    private JMenuItem downloadDatabaseMenuItem;
-    private JMenuItem uploadDatabaseMenuItem;
+    private JMenuItem syncWithRemoteDatabaseMenuItem;
     private JMenuItem changeMasterPasswordMenuItem;
     private JMenuItem databasePropertiesMenuItem;
     private JMenuItem exitMenuItem;
@@ -123,6 +121,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem copyPasswordMenuItem;
 
     private JList accountsListview;
+    private JLabel statusBar = new JLabel(" ");
     
     private DatabaseActions dbActions;
     
@@ -345,6 +344,17 @@ public class MainWindow extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         getContentPane().add(accountsScrollList, c);
 
+        // Add the statusbar
+        c.gridx = 0;
+        c.gridy = 4;
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(0, 1, 1, 1);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        getContentPane().add(statusBar, c);
+
     }
     
     
@@ -426,15 +436,15 @@ public class MainWindow extends JFrame implements ActionListener {
 
         toolbar.addSeparator();
 
-        // The "Get Latest Database Version" button
-        getLatestDBVersionButton = new JButton();
-        getLatestDBVersionButton.setToolTipText(GET_LATEST_DB_VERSION);
-        getLatestDBVersionButton.setIcon(Util.loadImage("options.gif"));
-        getLatestDBVersionButton.setDisabledIcon(Util.loadImage("options_d.gif"));;
-        getLatestDBVersionButton.addActionListener(this);
-        getLatestDBVersionButton.setEnabled(false);
-        getLatestDBVersionButton.setActionCommand(GET_LATEST_DB_VERSION);
-        toolbar.add(getLatestDBVersionButton);
+        // The Sync database button
+        syncDatabaseButton = new JButton();
+        syncDatabaseButton.setToolTipText(SYNC_DATABASE_TXT);
+        syncDatabaseButton.setIcon(Util.loadImage("options.gif"));
+        syncDatabaseButton.setDisabledIcon(Util.loadImage("options_d.gif"));;
+        syncDatabaseButton.addActionListener(this);
+        syncDatabaseButton.setEnabled(false);
+        syncDatabaseButton.setActionCommand(SYNC_DATABASE_TXT);
+        toolbar.add(syncDatabaseButton);
 
         return toolbar;
     }
@@ -468,7 +478,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         databaseMenu.addSeparator();
 
-        downloadDatabaseMenuItem = new JMenuItem(DOWNLOAD_DATABASE_TXT, KeyEvent.VK_S);
+        /*downloadDatabaseMenuItem = new JMenuItem(DOWNLOAD_DATABASE_TXT, KeyEvent.VK_S);
         downloadDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(downloadDatabaseMenuItem);
@@ -480,7 +490,14 @@ public class MainWindow extends JFrame implements ActionListener {
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(uploadDatabaseMenuItem);
         uploadDatabaseMenuItem.addActionListener(this);
-        uploadDatabaseMenuItem.setEnabled(false);
+        uploadDatabaseMenuItem.setEnabled(false);*/
+        
+        syncWithRemoteDatabaseMenuItem = new JMenuItem(SYNC_DATABASE_TXT, KeyEvent.VK_S);
+        syncWithRemoteDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        databaseMenu.add(syncWithRemoteDatabaseMenuItem);
+        syncWithRemoteDatabaseMenuItem.addActionListener(this);
+        syncWithRemoteDatabaseMenuItem.setEnabled(false);
         
         changeMasterPasswordMenuItem = new JMenuItem(CHANGE_MASTER_PASSWORD_TXT, KeyEvent.VK_G);
         changeMasterPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
@@ -699,10 +716,8 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.openDatabase();
             } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_FROM_URL_TXT) {
                 dbActions.openDatabaseFromURL();
-            } else if (event.getActionCommand() == MainWindow.DOWNLOAD_DATABASE_TXT) {
-                dbActions.downloadDatabase();
-            } else if (event.getActionCommand() == MainWindow.UPLOAD_DATABASE_TXT) {
-                dbActions.uploadDatabase();
+            } else if (event.getActionCommand() == MainWindow.SYNC_DATABASE_TXT) {
+                dbActions.syncWithRemoteDatabase();
             } else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
                 dbActions.addAccount();
             } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
@@ -719,8 +734,8 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.changeMasterPassword();
             } else if (event.getActionCommand() == MainWindow.DATABASE_PROPERTIES_TXT) {
                 dbActions.showDatabaseProperties();
-            } else if (event.getActionCommand() == MainWindow.GET_LATEST_DB_VERSION) {
-                dbActions.getLatestDatabaseVersion();
+            } else if (event.getActionCommand() == MainWindow.SYNC_DATABASE_TXT) {
+                dbActions.syncWithRemoteDatabase();
             }
         } catch (Exception e) {
             dbActions.errorHandler(e);
@@ -728,18 +743,18 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
 
-    public JButton getGetLatestDBVersionButton() {
-        return getLatestDBVersionButton;
+    public JButton getSyncWithRemoteDatabaseButton() {
+        return syncDatabaseButton;
     }
 
 
-    public JMenuItem getDownloadDatabaseMenuItem() {
-        return downloadDatabaseMenuItem;
+    public JMenuItem getSyncWithRemoteDatabaseMenuItem() {
+        return syncWithRemoteDatabaseMenuItem;
     }
 
-    
-    public JMenuItem getUploadDatabaseMenuItem() {
-        return uploadDatabaseMenuItem;
+
+    public JLabel getStatusBar() {
+        return statusBar;
     }
 
 }

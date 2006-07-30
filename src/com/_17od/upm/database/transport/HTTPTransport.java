@@ -157,14 +157,17 @@ public class HTTPTransport extends Transport {
     }
 
     
-    public File getRemoteFile(String remoteLocation, byte[] httpUsername, byte[] httpPassword) throws TransportException, IOException {
-    	byte[] remoteFile = get(remoteLocation, httpUsername, httpPassword);
-    	File downloadedFile = File.createTempFile("upm", null);
-    	FileOutputStream fos = new FileOutputStream(downloadedFile);
-    	fos.write(remoteFile);
-    	fos.close();
-    	
-    	return downloadedFile;
+    public File getRemoteFile(String remoteLocation, byte[] httpUsername, byte[] httpPassword) throws TransportException {
+        try {
+        	byte[] remoteFile = get(remoteLocation, httpUsername, httpPassword);
+        	File downloadedFile = File.createTempFile("upm", null);
+        	FileOutputStream fos = new FileOutputStream(downloadedFile);
+        	fos.write(remoteFile);
+        	fos.close();
+            return downloadedFile;
+        } catch (IOException e) {
+            throw new TransportException(e);
+        }
     }
 
 
@@ -207,7 +210,7 @@ public class HTTPTransport extends Transport {
     }
 
 
-    public File getRemoteFile(String remoteLocation) throws TransportException, IOException {
+    public File getRemoteFile(String remoteLocation) throws TransportException {
         return getRemoteFile(remoteLocation, null, null);
     }
 

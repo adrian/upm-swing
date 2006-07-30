@@ -45,9 +45,9 @@ public abstract class Transport {
 
     public abstract void delete(String targetLocation, String name) throws TransportException;
 
-    public abstract File getRemoteFile(String remoteLocation, byte[] username, byte[] password) throws TransportException, IOException;
+    public abstract File getRemoteFile(String remoteLocation, byte[] username, byte[] password) throws TransportException;
     
-    public abstract File getRemoteFile(String remoteLocation) throws TransportException, IOException;
+    public abstract File getRemoteFile(String remoteLocation) throws TransportException;
 
     public static Transport getTransportForURL(URL url) {
         Transport retVal = null;
