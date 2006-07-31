@@ -56,7 +56,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(5, 5, 0, 0);
+        c.insets = new Insets(0, 5, 0, 0);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 1;

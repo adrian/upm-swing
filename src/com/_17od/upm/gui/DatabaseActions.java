@@ -119,21 +119,16 @@ public class DatabaseActions {
             boolean passwordCorrect = false;
             boolean okClicked = true;
             do {
-                
                 char[] password = askUserForPassword("Please enter the master password for this database");
                 if (password == null) {
                     okClicked = false;
-                }
-                
-                if (okClicked) {
+                } else {
                     try {
                         new PasswordDatabase(database.getDatabaseFile(), password);
                         passwordCorrect = true;
                     } catch (InvalidPasswordException e) {
                         JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
                     }
-                } else {
-                    okClicked = false;
                 }
             } while (!passwordCorrect && okClicked);
             
@@ -197,18 +192,12 @@ public class DatabaseActions {
         mainWindow.getChangeMasterPasswordMenuItem().setEnabled(true);
         mainWindow.getDatabasePropertiesMenuItem().setEnabled(true);
 
-        setTitle();
+        mainWindow.setTitle(database.getDatabaseFile() + " - " + MainWindow.getApplicationName());
         
         setLocalDatabaseDirty(true);
-        setStatusBarText();
 
         accountNames = getAccountNames();
         populateListview(accountNames);
-    }
-    
-    
-    private void setTitle() {
-        mainWindow.setTitle(database.getDatabaseFile() + " - " + MainWindow.getApplicationName());
     }
     
     
@@ -276,7 +265,7 @@ public class DatabaseActions {
             }
         }
         
-        if (passwordCorrect == true) {
+        if (passwordCorrect) {
             doOpenDatabaseActions();
         }
 
@@ -594,17 +583,13 @@ public class DatabaseActions {
             password = askUserForPassword("Please enter the master password for the REMOTE database");
             if (password == null) {
                 okClicked = false;
-            }
-            
-            if (okClicked) {
+            } else {
                 try {
                     remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
                     passwordCorrect = true;
                 } catch (InvalidPasswordException e) {
                     JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
                 }
-            } else {
-                okClicked = false;
             }
         } while (!passwordCorrect && okClicked);
         
@@ -626,7 +611,6 @@ public class DatabaseActions {
 
             if (syncSuccessful) {
                 setLocalDatabaseDirty(false);
-                setStatusBarText();
                 JOptionPane.showMessageDialog(mainWindow, "Database synchronised successfully");
             }
         }
@@ -637,6 +621,9 @@ public class DatabaseActions {
 
     
     public void exitApplication() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+        if (database == null) {
+            System.exit(0);
+        }
         if (getLatestVersionOfDatabase()) {
             System.exit(0);
         }
@@ -688,7 +675,6 @@ public class DatabaseActions {
         } else {
             setLocalDatabaseDirty(false);
         }
-        setStatusBarText();
     }
 
 
@@ -708,6 +694,7 @@ public class DatabaseActions {
             mainWindow.getSyncWithRemoteDatabaseButton().setEnabled(false);
         }
         
+        setStatusBarText();
     }
     
     
@@ -715,10 +702,10 @@ public class DatabaseActions {
         String status = null;
         Color color = null;
         if (databaseHasRemoteInstance() && localDatabaseDirty) {
-            status = "Unconfirmed";
+            status = "Unsynchronised";
             color = Color.RED;
         } else {
-            status = "Confirmed";
+            status = "Synchronised";
             color = Color.BLACK;
         }
         mainWindow.getStatusBar().setText("Revision " + String.valueOf(database.getRevision()) + " - " + status);
