@@ -22,12 +22,17 @@
  */
 package com._17od.upm.gui;
 
-import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -37,57 +42,134 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import com._17od.upm.util.Preferences;
-import com._17od.upm.util.Util;
 
 
 public class OptionsDialog extends EscapeDialog {
 
     private JTextField dbToLoadOnStartup;
+    private JTextField httpProxyHost;
+    private JTextField httpProxyPort;
     private boolean okClicked = false;
     private JFrame parentFrame;
     
     
     public OptionsDialog(JFrame frame) {
         super(frame, "Options", true);
+        
+        Container container = getContentPane();
 
-        parentFrame = frame;
-        getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+        // Create a pane with an empty border for spacing
+        Border emptyBorder = BorderFactory.createEmptyBorder(2, 5, 5, 5);
+        JPanel emptyBorderPanel = new JPanel();
+        emptyBorderPanel.setLayout(new BoxLayout(emptyBorderPanel, BoxLayout.Y_AXIS));
+        emptyBorderPanel.setBorder(emptyBorder);
+        container.add(emptyBorderPanel);
 
-        JPanel borderPane = new JPanel();
-        borderPane.setLayout(new BoxLayout(borderPane, BoxLayout.PAGE_AXIS));
+        // Create a pane with an title etched border
+        Border etchedBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+        Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, " Startup ");
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(etchedTitleBorder);
+        emptyBorderPanel.add(mainPanel);
 
-        //Put a border on the panel
-        Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-        Border etchedBorder = BorderFactory.createEtchedBorder();
-        Border titledBorder = BorderFactory.createTitledBorder(etchedBorder, " General ");
-        Border compoundBorder = BorderFactory.createCompoundBorder(emptyBorder, titledBorder);
-        borderPane.setBorder(compoundBorder);
+        GridBagConstraints c = new GridBagConstraints();
 
-        JLabel accountToLoadOnStartupLabel = new JLabel("Database To Load On Startup");
-        borderPane.add(accountToLoadOnStartupLabel);
-        accountToLoadOnStartupLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // The "Database to Load on Startup" row
+        JLabel urlLabel = new JLabel("Database To Load On Startup");
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 0, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.NONE;
+        mainPanel.add(urlLabel, c);
 
-        JPanel inputPane = new JPanel();
-        inputPane.setLayout(new FlowLayout());
+        // The "Database to Load on Startup" input field row
         dbToLoadOnStartup = new JTextField(Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP), 25);
-        inputPane.add(dbToLoadOnStartup);
-        JButton dbToLoadOnStartupButton = new JButton(Util.loadImage("open.gif"));
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 5);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(dbToLoadOnStartup, c);
+
+        //JButton dbToLoadOnStartupButton = new JButton(Util.loadImage("open.gif"));
+        JButton dbToLoadOnStartupButton = new JButton("...");
         dbToLoadOnStartupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getDBToLoadOnStartup();
             }
         });
-        inputPane.add(dbToLoadOnStartupButton);
+        c.gridx = 1;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_END;
+        c.insets = new Insets(0, 0, 5, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        mainPanel.add(dbToLoadOnStartupButton, c);
 
-        borderPane.add(inputPane);
-        inputPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Some space
+        emptyBorderPanel.add(Box.createRigidArea(new Dimension(1, 10)));
+        
+        // ******************
+        // *** The Proxy Section
+        // ******************
+        // Create a pane with an title etched border
+        Border proxyEtchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, " HTTP Proxy ");
+        JPanel proxyPanel = new JPanel(new GridBagLayout());
+        proxyPanel.setBorder(proxyEtchedTitleBorder);
+        emptyBorderPanel.add(proxyPanel);
 
-        getContentPane().add(borderPane);
-        borderPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // The "HTTP Proxy" label row
+        JLabel proxyLabel = new JLabel("HTTP Proxy");
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 0, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.NONE;
+        proxyPanel.add(proxyLabel, c);
 
-        //Add the OK/Cancel buttons to the dialog
-        JPanel buttonPanel = new JPanel();
+        // The "HTTP Proxy" field row
+        httpProxyHost = new JTextField(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST), 20);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        proxyPanel.add(httpProxyHost, c);
+
+        httpProxyPort = new JTextField(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT), 6);
+        c.gridx = 1;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        proxyPanel.add(httpProxyPort, c);
+
+        // Some spacing
+        emptyBorderPanel.add(Box.createVerticalGlue());
+        
+        // The buttons row
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        emptyBorderPanel.add(buttonPanel);
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -95,17 +177,16 @@ public class OptionsDialog extends EscapeDialog {
             }
         });
         buttonPanel.add(okButton);
+        
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                closeButtonAction();
+                setVisible(false);
+                dispose();
             }
         });
         buttonPanel.add(cancelButton);
-        getContentPane().add(buttonPanel);
-        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        setResizable(false);
     }
     
 
@@ -116,7 +197,9 @@ public class OptionsDialog extends EscapeDialog {
     
     private void okButtonAction() {
         try {
-        	Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
+            Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
+            Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_HOST, httpProxyHost.getText());
+            Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PORT, httpProxyPort.getText());
         	Preferences.save();
             setVisible(false);
             dispose();
@@ -124,12 +207,6 @@ public class OptionsDialog extends EscapeDialog {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(parentFrame, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    
-    private void closeButtonAction() {
-        setVisible(false);
-        dispose();
     }
 
     

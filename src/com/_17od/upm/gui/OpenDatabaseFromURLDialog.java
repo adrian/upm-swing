@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -26,7 +27,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
 
     public JTextField urlTextField;
     public JTextField usernameTextField;
-    public JTextField passwordTextField;
+    public JPasswordField passwordTextField;
     private boolean okClicked = false;
     
     
@@ -112,7 +113,7 @@ public class OpenDatabaseFromURLDialog extends EscapeDialog {
         mainPanel.add(passwordLabel, c);
 
         // The username inpur field
-        passwordTextField = new JTextField(10);
+        passwordTextField = new JPasswordField(10);
         c.gridx = 0;
         c.gridy = 5;
         c.anchor = GridBagConstraints.LINE_START;

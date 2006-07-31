@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -96,6 +97,8 @@ public class HTTPTransport extends Transport {
                 client.getParams().setAuthenticationPreemptive(true);
             }
 
+            client.setHostConfiguration(getHostConfiguration());
+
             int status = client.executeMethod(post);
             
             // I've noticed on Windows (at least) that PHP seems to fail when moving files on the first attempt
@@ -123,6 +126,15 @@ public class HTTPTransport extends Transport {
     }
 
 
+    private HostConfiguration getHostConfiguration() {
+        HostConfiguration config = new HostConfiguration();
+        String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
+        String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
+        config.setProxy(proxyHost, Integer.parseInt(proxyPort));
+        return config;
+    }
+    
+    
     public byte[] get(String url, String fileName) throws TransportException {
         return get(url, fileName, null, null);
     }
