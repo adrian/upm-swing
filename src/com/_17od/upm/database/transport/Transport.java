@@ -59,8 +59,6 @@ public abstract class Transport {
         Transport retVal = null;
         if (url.getProtocol().equals("http")) {
             retVal = new HTTPTransport();
-        } else if (url.getProtocol().equals("file")) {
-            retVal = new FileTransport();
         }
         return retVal;
     }
