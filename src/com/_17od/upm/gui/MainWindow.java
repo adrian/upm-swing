@@ -22,7 +22,6 @@
  */
 package com._17od.upm.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -91,6 +90,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String OPTIONS_TXT = "Options";
     public static final String ABOUT_TXT = "About";
     public static final String RESET_SEARCH_TXT = "Reset Search";
+    public static final String EXIT_TXT = "Exit";
 
     private JButton addAccountButton;
     private JButton editAccountButton;
@@ -561,14 +561,10 @@ public class MainWindow extends JFrame implements ActionListener {
         copyPasswordMenuItem.setEnabled(false);
 
         
-        exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
+        exitMenuItem = new JMenuItem(EXIT_TXT, KeyEvent.VK_X);
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        exitMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitMenuItem.addActionListener(this);
 
         aboutMenuItem = new JMenuItem(ABOUT_TXT, KeyEvent.VK_A);
         aboutMenuItem.addActionListener(this);
@@ -736,6 +732,8 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.showDatabaseProperties();
             } else if (event.getActionCommand() == MainWindow.SYNC_DATABASE_TXT) {
                 dbActions.syncWithRemoteDatabase();
+            } else if (event.getActionCommand() == MainWindow.EXIT_TXT) {
+                dbActions.exitApplication();
             }
         } catch (Exception e) {
             dbActions.errorHandler(e);

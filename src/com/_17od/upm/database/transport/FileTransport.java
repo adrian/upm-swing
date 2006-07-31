@@ -34,7 +34,7 @@ public class FileTransport extends Transport {
     }
 
     
-    public byte[] get(String fileToGet, byte[] username, byte[] password) throws TransportException {
+    public byte[] get(String fileToGet, String fileName, byte[] username, byte[] password) throws TransportException {
         
         byte[] retVal;
         
@@ -63,8 +63,8 @@ public class FileTransport extends Transport {
     }
 
     
-    public byte[] get(String url) throws TransportException {
-        return get(url, null, null);
+    public byte[] get(String url, String fileName) throws TransportException {
+        return get(url, fileName, null, null);
     }
 
     
@@ -83,9 +83,9 @@ public class FileTransport extends Transport {
     }
     
     
-    public File getRemoteFile(String remoteFile, byte[] username, byte[] password) throws TransportException {
+    public File getRemoteFile(String remoteFile, String fileName, byte[] username, byte[] password) throws TransportException {
         try {
-            byte[] remoteFileBytes = get(remoteFile, username, password);
+            byte[] remoteFileBytes = get(remoteFile, fileName, username, password);
             File downloadedFile = File.createTempFile("upm", null);
             FileOutputStream fos = new FileOutputStream(downloadedFile);
             fos.write(remoteFileBytes);
@@ -97,8 +97,8 @@ public class FileTransport extends Transport {
     }
 
 
-    public File getRemoteFile(String remoteFile) throws TransportException {
-        return getRemoteFile(remoteFile, null, null);
+    public File getRemoteFile(String remoteFile, String fileName) throws TransportException {
+        return getRemoteFile(remoteFile, fileName, null, null);
     }
     
     
@@ -120,5 +120,23 @@ public class FileTransport extends Transport {
         }
         in.close();
         out.close();
+    }
+
+
+    public byte[] get(String url, byte[] username, byte[] password) throws TransportException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    public File getRemoteFile(String remoteLocation) throws TransportException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    public File getRemoteFile(String remoteLocation, byte[] username, byte[] password) throws TransportException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

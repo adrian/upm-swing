@@ -491,13 +491,13 @@ public class DatabaseActions {
     
     
     private static void replaceDatabase(PasswordDatabase existingDatabase, PasswordDatabase newDatabase) throws PasswordDatabaseException {
-        // Delete the existing database and then copy the downloaded db into it's place
+        // Delete the existing database and then copy the new db into it's place
         String dbFileName = existingDatabase.getDatabaseFile().getAbsolutePath();
         boolean successful = existingDatabase.getDatabaseFile().delete();
         if (successful) {
             successful = newDatabase.getDatabaseFile().renameTo(new File(dbFileName));
             if (!successful) {
-                throw new PasswordDatabaseException("Couldn't rename existing password database (to make way for the downloaded database) [" + existingDatabase.getDatabaseFile().getAbsolutePath() + "] to [" + existingDatabase.getDatabaseFile().getName() + ".tmp]");
+                throw new PasswordDatabaseException("Couldn't rename the existing password database (to make way for the new database) [" + existingDatabase.getDatabaseFile().getAbsolutePath() + "] to [" + existingDatabase.getDatabaseFile().getName() + ".tmp]");
             }
         } else {
             throw new PasswordDatabaseException("Couldn't delete the existing password database");
@@ -513,7 +513,7 @@ public class DatabaseActions {
                 dbPropsDialog.setLocationRelativeTo(mainWindow);
                 dbPropsDialog.show();
                 if (dbPropsDialog.getDatabaseNeedsSaving()) {
-                    database.save();
+                    saveDatabase();
                 }
             }
         } catch (TransportException e) {
@@ -521,12 +521,9 @@ public class DatabaseActions {
             if (response == JOptionPane.YES_OPTION) {
                 database.getDbOptions().setRemoteLocation("");
                 database.getDbOptions().setAuthDBEntry("");
-                database.save();
+                saveDatabase();
             }
         }
-
-        setLocalDatabaseDirty(false);
-        setStatusBarText();
     }
 
 
@@ -548,6 +545,7 @@ public class DatabaseActions {
             File saveDatabaseTo = getSaveAsFile("Save Database as...");
             
             if (saveDatabaseTo != null) {
+                
                 // Download the database
                 Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
                 File downloadedDatabaseFile = transport.getRemoteFile(remoteLocation, username.getBytes(), password.getBytes());
@@ -585,7 +583,7 @@ public class DatabaseActions {
 
         // Download the database that's already at the remote location
         Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
-        File remoteDatabaseFile = transport.getRemoteFile(remoteLocation + database.getDatabaseFile().getName(), httpUsername, httpPassword);
+        File remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
         
         // Ask the user for the password for the database just downloaded
         PasswordDatabase remoteDatabase = null;
@@ -636,7 +634,14 @@ public class DatabaseActions {
         return syncSuccessful;
         
     }
+
     
+    public void exitApplication() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+        if (getLatestVersionOfDatabase()) {
+            System.exit(0);
+        }
+    }
+
     
     /**
      * This method prompts the user for the name of a file.
@@ -709,7 +714,7 @@ public class DatabaseActions {
     private void setStatusBarText() {
         String status = null;
         Color color = null;
-        if (localDatabaseDirty) {
+        if (databaseHasRemoteInstance() && localDatabaseDirty) {
             status = "Unconfirmed";
             color = Color.RED;
         } else {

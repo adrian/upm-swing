@@ -37,17 +37,23 @@ public abstract class Transport {
     
     public abstract void put(String targetLocation, File file) throws TransportException;
 
-    public abstract byte[] get(String url, byte[] username, byte[] password) throws TransportException;
+    public abstract byte[] get(String url, String fileName) throws TransportException;
 
-    public abstract byte[] get(String url) throws TransportException;
+    public abstract byte[] get(String url, String fileName, byte[] username, byte[] password) throws TransportException;
+
+    public abstract byte[] get(String url, byte[] username, byte[] password) throws TransportException;
 
     public abstract void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException;
 
     public abstract void delete(String targetLocation, String name) throws TransportException;
 
-    public abstract File getRemoteFile(String remoteLocation, byte[] username, byte[] password) throws TransportException;
-    
+    public abstract File getRemoteFile(String remoteLocation, String fileName) throws TransportException;
+
     public abstract File getRemoteFile(String remoteLocation) throws TransportException;
+
+    public abstract File getRemoteFile(String remoteLocation, String fileName, byte[] username, byte[] password) throws TransportException;
+    
+    public abstract File getRemoteFile(String remoteLocation, byte[] username, byte[] password) throws TransportException;
 
     public static Transport getTransportForURL(URL url) {
         Transport retVal = null;
@@ -58,14 +64,6 @@ public abstract class Transport {
         }
         return retVal;
     }
-
-    public String addTrailingSlash(String url) {
-        if (url.charAt(url.length() - 1) != '/') {
-            url = url + '/';
-        }
-        return url;
-    }
-
     
     public static boolean isASupportedProtocol(String protocol) {
         boolean supported = false;

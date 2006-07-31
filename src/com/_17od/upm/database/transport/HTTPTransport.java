@@ -23,11 +23,14 @@
 package com._17od.upm.database.transport;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -105,7 +108,13 @@ public class HTTPTransport extends Transport {
                 throw new TransportException("There's been some kind of problem uploading a file to the HTTP server. The return code returned was [" + post.getResponseBodyAsString() + "]");
             }
             
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            throw new TransportException(e);
+        } catch (MalformedURLException e) {
+            throw new TransportException(e);
+        } catch (HttpException e) {
+            throw new TransportException(e);
+        } catch (IOException e) {
             throw new TransportException(e);
         } finally {
             post.releaseConnection();
@@ -114,15 +123,21 @@ public class HTTPTransport extends Transport {
     }
 
 
-    public byte[] get(String url) throws TransportException {
-        return get(url, null, null);
+    public byte[] get(String url, String fileName) throws TransportException {
+        return get(url, fileName, null, null);
+    }
+    
+    
+    public byte[] get(String url, String fileName, byte[] username, byte[] password) throws TransportException {
+        url = addTrailingSlash(url);
+        return get(url + fileName, username, password);
     }
     
     
     public byte[] get(String url, byte[] username, byte[] password) throws TransportException {
 
         byte[] retVal = null;
-        
+
         GetMethod method = new GetMethod(url);
         
         //This part is wrapped in a try/finally so that we can ensure
@@ -146,31 +161,51 @@ public class HTTPTransport extends Transport {
 
             retVal = method.getResponseBody();
 
-        } catch (Exception e) {
+        } catch (MalformedURLException e) {
+            throw new TransportException(e);
+        } catch (HttpException e) {
+            throw new TransportException(e);
+        } catch (IOException e) {
             throw new TransportException(e);
         } finally {
             method.releaseConnection();
         }
-
+        
         return retVal;
 
     }
 
     
+    public File getRemoteFile(String remoteLocation, String fileName) throws TransportException {
+        return getRemoteFile(remoteLocation, fileName, null, null);
+    }
+
+    
+    public File getRemoteFile(String remoteLocation) throws TransportException {
+        return getRemoteFile(remoteLocation, null, null);
+    }
+
+    
+    public File getRemoteFile(String remoteLocation, String fileName, byte[] httpUsername, byte[] httpPassword) throws TransportException {
+        remoteLocation = addTrailingSlash(remoteLocation);
+        return getRemoteFile(remoteLocation + fileName, httpUsername, httpPassword);
+    }
+
+
     public File getRemoteFile(String remoteLocation, byte[] httpUsername, byte[] httpPassword) throws TransportException {
         try {
-        	byte[] remoteFile = get(remoteLocation, httpUsername, httpPassword);
-        	File downloadedFile = File.createTempFile("upm", null);
-        	FileOutputStream fos = new FileOutputStream(downloadedFile);
-        	fos.write(remoteFile);
-        	fos.close();
+            byte[] remoteFile = get(remoteLocation, httpUsername, httpPassword);
+            File downloadedFile = File.createTempFile("upm", null);
+            FileOutputStream fos = new FileOutputStream(downloadedFile);
+            fos.write(remoteFile);
+            fos.close();
             return downloadedFile;
         } catch (IOException e) {
             throw new TransportException(e);
         }
     }
 
-
+    
     public void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException {
 
         targetLocation = addTrailingSlash(targetLocation) + "deletefile.php";
@@ -196,7 +231,11 @@ public class HTTPTransport extends Transport {
                 throw new TransportException("There's been some kind of problem deleting a file to the HTTP server. The return code returned was [" + post.getResponseBodyAsString() + "]");
             }
 
-        } catch (Exception e) {
+        } catch (MalformedURLException e) {
+            throw new TransportException(e);
+        } catch (HttpException e) {
+            throw new TransportException(e);
+        } catch (IOException e) {
             throw new TransportException(e);
         } finally {
             post.releaseConnection();
@@ -209,9 +248,12 @@ public class HTTPTransport extends Transport {
         delete(targetLocation, name, null, null);
     }
 
-
-    public File getRemoteFile(String remoteLocation) throws TransportException {
-        return getRemoteFile(remoteLocation, null, null);
+    
+    private String addTrailingSlash(String url) {
+        if (url.charAt(url.length() - 1) != '/') {
+            url = url + '/';
+        }
+        return url;
     }
 
 }
