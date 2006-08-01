@@ -141,6 +141,18 @@ public class OptionsDialog extends EscapeDialog {
         c.fill = GridBagConstraints.NONE;
         proxyPanel.add(proxyLabel, c);
 
+        // The "HTTP Proxy Port" label row
+        JLabel proxyPortLabel = new JLabel("Port");
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 5);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        proxyPanel.add(proxyPortLabel, c);
+
         // The "HTTP Proxy" field row
         httpProxyHost = new JTextField(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST), 20);
         c.gridx = 0;
