@@ -168,7 +168,7 @@ public class HTTPTransport extends Transport {
             int statusCode = client.executeMethod(method);
 
             if (statusCode != HttpStatus.SC_OK) {
-                throw new TransportException("There's been some kind of problem getting a file from the HTTP server. The status code is [" + statusCode + "]");
+                throw new TransportException("There's been some kind of problem getting the URL [" + url + "]. The status code is [" + statusCode + "]");
             }
 
             retVal = method.getResponseBody();

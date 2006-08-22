@@ -173,7 +173,8 @@ public class DatabasePropertiesDialog extends EscapeDialog {
 
         boolean canCloseWindow = false;
 
-        // If either the url or authentication entry to use has changes then flag that the database needs to be saved
+        // If either the url or authentication entry to use have changed then update 
+        // the flag to indicate that the database needs to be saved
         if (!database.getDbOptions().getRemoteLocation().equals(remoteLocation) ||
                 !database.getDbOptions().getAuthDBEntry().equals(authEntry)) {
             databaseNeedsSaving = true;
