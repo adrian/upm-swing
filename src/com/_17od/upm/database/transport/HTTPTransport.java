@@ -88,7 +88,7 @@ public class HTTPTransport extends Transport {
                     new MultipartRequestEntity(parts, post.getParams())
             );
 
-            //Set the authentication details
+            //Set the HTTP authentication details
             if (username != null) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
                 URL url = new URL(targetLocation);
@@ -97,8 +97,16 @@ public class HTTPTransport extends Transport {
                 client.getParams().setAuthenticationPreemptive(true);
             }
 
-            client.setHostConfiguration(getHostConfiguration());
+            // Set the proxy configuration
+            String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
+            if (proxyHost != null) {
+                HostConfiguration config = new HostConfiguration();
+                String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
+                config.setProxy(proxyHost, Integer.parseInt(proxyPort));
+                client.setHostConfiguration(config);
+            }
 
+            // This line makes the HTTP call
             int status = client.executeMethod(post);
             
             // I've noticed on Windows (at least) that PHP seems to fail when moving files on the first attempt
@@ -126,15 +134,6 @@ public class HTTPTransport extends Transport {
     }
 
 
-    private HostConfiguration getHostConfiguration() {
-        HostConfiguration config = new HostConfiguration();
-        String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
-        String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
-        config.setProxy(proxyHost, Integer.parseInt(proxyPort));
-        return config;
-    }
-    
-    
     public byte[] get(String url, String fileName) throws TransportException {
         return get(url, fileName, null, null);
     }
@@ -164,7 +163,16 @@ public class HTTPTransport extends Transport {
                 client.getState().setCredentials(authScope, creds);
                 client.getParams().setAuthenticationPreemptive(true);
             }
-            
+
+            // Set the proxy configuration
+            String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
+            if (proxyHost != null) {
+                HostConfiguration config = new HostConfiguration();
+                String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
+                config.setProxy(proxyHost, Integer.parseInt(proxyPort));
+                client.setHostConfiguration(config);
+            }
+
             int statusCode = client.executeMethod(method);
 
             if (statusCode != HttpStatus.SC_OK) {
@@ -236,6 +244,15 @@ public class HTTPTransport extends Transport {
                 AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
                 client.getState().setCredentials(authScope, creds);
                 client.getParams().setAuthenticationPreemptive(true);
+            }
+
+            // Set the proxy configuration
+            String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
+            if (proxyHost != null) {
+                HostConfiguration config = new HostConfiguration();
+                String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
+                config.setProxy(proxyHost, Integer.parseInt(proxyPort));
+                client.setHostConfiguration(config);
             }
 
             int status = client.executeMethod(post);

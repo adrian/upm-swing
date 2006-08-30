@@ -48,6 +48,7 @@ import javax.swing.border.EtchedBorder;
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.transport.Transport;
 import com._17od.upm.database.transport.TransportException;
+import java.util.Arrays;
 
 
 public class DatabasePropertiesDialog extends EscapeDialog {
@@ -115,6 +116,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
         String[] sAccountNames = new String[accountNames.size() + 1];
         sAccountNames[0] = "";
         System.arraycopy(accountNames.toArray(), 0, sAccountNames, 1, accountNames.size());
+        Arrays.sort(sAccountNames);
         final JComboBox auth = new JComboBox(sAccountNames);
         auth.setSelectedItem(database.getDbOptions().getAuthDBEntry());
         c.gridx = 0;

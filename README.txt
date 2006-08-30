@@ -1,11 +1,17 @@
 Universal Password Manager
 --------------------------
-UPM is a cross platform password manager. Over the years I've used a number of different password managers but I never quite found one that gave me everything I needed. At work I use MS Windows but at home I use a Mac. What I wanted was a password manager that would run on both platforms and share the same password database. Version 1.0 of UPM satisfies the first of these requirements. I'm hoping that another release soon after will fulfil the second.
+UPM is a cross platform password manager. It's three strongest features are...
+ * it's simplicity
+ * the fact that you can run it on Windows, Mac OS X & Linux
+ * database sharing
+
+The database sharing feature is particularly useful. It allows you to access your database from many machines and not have to worry about keeping several databases in sync.
 
 
 Features
 --------
 .Small, fast and lean
+.Shared Password Database (so that the same database can be used from many machines)
 .Written in Java and utilises Swing for the GUI
 .Windows and Mac OS X native feeling versions available
 .Fast Account searching
@@ -15,16 +21,18 @@ Features
 
 Roadmap
 -------
-.Shared Password Database (so that the same database can be used from many machines)
 .Choice of encryption algorithms
 .Password generator
-.Linux distributions (RPM, DEB)
+.Native Linux distributions (RPM, DEB)
 .Internationalisation
 .Commandline interface
 
 
 History
 -------
+22-Sep-2006 : Version 1.1
+   This release has one major new feature, database sharing. This feature allows you to have one database that can be accessed from many machines.
+   
 21-Dec-2005 : Version 1.0
    This is first stable release of UPM. It's a bugfix release only and has no functional differences to version 1.0b1. Databases created with 1.0b1 are fully compatible with 1.0.
 
