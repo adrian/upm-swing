@@ -248,7 +248,7 @@ public class HTTPTransport extends Transport {
 
             // Set the proxy configuration
             String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
-            if (proxyHost != null) {
+            if (proxyHost != null && !proxyHost.trim().equals("")) {
                 HostConfiguration config = new HostConfiguration();
                 String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
                 config.setProxy(proxyHost, Integer.parseInt(proxyPort));
