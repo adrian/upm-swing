@@ -56,7 +56,7 @@
             <pathelement location="${svnant.home}\lib\svnjavahl.jar"/>
         </classpath>
     </taskdef>
-    <taskdef name="jarbundler" classpath="${lib}\jarbundler-1.4.jar" classname="com.loomcom.ant.tasks.jarbundler.JarBundler"/>
+    <taskdef name="jarbundler" classpath="${lib}\jarbundler-1.8.1.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
 
 
     <target name="init">
@@ -177,13 +177,17 @@
         <!-- Build the MAC OS X application -->
         <mkdir dir="${dist}\mac"/>
         <jarbundler dir="${dist}\mac"
-                   jars="${dist}/build/${short.name}.jar"
               mainclass="com._17od.upm.gui.MainWindow"
                    name="${full.name}"
                    icon="${basedir}\images\upm.icns"
              jvmversion="1.4+"
                 version="${version}"
-             screenmenu="true"/>
+             screenmenu="true">
+            <jarfilelist dir="${basedir}\lib" files="commons-codec-1.3.jar, commons-httpclient-3.0.jar, commons-logging-1.1.jar"/>
+            <jarfilelist dir="${dist}\build" files="${short.name}.jar"/>
+        </jarbundler>
+        <copy file="${basedir}\server\http\upload.php" todir="${dist}\mac\server\http"/>
+        <copy file="${basedir}\server\http\deletefile.php" todir="${dist}\mac\server\http"/>
         <copy file="${basedir}\COPYING.txt" todir="${dist}\mac"/>
         <copy file="${basedir}\README.txt" todir="${dist}\mac"/>
         <echo message="Use the MAC 'Disk Utility' to build a .DMG file with the contents of the directory ${basedir}\${dist}\mac"/>
