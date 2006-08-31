@@ -61,6 +61,10 @@ Section "Universal Password Manager"
 
   ;Files to install
 
+  SetOutPath "$INSTDIR\server\http"
+  File ..\dist\build\server\http\upload.php
+  File ..\dist\build\server\http\deletefile.php
+
   SetOutPath "$INSTDIR"
   File ..\bin\upm.bat
   File ..\images\upm.ico
@@ -70,10 +74,6 @@ Section "Universal Password Manager"
   File ..\lib\commons-codec-1.3.jar
   File ..\lib\commons-httpclient-3.0.jar
   File ..\lib\commons-logging-1.1.jar
-
-  SetOutPath "$INSTDIR\server\http"
-  File ..\dist\build\server\http\upload.php
-  File ..\dist\build\server\http\deletefile.php
 
   ;Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\UPM "Install_Dir" "$INSTDIR"
