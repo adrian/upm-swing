@@ -91,7 +91,7 @@
         </javac>
       
         <copy todir="${build}\com\_17od\upm\util\images">
-            <fileset dir="images" includes="*.gif"/>
+            <fileset dir="images" includes="*.gif *.png"/>
         </copy>
 
         <copy file="${src}\simplelog.properties" todir="${build}"/>
@@ -123,7 +123,7 @@
 
         <!-- Build the basic JAR distribution -->
         <mkdir dir="${dist}\build"/>    
-        <jar destfile="${dist}\build\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif" excludes="**\invest\**">
+        <jar destfile="${dist}\build\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif **\*.png" excludes="**\invest\**">
             <manifest>
                 <attribute name="Implementation-Title" value="${short.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>

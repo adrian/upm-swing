@@ -439,8 +439,8 @@ public class MainWindow extends JFrame implements ActionListener {
         // The Sync database button
         syncDatabaseButton = new JButton();
         syncDatabaseButton.setToolTipText(SYNC_DATABASE_TXT);
-        syncDatabaseButton.setIcon(Util.loadImage("options.gif"));
-        syncDatabaseButton.setDisabledIcon(Util.loadImage("options_d.gif"));;
+        syncDatabaseButton.setIcon(Util.loadImage("sync.png"));
+        syncDatabaseButton.setDisabledIcon(Util.loadImage("sync_d.png"));;
         syncDatabaseButton.addActionListener(this);
         syncDatabaseButton.setEnabled(false);
         syncDatabaseButton.setActionCommand(SYNC_DATABASE_TXT);

@@ -226,7 +226,7 @@ public class DatabaseActions {
         JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
         dialog.show();
         
-        if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
+        if (pane.getValue() != null && pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
             password = masterPassword.getPassword();
         }
         
