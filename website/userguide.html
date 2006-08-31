@@ -1,4 +1,4 @@
-<!-- $Id$ -->
+<!-- $Id: screenshots.html 81 2005-12-11 13:07:47Z adrian $ -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
@@ -40,26 +40,39 @@
       <tbody>
         <tr>
           <td>
-            <img alt="Windows - Main Window" src="win-main.png"><br>MS Windows 2000 - Main Window
-          </td>
-          <td>
-            <img alt="Mac OS X - Main Window" src="mac-main.png"><br>Mac OS X - Main Window
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <img alt="Windows - Account Details" src="win-account.png"><br>MS Windows 2000 - Account Details
-          </td>
-          <td>
-            <img alt="Mac OS X - Account Details" src="mac-account.png"><br>Mac OS X - Account Details
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <img alt="Windows - Options" src="win-options.png"><br>MS Windows 2000 - Options
-          </td>
-          <td>
-            <img alt="Mac OS X - Options" src="mac-options.png"><br>Mac OS X - Options
+<h2>Database Sharing</h2>
+The database sharing feature was introduced in version 1.1. The reason it came about was 
+because I was using UPM at home and at work and was finding it a real pain trying to keep the 
+databases on both machines in sync. With database sharing UPM uses a remote copy of your 
+database to keep all the local copies in sync. It does this by downloading the remote copy 
+before you make local changes and by uploading your local copy after you've made changes.
+<h3>Server Side Steps</h3>
+To use database sharing you need to specify where you want your remote database stored. At 
+present UPM only supports HTTP locations (both password protected by basic authentication and 
+non password protected).
+<p>
+To upload your database UPM comes with a PHP script (upload.php) that needs to be placed in the 
+directory where you want to store the database. You'll find this script in the .\server\http 
+directory of your UPM installation.
+<h3>Database Configuration</h3>
+To configure your database with the remote location open your database and go to the 
+<i>Database -> Database Properties</i> menu item. In the URL field enter the URL of your remote 
+location. If you put the upload.php file at http://www.mydomain.com/securedir/upload.php then 
+enter http://www.mydomain.com/securedir in the URL field. If this URL is password protected 
+then select the account in your database that has the relevant username and password. When you 
+click OK UPM will upload your database to this URL.
+<h3>Application Prompts</h3>
+When the text "Revision x - Unsynchronised" appears in red in the status bar this means that 
+your local database and the remote database may by out of sync. To synchronise them press the 
+<i>Synchronise</i> button or the menu item <i>Database -> Sync with Remote Database</i>. When the 
+databases are in sync the status bar will read "Revision x - Synchronised".
+<p>
+Once you've configured your database to use a remote copy UPM will download the remote database 
+before you make any changes to your local copy. This ensures that any changes you made on 
+another machine will be downloaded to your current machine so that they're not lost. When 
+you exit UPM (via the <i>Database -> Exit</i> menu item) UPM will upload your database if you've 
+made any local changes. Be aware that UPM will not upload your database if you exit the application
+any other way.
           </td>
         </tr>
       </tbody>
