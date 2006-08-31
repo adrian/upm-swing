@@ -40,7 +40,6 @@ public class Preferences {
     
     public class ApplicationOptions {
         public static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
-        public static final String SYNC_DB_ON_STARTUP= "SyncDBOnStartup";
 
         public static final String HTTP_PROXY_HOST="http.proxy.host";
         public static final String HTTP_PROXY_PORT="http.proxy.port";
