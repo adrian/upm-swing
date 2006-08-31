@@ -24,7 +24,7 @@
 ;--------------------------------
 ;General
 
-  !define UPM_VERSION "1.0"
+  !define UPM_VERSION "1.1"
 
   ;Name and file
   Name "Universal Password Manager"
@@ -41,7 +41,7 @@
   ;overwrite the old one automatically)
   InstallDirRegKey HKLM "Software\UPM" "Install_Dir"
 
-  LicenseData "..\dist\jar\COPYING.txt"
+  LicenseData "..\dist\build\COPYING.txt"
 
 ;--------------------------------
 ;Installer Pages
@@ -59,15 +59,21 @@
 
 Section "Universal Password Manager"
 
-  ;Set output path to the installation directory.
-  SetOutPath "$INSTDIR"
-  
   ;Files to install
+
+  SetOutPath "$INSTDIR"
   File ..\bin\upm.bat
   File ..\images\upm.ico
-  File ..\dist\jar\upm.jar
-  File ..\dist\jar\COPYING.txt
-  File ..\dist\jar\README.txt
+  File ..\dist\build\upm.jar
+  File ..\dist\build\COPYING.txt
+  File ..\dist\build\README.txt
+  File ..\lib\commons-codec-1.3.jar
+  File ..\lib\commons-httpclient-3.0.jar
+  File ..\lib\commons-logging-1.1.jar
+
+  SetOutPath "$INSTDIR\server\http"
+  File ..\dist\build\server\http\upload.php
+  File ..\dist\build\server\http\deletefile.php
 
   ;Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\UPM "Install_Dir" "$INSTDIR"
@@ -100,15 +106,24 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM"
   DeleteRegKey HKLM SOFTWARE\UPM
 
-  ;Remove files and uninstaller
-  Delete $INSTDIR\*.*
+  ;Remove files
+  ;Purposly don't delete the root install folder in case the user placed other files there
+  Delete $INSTDIR\upm.bat
+  Delete $INSTDIR\upm.ico
+  Delete $INSTDIR\upm.jar
+  Delete $INSTDIR\COPYING.txt
+  Delete $INSTDIR\README.txt
+  Delete $INSTDIR\uninstall.exe
+  Delete $INSTDIR\commons-codec-1.3.jar
+  Delete $INSTDIR\commons-httpclient-3.0.jar
+  Delete $INSTDIR\commons-logging-1.1.jar
+  Delete $INSTDIR\server\http\upload.php
+  Delete $INSTDIR\server\http\deletefile.php
+  RMDir /r $INSTDIR\server
 
   ;Remove shortcuts, if any
   Delete "$SMPROGRAMS\UPM\*.*"
-
-  ;Remove directories used
   RMDir "$SMPROGRAMS\UPM"
-  RMDir "$INSTDIR"
 
 SectionEnd
 
