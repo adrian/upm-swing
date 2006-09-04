@@ -36,6 +36,9 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+
+import org.apache.commons.codec.binary.Base64;
+
 import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.PasswordDatabase;
@@ -51,6 +54,7 @@ public class DatabaseActions {
     private PasswordDatabase database;
     private ArrayList accountNames;
     private boolean localDatabaseDirty = true;
+    private byte[] pw = null;
 
 
     public DatabaseActions(MainWindow mainWindow) {
@@ -108,6 +112,10 @@ public class DatabaseActions {
         saveDatabase();
         accountNames = new ArrayList();
         doOpenDatabaseActions();
+        
+        // Store the password for later use (base64 encoded so that it's not in cleartext in memory)
+        String masterPwStr = new String(masterPassword.getPassword());
+        this.pw = Base64.encodeBase64(masterPwStr.getBytes());
     
     }
 
@@ -135,36 +143,41 @@ public class DatabaseActions {
             //If the master password was entered correctly then the next step is to get the new master password
             if (passwordCorrect == true) {
     
-    	        JPasswordField masterPassword;
-    	        boolean passwordsMatch = false;
-    	        Object buttonClicked;
-    	        
-    	        //Ask the user for the new master password
-    	        //This loop will continue until the two passwords entered match or until the user hits the cancel button
-    	        do {
-    	
-    	            masterPassword = new JPasswordField("");
-    	            JPasswordField confirmedMasterPassword = new JPasswordField("");
-    	            JOptionPane pane = new JOptionPane(new Object[] {"Please enter a new master password for your database...", masterPassword, "Confirmation...", confirmedMasterPassword},	JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-    	            JDialog dialog = pane.createDialog(mainWindow, "Change Master Password...");
-    	            dialog.show();
-    	            
-    	            buttonClicked = pane.getValue();
-    	            if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION))) {
-    	                if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
-    	                    JOptionPane.showMessageDialog(mainWindow, "The two passwords you entered don't match");
-    	                } else {
-    	                    passwordsMatch = true;
-    	                }
-    	            }
-    	        
-    	        } while (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && !passwordsMatch);
-    	
-    	        //If the user clicked OK and the passwords match then change the database password
-    	        if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && passwordsMatch) {
-    		        database.changePassword(masterPassword.getPassword());
-    		        saveDatabase();
-    	        }
+        	        JPasswordField masterPassword;
+        	        boolean passwordsMatch = false;
+        	        Object buttonClicked;
+        	        
+        	        //Ask the user for the new master password
+        	        //This loop will continue until the two passwords entered match or until the user hits the cancel button
+        	        do {
+        	
+        	            masterPassword = new JPasswordField("");
+        	            JPasswordField confirmedMasterPassword = new JPasswordField("");
+        	            JOptionPane pane = new JOptionPane(new Object[] {"Please enter a new master password for your database...", masterPassword, "Confirmation...", confirmedMasterPassword},	JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        	            JDialog dialog = pane.createDialog(mainWindow, "Change Master Password...");
+        	            dialog.show();
+        	            
+        	            buttonClicked = pane.getValue();
+        	            if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION))) {
+        	                if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
+        	                    JOptionPane.showMessageDialog(mainWindow, "The two passwords you entered don't match");
+        	                } else {
+        	                    passwordsMatch = true;
+        	                }
+        	            }
+        	        
+        	        } while (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && !passwordsMatch);
+        	
+        	        //If the user clicked OK and the passwords match then change the database password
+        	        if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && passwordsMatch) {
+        		        database.changePassword(masterPassword.getPassword());
+        		        saveDatabase();
+                        
+                    // Store the password for later use (base64 encoded so that it's not in cleartext in memory)
+                    String masterPwStr = new String(masterPassword.getPassword());
+                    this.pw = Base64.encodeBase64(masterPwStr.getBytes());
+
+        	        }
     
             }
         }
@@ -228,6 +241,10 @@ public class DatabaseActions {
         
         if (pane.getValue() != null && pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
             password = masterPassword.getPassword();
+            
+            // Store the password for later use (base64 encoded so that it's not in cleartext in memory)
+            String masterPwStr = new String(masterPassword.getPassword());
+            this.pw = Base64.encodeBase64(masterPwStr.getBytes());
         }
         
         return password;
@@ -574,29 +591,39 @@ public class DatabaseActions {
         Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
         File remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
         
-        // Ask the user for the password for the database just downloaded
+        // Attempt to decrypt the database using the password the user entered
         PasswordDatabase remoteDatabase = null;
-        boolean passwordCorrect = false;
-        boolean okClicked = true;
         char[] password = null;
-        do {
-            password = askUserForPassword("Please enter the master password for the REMOTE database");
-            if (password == null) {
-                okClicked = false;
-            } else {
-                try {
-                    remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
-                    passwordCorrect = true;
-                } catch (InvalidPasswordException e) {
-                    JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
+        boolean successfullyDecryptedDb = false;
+        try {
+            String pwString = new String(Base64.decodeBase64(this.pw));
+            password = pwString.toCharArray();
+            remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
+            successfullyDecryptedDb = true;
+        } catch (InvalidPasswordException e) {
+            // The password for the downloaded database is different to that of the open database
+            // (most likely the user changed the local database's master password)
+            boolean okClicked = false;
+            do {
+                password = askUserForPassword("Please enter the master password for the REMOTE database");
+                if (password == null) {
+                    okClicked = false;
+                } else {
+                    okClicked = true;
+                    try {
+                        remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
+                        successfullyDecryptedDb = true;
+                    } catch (InvalidPasswordException invalidPassword) {
+                        JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
+                    }
                 }
-            }
-        } while (!passwordCorrect && okClicked);
-        
+            } while (okClicked && !successfullyDecryptedDb);
+        }
+                
         /* If the local database revision > remote database version => upload local database 
            If the local database revision < remote database version => replace local database with remote database
            If the local database revision = remote database version => do nothing */
-        if (okClicked) {
+        if (successfullyDecryptedDb) {
             if (database.getRevision() > remoteDatabase.getRevision()) {
                 transport.delete(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
                 transport.put(remoteLocation, database.getDatabaseFile(), httpUsername, httpPassword);
@@ -611,7 +638,6 @@ public class DatabaseActions {
 
             if (syncSuccessful) {
                 setLocalDatabaseDirty(false);
-                JOptionPane.showMessageDialog(mainWindow, "Database synchronised successfully");
             }
         }
 
@@ -621,14 +647,9 @@ public class DatabaseActions {
 
     
     public void exitApplication() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
-        if (database == null) {
-            System.exit(0);
-        }
-        if (getLatestVersionOfDatabase()) {
-            System.exit(0);
-        }
+        System.exit(0);
     }
-
+    
     
     /**
      * This method prompts the user for the name of a file.
@@ -701,14 +722,20 @@ public class DatabaseActions {
     private void setStatusBarText() {
         String status = null;
         Color color = null;
-        if (databaseHasRemoteInstance() && localDatabaseDirty) {
-            status = "Unsynchronised";
-            color = Color.RED;
+        if (databaseHasRemoteInstance()) {
+            if (localDatabaseDirty) {
+                status = "Unsynchronised";
+                color = Color.RED;
+            } else {
+                status = "Synchronised";
+                color = Color.BLACK;
+            }
+            status = "Revision " + String.valueOf(database.getRevision()) + " - " + status;
         } else {
-            status = "Synchronised";
+            status = "Local Database";
             color = Color.BLACK;
         }
-        mainWindow.getStatusBar().setText("Revision " + String.valueOf(database.getRevision()) + " - " + status);
+        mainWindow.getStatusBar().setText(status);
         mainWindow.getStatusBar().setForeground(color);
     }
     

@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -59,8 +58,8 @@ public class HTTPTransport extends Transport {
             int proxyPort = 0;
             if (proxyPortStr != null && !proxyPortStr.trim().equals("")) {
                 proxyPort = Integer.parseInt(proxyPortStr);
+                client.getHostConfiguration().setProxy(proxyHost, proxyPort);
             }
-            client.getHostConfiguration().setProxy(proxyHost, proxyPort);
         }
 
     }
@@ -95,15 +94,6 @@ public class HTTPTransport extends Transport {
                 AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
                 client.getState().setCredentials(authScope, creds);
                 client.getParams().setAuthenticationPreemptive(true);
-            }
-
-            // Set the proxy configuration
-            String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
-            if (proxyHost != null && !proxyHost.trim().equals("")) {
-                HostConfiguration config = new HostConfiguration();
-                String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
-                config.setProxy(proxyHost, Integer.parseInt(proxyPort));
-                client.setHostConfiguration(config);
             }
 
             // This line makes the HTTP call
@@ -162,15 +152,6 @@ public class HTTPTransport extends Transport {
                 AuthScope authScope = new AuthScope(urlObj.getHost(), urlObj.getPort());
                 client.getState().setCredentials(authScope, creds);
                 client.getParams().setAuthenticationPreemptive(true);
-            }
-
-            // Set the proxy configuration
-            String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
-            if (proxyHost != null && !proxyHost.trim().equals("")) {
-                HostConfiguration config = new HostConfiguration();
-                String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
-                config.setProxy(proxyHost, Integer.parseInt(proxyPort));
-                client.setHostConfiguration(config);
             }
 
             int statusCode = client.executeMethod(method);
@@ -244,15 +225,6 @@ public class HTTPTransport extends Transport {
                 AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
                 client.getState().setCredentials(authScope, creds);
                 client.getParams().setAuthenticationPreemptive(true);
-            }
-
-            // Set the proxy configuration
-            String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
-            if (proxyHost != null && !proxyHost.trim().equals("")) {
-                HostConfiguration config = new HostConfiguration();
-                String proxyPort = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
-                config.setProxy(proxyHost, Integer.parseInt(proxyPort));
-                client.setHostConfiguration(config);
             }
 
             int status = client.executeMethod(post);
