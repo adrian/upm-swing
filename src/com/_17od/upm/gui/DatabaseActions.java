@@ -630,7 +630,9 @@ public class DatabaseActions {
                 syncSuccessful = true;
             } else if (database.getRevision() < remoteDatabase.getRevision()) {
                 replaceDatabase(database, remoteDatabase);
-                openDatabase(database.getDatabaseFile().getAbsolutePath());
+                String pwString = new String(Base64.decodeBase64(this.pw));
+                password = pwString.toCharArray();
+                openDatabase(database.getDatabaseFile().getAbsolutePath(), password);
                 syncSuccessful = true;
             } else {
                 syncSuccessful = true;
