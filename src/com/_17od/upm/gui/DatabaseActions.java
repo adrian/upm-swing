@@ -398,7 +398,7 @@ public class DatabaseActions {
 
             //If the ok button was clicked then save the account to the database and update the 
             //listview with the new account name (if it's changed) 
-            if (accDialog.okClicked()) {
+            if (accDialog.okClicked() && accDialog.getAccountChanged()) {
                 accInfo = accDialog.getAccount();
                 database.deleteAccount(selectedAccName);
                 database.addAccount(accInfo);

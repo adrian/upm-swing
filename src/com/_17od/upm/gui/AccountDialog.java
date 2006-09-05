@@ -29,6 +29,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -54,6 +55,7 @@ public class AccountDialog extends EscapeDialog {
     private ArrayList existingAccounts;
     private boolean accNameEditable;
     private JFrame parentWindow;
+    private boolean accountChanged = false;
     
     
     public AccountDialog(AccountInformation account, JFrame parentWindow, String title, boolean accNameEditable, ArrayList existingAccounts) {
@@ -249,17 +251,40 @@ public class AccountDialog extends EscapeDialog {
         if (accNameEditable && existingAccounts.indexOf(accountName.getText()) > -1) {
             JOptionPane.showMessageDialog(parentWindow, "An account with the name [" + accountName.getText() + "] already exists", "Account already exists...", JOptionPane.ERROR_MESSAGE);
         } else {
+            // Check for changes
+            if (!pAccount.getAccountName().equals(accountName.getText())) {
+                accountChanged = true;
+            }
+            if (!Arrays.equals(pAccount.getUserId(), userId.getText().getBytes())) {
+                accountChanged = true;
+            }
+            if (!Arrays.equals(pAccount.getPassword(), password.getText().getBytes())) {
+                accountChanged = true;
+            }
+            if (!Arrays.equals(pAccount.getUrl(), url.getText().getBytes())) {
+                accountChanged = true;
+            }
+            if (!Arrays.equals(pAccount.getNotes(), notes.getText().getBytes())) {
+                accountChanged = true;
+            }
+
             pAccount.setAccountName(accountName.getText());
             pAccount.setUserId(userId.getText().getBytes());
             pAccount.setPassword(password.getText().getBytes());
             pAccount.setUrl(url.getText().getBytes());
             pAccount.setNotes(notes.getText().getBytes());
+            
             setVisible(false);
             dispose();
             okClicked = true;
         }
     }
 
+    
+    public boolean getAccountChanged() {
+        return accountChanged;
+    }
+    
     
     private void closeButtonAction() {
         okClicked = false;
