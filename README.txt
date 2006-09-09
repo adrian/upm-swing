@@ -1,8 +1,8 @@
 --------------------------
 Universal Password Manager
 --------------------------
-Universal Password Manager (UPM) allows you to store usernames, passwords, URLs
-etc in an encrypted database protected by one master password.
+Universal Password Manager (UPM) allows you to store usernames, passwords, URLs,
+and generic notes in an encrypted database protected by one master password.
 
 There are several open source password managers available so what makes UPM 
 different? It's three strongest features are...
@@ -15,10 +15,10 @@ different? It's three strongest features are...
    available.
 
  * database sharing - This feature is particularly useful. Rather than having
-   lots of seperate databases (home, work, etc) this feature allows you store
-   your database at a remote location (password protected HTTP URL for example)
-   and then have UPM automatically keep your local database in sync with the
-   remote database.
+   lots of seperate databases (at home and at work for example) this feature
+   allows you store your database at a remote location (password protected HTTP
+   URL for example) and then have UPM automatically keep your local database in
+   sync with the remote database.
 
 
 --------
@@ -28,7 +28,7 @@ Features
 .Shared password database
 .Written in Java/SWING
 .Windows and Mac OS X native feeling versions available
-.Fast Account searching
+.Fast account searching
 .Streamlined for those who are more comfortable using the keyboard only
 .Uses DES with 56 bit keys to encrypt the database
 
@@ -94,6 +94,21 @@ Roadmap
 -------
 History
 -------
+09-Sep-2006 : Version 1.2
+   This is primarily a bug fix release.
+
+   Bugs Fixed
+   [1551461] - Database sync problem on Mac
+
+   Other Changes
+   - Tidy up the HTTP proxy code in the HTTPTransport class
+   - Don't prompt the user for the password on each database sync
+   - Don't bother showing a "success" dialog on each database sync
+   - Don't bother asking the user to sync database on application exit
+   - Change the status bar message for local databases
+   - When user edits and account check if it has changed before marking the database as dirty
+
+
 22-Sep-2006 : Version 1.1
    This release has one major new feature, database sharing. This feature allows you to have one database that can be accessed from many machines.
 
@@ -112,5 +127,5 @@ History
 5-Dec-2005 : Version 1.0b1
    First release.
 
-$Id:$
+$Id$
 
