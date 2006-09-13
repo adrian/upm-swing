@@ -29,26 +29,27 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.security.Security;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.BadPaddingException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 
 public class EncryptionService {
+
+    private static final String PBEWithSHA256And256BitAES = "PBEWithSHA256And256BitAES-CBC-BC";
+    private static final String randomAlgorithm = "SHA1PRNG";
+    public static final int SALT_LENGTH = 8;
 
     private Cipher encryptionCipher; 
     private Cipher decryptionCipher;
     private byte[] salt;
 
-    public static final int SALT_LENGTH = 8;
-
-    //Would prefer if I could use AES or Twofish here. Sun doesn't 
-    //distribute one with their JRE. Might want to look into
-    //http://www.bouncycastle.org
-    private static final String algorithm = "PBEWithMD5AndDES";
-    private static final String randomAlgorithm = "SHA1PRNG";
-
 
     public EncryptionService(char[] password) throws GeneralSecurityException {
+        // Load the BouncyCastle JCE provider (for the AES algorithim)
+        Security.addProvider(new BouncyCastleProvider());
+        
         //Generate a random salt
         SecureRandom saltGen = SecureRandom.getInstance(randomAlgorithm);
         byte pSalt[] = new byte[SALT_LENGTH];
@@ -74,11 +75,11 @@ public class EncryptionService {
         pbeParamSpec = new PBEParameterSpec(salt, count);
 
         pbeKeySpec = new PBEKeySpec(password);
-        keyFac = SecretKeyFactory.getInstance(algorithm);
+        keyFac = SecretKeyFactory.getInstance(PBEWithSHA256And256BitAES);
         SecretKey pbeKey = keyFac.generateSecret(pbeKeySpec);
 
-        encryptionCipher = Cipher.getInstance(algorithm);
-        decryptionCipher = Cipher.getInstance(algorithm);
+        encryptionCipher = Cipher.getInstance(PBEWithSHA256And256BitAES);
+        decryptionCipher = Cipher.getInstance(PBEWithSHA256And256BitAES);
 
         encryptionCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
         decryptionCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
@@ -104,5 +105,5 @@ public class EncryptionService {
     public byte[] getSalt() {
         return salt;
     }
-
+    
 }

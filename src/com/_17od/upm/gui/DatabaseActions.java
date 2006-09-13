@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.crypto.BadPaddingException;
@@ -278,6 +279,14 @@ public class DatabaseActions {
                 } catch (InvalidPasswordException e) {
                     JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
                     password = null;
+                } catch (InvalidKeyException e) {
+                    JOptionPane.showMessageDialog(mainWindow,
+                            "You don't appear to have the Java Cryptography Extension (JCE)\n" +
+                            "Unlimited Strength Jurisdiction Policy Files installed.\n\n" +
+                            "Please visit http://java.sun.com for details on how to download\n" +
+                            "and install these files", "JCE Exception", JOptionPane.ERROR_MESSAGE);
+                    password = null;
+                    break;  // hate using these but it's a lazy way to break out of the while loop
                 }
             }
         }

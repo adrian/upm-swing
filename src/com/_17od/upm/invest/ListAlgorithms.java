@@ -1,13 +1,16 @@
 package com._17od.upm.invest;
 
 import java.security.*;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
  
 public class ListAlgorithms
 {
     
     public static void main(String[] args)
     {
-          Security.addProvider(new com.sun.crypto.provider.SunJCE());
+        //Security.addProvider(new com.sun.crypto.provider.SunJCE());
+        Security.addProvider(new BouncyCastleProvider());
         
         System.out.println("Providers -");
         
