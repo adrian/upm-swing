@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.crypto.BadPaddingException;
@@ -37,15 +36,12 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
-
-import org.apache.commons.codec.binary.Base64;
-
 import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
-import com._17od.upm.database.transport.Transport;
-import com._17od.upm.database.transport.TransportException;
+import com._17od.upm.transport.Transport;
+import com._17od.upm.transport.TransportException;
 import com._17od.upm.util.Util;
 
 
@@ -55,7 +51,6 @@ public class DatabaseActions {
     private PasswordDatabase database;
     private ArrayList accountNames;
     private boolean localDatabaseDirty = true;
-    private byte[] pw = null;
 
 
     public DatabaseActions(MainWindow mainWindow) {
@@ -109,15 +104,11 @@ public class DatabaseActions {
             newDatabaseFile.delete();
         }
         
-        database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());
+        database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());        
         saveDatabase();
         accountNames = new ArrayList();
         doOpenDatabaseActions();
-        
-        // Store the password for later use (base64 encoded so that it's not in cleartext in memory)
-        String masterPwStr = new String(masterPassword.getPassword());
-        this.pw = Base64.encodeBase64(masterPwStr.getBytes());
-    
+
     }
 
 
@@ -173,11 +164,6 @@ public class DatabaseActions {
         	        if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && passwordsMatch) {
         		        database.changePassword(masterPassword.getPassword());
         		        saveDatabase();
-                        
-                    // Store the password for later use (base64 encoded so that it's not in cleartext in memory)
-                    String masterPwStr = new String(masterPassword.getPassword());
-                    this.pw = Base64.encodeBase64(masterPwStr.getBytes());
-
         	        }
     
             }
@@ -242,10 +228,6 @@ public class DatabaseActions {
         
         if (pane.getValue() != null && pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
             password = masterPassword.getPassword();
-            
-            // Store the password for later use (base64 encoded so that it's not in cleartext in memory)
-            String masterPwStr = new String(masterPassword.getPassword());
-            this.pw = Base64.encodeBase64(masterPwStr.getBytes());
         }
         
         return password;
@@ -279,14 +261,6 @@ public class DatabaseActions {
                 } catch (InvalidPasswordException e) {
                     JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
                     password = null;
-                } catch (InvalidKeyException e) {
-                    JOptionPane.showMessageDialog(mainWindow,
-                            "You don't appear to have the Java Cryptography Extension (JCE)\n" +
-                            "Unlimited Strength Jurisdiction Policy Files installed.\n\n" +
-                            "Please visit http://java.sun.com for details on how to download\n" +
-                            "and install these files", "JCE Exception", JOptionPane.ERROR_MESSAGE);
-                    password = null;
-                    break;  // hate using these but it's a lazy way to break out of the while loop
                 }
             }
         }
@@ -605,9 +579,7 @@ public class DatabaseActions {
         char[] password = null;
         boolean successfullyDecryptedDb = false;
         try {
-            String pwString = new String(Base64.decodeBase64(this.pw));
-            password = pwString.toCharArray();
-            remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
+            remoteDatabase = new PasswordDatabase(remoteDatabaseFile, database.getPassword());
             successfullyDecryptedDb = true;
         } catch (InvalidPasswordException e) {
             // The password for the downloaded database is different to that of the open database
@@ -639,9 +611,7 @@ public class DatabaseActions {
                 syncSuccessful = true;
             } else if (database.getRevision() < remoteDatabase.getRevision()) {
                 replaceDatabase(database, remoteDatabase);
-                String pwString = new String(Base64.decodeBase64(this.pw));
-                password = pwString.toCharArray();
-                openDatabase(database.getDatabaseFile().getAbsolutePath(), password);
+                openDatabase(database.getDatabaseFile().getAbsolutePath(), database.getPassword());
                 syncSuccessful = true;
             } else {
                 syncSuccessful = true;

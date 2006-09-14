@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
-
 import javax.crypto.IllegalBlockSizeException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -64,8 +63,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import com._17od.upm.crypto.EncryptionService;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.platformspecific.PlatformSpecificCode;
@@ -141,20 +138,6 @@ public class MainWindow extends JFrame implements ActionListener {
 
         PlatformSpecificCode.getInstance().initialiseApplication(this);
 
-        // Check to see if the JCE Unlimited Strength Jurisdiction Policy Files are installed
-        // By attempting to initialise the encryption with a key >= 8 chars we should
-        // get an exception if the policy files aren't installed
-        try {
-            new EncryptionService("12345678".toCharArray());
-        } catch (InvalidKeyException e) {
-            JOptionPane.showMessageDialog(this,
-                    "You don't appear to have the Java Cryptography Extension (JCE)\n" +
-                    "Unlimited Strength Jurisdiction Policy Files installed.\n\n" +
-                    "Please visit http://java.sun.com for details on how to download\n" +
-                    "and install these files", "JCE Exception", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-        
         dbActions = new DatabaseActions(this);
 
         //Set up the content pane.
@@ -739,6 +722,13 @@ public class MainWindow extends JFrame implements ActionListener {
             } else if (event.getActionCommand() == MainWindow.EXIT_TXT) {
                 dbActions.exitApplication();
             }
+        } catch (InvalidKeyException e) {
+            JOptionPane.showMessageDialog(this,
+                    "You don't appear to have the Java Cryptography Extension (JCE)\n" +
+                    "Unlimited Strength Jurisdiction Policy Files installed.\n\n" +
+                    "These are required for passwords of 8 characters or more.\n\n" +
+                    "Please visit http://java.sun.com for details on how to download\n" +
+                    "and install these files", "JCE Exception", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             dbActions.errorHandler(e);
         }

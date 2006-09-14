@@ -37,6 +37,8 @@ import java.security.GeneralSecurityException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 
+import org.apache.commons.codec.binary.Base64;
+
 import com._17od.upm.crypto.DESDecryptionService;
 import com._17od.upm.crypto.EncryptionService;
 import com._17od.upm.crypto.InvalidPasswordException;
@@ -71,7 +73,7 @@ public class PasswordDatabase {
 	private DatabaseOptions dbOptions;
 	private HashMap accounts;
 	private EncryptionService encryptionService;
-	private char[] password;
+	private byte[] encodedPassword;
 
 	
 	public PasswordDatabase(File dbFile, char[] password) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
@@ -142,9 +144,7 @@ public class PasswordDatabase {
                 //Attempt to decrypt the database information
                 encryptionService = new EncryptionService(password, salt);
                 byte[] decryptedBytes = encryptionService.decrypt(encryptedBytes);
-        
-                this.password = password;
-    
+
                 //If we've got here then the database was successfully decrypted 
                 is = new ByteArrayInputStream(decryptedBytes);
                 revision = new Revision(is);
@@ -181,7 +181,6 @@ public class PasswordDatabase {
             encryptionService = new EncryptionService(password, salt);
             
             //We'll get to here if the password was correct so load up the decryped byte
-            this.password = password;
             is = new ByteArrayInputStream(decryptedBytes);
             DatabaseHeader dh = new DatabaseHeader(is);
 
@@ -210,6 +209,10 @@ public class PasswordDatabase {
 			//just means we hit eof
 		}
 		is.close();
+        
+        
+        // Store the master password for use later
+        setPassword(password);
         
 	}
 	
@@ -281,12 +284,14 @@ public class PasswordDatabase {
 
 
 	public char[] getPassword() {
-		return password;
+        String passwordAsString = new String(Base64.decodeBase64(this.encodedPassword));
+		return passwordAsString.toCharArray();
 	}
 
 
 	public void setPassword(char[] password) {
-		this.password = password;
+        String passwordAsString = new String(password);
+		this.encodedPassword = Base64.encodeBase64(passwordAsString.getBytes());
 	}
-	
+
 }

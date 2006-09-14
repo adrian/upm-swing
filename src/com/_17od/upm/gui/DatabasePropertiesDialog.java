@@ -46,8 +46,8 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import com._17od.upm.database.PasswordDatabase;
-import com._17od.upm.database.transport.Transport;
-import com._17od.upm.database.transport.TransportException;
+import com._17od.upm.transport.Transport;
+import com._17od.upm.transport.TransportException;
 import java.util.Arrays;
 
 

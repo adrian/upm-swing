@@ -20,10 +20,9 @@
  * along with Universal Password Manager; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package com._17od.upm.database.transport;
+package com._17od.upm.transport;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 

@@ -47,9 +47,6 @@ public class EncryptionService {
 
 
     public EncryptionService(char[] password) throws GeneralSecurityException {
-        // Load the BouncyCastle JCE provider (for the AES algorithim)
-        Security.addProvider(new BouncyCastleProvider());
-        
         //Generate a random salt
         SecureRandom saltGen = SecureRandom.getInstance(randomAlgorithm);
         byte pSalt[] = new byte[SALT_LENGTH];
@@ -65,6 +62,10 @@ public class EncryptionService {
 
 
 	private void init(char[] password, byte[] salt) throws GeneralSecurityException {
+
+        // Load the BouncyCastle JCE provider (for the AES algorithim)
+        Security.addProvider(new BouncyCastleProvider());
+
         PBEKeySpec pbeKeySpec;
         PBEParameterSpec pbeParamSpec;
         SecretKeyFactory keyFac;
