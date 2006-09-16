@@ -24,7 +24,7 @@
 ;--------------------------------
 ;General
 
-  !define UPM_VERSION "1.2"
+  !define UPM_VERSION "1.3RC1"
 
   ;Name and file
   Name "Universal Password Manager"
@@ -74,6 +74,7 @@ Section "Universal Password Manager"
   File ..\lib\commons-codec-1.3.jar
   File ..\lib\commons-httpclient-3.0.jar
   File ..\lib\commons-logging-1.1.jar
+  File ..\lib\bcprov-jdk14-133.jar
 
   ;Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\UPM "Install_Dir" "$INSTDIR"
@@ -117,6 +118,7 @@ Section "Uninstall"
   Delete $INSTDIR\commons-codec-1.3.jar
   Delete $INSTDIR\commons-httpclient-3.0.jar
   Delete $INSTDIR\commons-logging-1.1.jar
+  Delete $INSTDIR\bcprov-jdk14-133.jar
   Delete $INSTDIR\server\http\upload.php
   Delete $INSTDIR\server\http\deletefile.php
   RMDir /r $INSTDIR\server

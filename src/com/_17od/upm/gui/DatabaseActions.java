@@ -104,7 +104,7 @@ public class DatabaseActions {
             newDatabaseFile.delete();
         }
         
-        database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());        
+        database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());
         saveDatabase();
         accountNames = new ArrayList();
         doOpenDatabaseActions();

@@ -25,12 +25,12 @@ different? It's three strongest features are...
 Features
 --------
 .Small, fast and lean
+.Uses AES for database encryption (PBEWithSHA256And256BitAES-CBC-BC)
 .Shared password database
 .Written in Java/SWING
 .Windows and Mac OS X native feeling versions available
 .Fast account searching
 .Streamlined for those who are more comfortable using the keyboard only
-.Uses DES with 56 bit keys to encrypt the database
 
 
 ----------------
@@ -84,7 +84,6 @@ application any other way.
 -------
 Roadmap
 -------
-.Choice of encryption algorithms
 .Password generator
 .Native Linux distributions (RPM, DEB)
 .Internationalisation
@@ -94,6 +93,15 @@ Roadmap
 -------
 History
 -------
+09-Sep-2006 : Version 1.3
+   The primary purpose of this release is the introduction of AES database encryption.
+
+   Changes
+   - Now use BouncyCastle AES to encrypt the database (PBEWithSHA256And256BitAES-CBC-BC)
+   - Moved the database structural version out of the encrypted portion of the database.
+     This means that UPM can use the database version to decide how to decrypt the database.
+
+   
 09-Sep-2006 : Version 1.2
    This is primarily a bug fix release.
 
