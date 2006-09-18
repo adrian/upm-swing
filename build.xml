@@ -31,12 +31,14 @@
     <property name="src" value="src"/>
     <property name="test.src" value="test"/>
     <property name="build" value="build"/>
+    <property name="build.instrumented" value="build.instrumented"/>
     <property name="test.build" value="testbuild"/>
     <property name="dist" value="dist"/>
     <property name="short.name" value="upm"/>
     <property name="full.name" value="UPM"/>
     <property name="lib" value="lib"/>
     <property name="repos.url" value="https://opensvn.csie.org/UPM"/>
+    <property name="coveragereport.dir" value="coveragereport.dir"/>
 
 
     <!-- Define a classpath for use later on -->
@@ -48,7 +50,15 @@
         </fileset>
     </path>
 
-    
+
+    <path id="cobertura.classpath">
+        <fileset dir="${cobertura.dir}">
+            <include name="cobertura.jar" />
+            <include name="lib\**\*.jar" />
+        </fileset>
+    </path>
+    <taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
+
     <taskdef resource="svntask.properties">
         <classpath>
             <pathelement location="${svnant.home}\lib\svnant.jar"/>
@@ -56,6 +66,7 @@
             <pathelement location="${svnant.home}\lib\svnjavahl.jar"/>
         </classpath>
     </taskdef>
+
     <taskdef name="jarbundler" classpath="${lib}\jarbundler-1.8.1.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
 
 
@@ -99,6 +110,12 @@
         <!-- Compile platform specific code -->
         <antcall target="compile.macosx"/>
         
+        <!-- Compile the Cobertura instrumented classes -->
+        <delete file="cobertura.ser"/>
+        <cobertura-instrument todir="${build.instrumented}">
+            <fileset dir="${build}"/>
+        </cobertura-instrument>
+
     </target>
 
     
@@ -211,7 +228,10 @@
         <!-- I had to put the junit.jar file into my ANT_HOME\lib in order for
              the junit task to work -->
         <junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on" fork="yes">
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${basedir}/cobertura.ser"/>
+            <classpath location="${build.instrumented}"/>
             <classpath refid="project.class.path"/>
+            <classpath refid="cobertura.classpath"/>
             <jvmarg value="-Djunit.properties=${basedir}/build.properties"/>
             <jvmarg value="-Dupm.properties=${basedir}/upm.properties"/>
             <formatter type="plain"/>
@@ -226,6 +246,7 @@
                 </fileset>
             </batchtest>
         </junit>
+        <cobertura-report format="html" destdir="${coveragereport.dir}" srcdir="${src}"/>
     </target>
 
 </project>
