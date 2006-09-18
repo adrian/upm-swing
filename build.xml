@@ -37,7 +37,7 @@
     <property name="short.name" value="upm"/>
     <property name="full.name" value="UPM"/>
     <property name="lib" value="lib"/>
-    <property name="repos.url" value="https://opensvn.csie.org/UPM"/>
+    <property name="repos.url" value="https://svn.sourceforge.net/svnroot/upm"/>
     <property name="coveragereport.dir" value="coveragereport.dir"/>
 
 
@@ -82,6 +82,8 @@
         <delete dir="${build}"/>
         <delete dir="${test.build}"/>
         <delete dir="${dist}"/>
+        <delete dir="${build.instrumented}"/>
+        <delete dir="${coveragereport.dir}"/>
         <delete>
             <fileset dir="${basedir}" includes="TEST-*"/>
         </delete>
@@ -113,7 +115,9 @@
         <!-- Compile the Cobertura instrumented classes -->
         <delete file="cobertura.ser"/>
         <cobertura-instrument todir="${build.instrumented}">
-            <fileset dir="${build}"/>
+            <fileset dir="${build}">
+                <exclude name="**\invest\**"/>
+            </fileset>
         </cobertura-instrument>
 
     </target>
