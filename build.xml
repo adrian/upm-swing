@@ -64,6 +64,7 @@
             <pathelement location="${svnant.home}\lib\svnant.jar"/>
             <pathelement location="${svnant.home}\lib\svnClientAdapter.jar"/>
             <pathelement location="${svnant.home}\lib\svnjavahl.jar"/>
+            <pathelement location="${svnant.home}\lib\commons-lang-2.0.jar"/>
         </classpath>
     </taskdef>
 
