@@ -225,7 +225,7 @@
         <fail unless="version" message="Need to pass the parameter 'version' to this target"/>
 
         <svn username="${svn.username}" password="${svn.password}">
-            <copy srcUrl="${repos.url}\trunk" destUrl="${repos.url}\tags\${version}" message="Release ${version}"/>
+            <copy srcUrl="${repos.url}/trunk" destUrl="${repos.url}/tags/${version}" message="Release ${version}"/>
         </svn>
     </target>
 
