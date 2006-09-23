@@ -93,11 +93,11 @@ Roadmap
 -------
 History
 -------
-09-Sep-2006 : Version 1.3
+23-Sep-2006 : Version 1.3
    The primary purpose of this release is the introduction of AES database encryption.
 
    Changes
-   - Now use BouncyCastle AES to encrypt the database (PBEWithSHA256And256BitAES-CBC-BC)
+   - Use the BouncyCastle AES provider to encrypt the database (PBEWithSHA256And256BitAES-CBC-BC)
    - Moved the database structural version out of the encrypted portion of the database.
      This means that UPM can use the database version to decide how to decrypt the database.
 
