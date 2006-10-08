@@ -49,7 +49,7 @@ public class Preferences {
     }
 
 
-    private static final String PREF_FILE = System.getProperty("user.home") + "\\upm.properties";
+    private static final String PREF_FILE = System.getProperty("user.home") + System.getProperty("file.separator") + "upm.properties";
     private static final String PREF_FILE_SYS_PROP = "upm.properties";
     private static Properties preferences; 
 
