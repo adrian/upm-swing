@@ -52,7 +52,7 @@ public class Preferences {
     private static final String PREF_FILE = System.getProperty("user.home") + System.getProperty("file.separator") + "upm.properties";
     private static final String PREF_FILE_SYS_PROP = "upm.properties";
     private static Properties preferences; 
-
+    private static String propertiesFile;
 
     public static String get(String name) {
         String retVal = preferences.getProperty(name); 
@@ -76,7 +76,7 @@ public class Preferences {
         //Check for the system property PREF_FILE_SYS_PROP. If supplied it will give the name
         //of the properties file to use. If it's not given then use the properties file in the
         //user's home directory (which may or may not exist)
-        String propertiesFile = System.getProperty(PREF_FILE_SYS_PROP);
+        propertiesFile = System.getProperty(PREF_FILE_SYS_PROP);
         if (propertiesFile == null || propertiesFile.trim().equals("")) {
             propertiesFile = PREF_FILE;
         }
@@ -100,7 +100,7 @@ public class Preferences {
         if (log.isDebugEnabled()) {
             log.debug("Saving properties to the file [" + PREF_FILE + "]");
         }
-        preferences.store(new FileOutputStream(PREF_FILE), "Universal Password Manager Preferences");
+        preferences.store(new FileOutputStream(propertiesFile), "Universal Password Manager Preferences");
     }
     
 }
