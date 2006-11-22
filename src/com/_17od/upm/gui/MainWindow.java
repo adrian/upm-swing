@@ -67,6 +67,7 @@ import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.platformspecific.PlatformSpecificCode;
 import com._17od.upm.util.Preferences;
+import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
 
 
@@ -77,21 +78,21 @@ public class MainWindow extends JFrame implements ActionListener {
 
     private static final String applicationName = "Universal Password Manager";
     
-    public static final String NEW_DATABASE_TXT = "New Database";
-    public static final String OPEN_DATABASE_TXT = "Open Database";
-    public static final String OPEN_DATABASE_FROM_URL_TXT = "Open Database From URL";
-    public static final String SYNC_DATABASE_TXT = "Sync with Remote Database";
-    public static final String CHANGE_MASTER_PASSWORD_TXT = "Change Master Password";
-    public static final String DATABASE_PROPERTIES_TXT = "Database Properties";
-    public static final String ADD_ACCOUNT_TXT = "Add Account";
-    public static final String EDIT_ACCOUNT_TXT = "Edit Account";
-    public static final String DELETE_ACCOUNT_TXT = "Delete Account";
-    public static final String COPY_USERNAME_TXT = "Copy Username";
-    public static final String COPY_PASSWORD_TXT = "Copy Password";
-    public static final String OPTIONS_TXT = "Options";
-    public static final String ABOUT_TXT = "About";
-    public static final String RESET_SEARCH_TXT = "Reset Search";
-    public static final String EXIT_TXT = "Exit";
+    public static final String NEW_DATABASE_TXT = "newDatabaseMenuItem";
+    public static final String OPEN_DATABASE_TXT = "openDatabaseMenuItem";
+    public static final String OPEN_DATABASE_FROM_URL_TXT = "openDatabaseFromURLMenuItem";
+    public static final String SYNC_DATABASE_TXT = "syncWithRemoteDatabaseMenuItem";
+    public static final String CHANGE_MASTER_PASSWORD_TXT = "changeMasterPasswordMenuItem";
+    public static final String DATABASE_PROPERTIES_TXT = "databasePropertiesMenuItem";
+    public static final String ADD_ACCOUNT_TXT = "addAccountMenuItem";
+    public static final String EDIT_ACCOUNT_TXT = "editAccountMenuItem";
+    public static final String DELETE_ACCOUNT_TXT = "deleteAccountMenuItem";
+    public static final String COPY_USERNAME_TXT = "copyUsernameMenuItem";
+    public static final String COPY_PASSWORD_TXT = "copyPasswordMenuItem";
+    public static final String OPTIONS_TXT = "optionsMenuItem";
+    public static final String ABOUT_TXT = "aboutMenuItem";
+    public static final String RESET_SEARCH_TXT = "resetSearchMenuItem";
+    public static final String EXIT_TXT = "exitMenuItem";
 
     private JButton addAccountButton;
     private JButton editAccountButton;
@@ -125,12 +126,14 @@ public class MainWindow extends JFrame implements ActionListener {
     private JLabel statusBar = new JLabel(" ");
     
     private DatabaseActions dbActions;
-    
-    
+
+
     public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
         super(title);
 
         Preferences.load();
+        
+        Translator.initialise();
         
         setIconImage(Util.loadImage("upm.gif").getImage());
 
@@ -154,7 +157,7 @@ public class MainWindow extends JFrame implements ActionListener {
             if (db != null && !db.equals("")) {
 	            File dbFile = new File(db);
 	            if (!dbFile.exists()) {
-	            	dbActions.errorHandler(new Exception("The startup database [" + db + "] does not exist"));
+	            	dbActions.errorHandler(new Exception(Translator.translate("dbDoesNotExist", db)));
 	            } else {
 	            	dbActions.openDatabase(db);
 	            }
@@ -178,7 +181,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
                     Double jvmVersion = new Double(System.getProperty("java.specification.version"));
                     if (jvmVersion.doubleValue() < 1.4) {
-                        JOptionPane.showMessageDialog(null, "This application requires Java 1.4 or later", "Problem...", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, Translator.translate("requireJava14"), Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
                         System.exit(1);
                      } else {
                         new MainWindow(applicationName);
@@ -190,7 +193,7 @@ public class MainWindow extends JFrame implements ActionListener {
         });
     }
 
-    
+
     private void addComponentsToPane() {
 
         //Ensure the layout manager is a BorderLayout
@@ -455,77 +458,86 @@ public class MainWindow extends JFrame implements ActionListener {
 
         JMenuBar menuBar = new JMenuBar();
         
-        databaseMenu = new JMenu("Database");
+        databaseMenu = new JMenu(Translator.translate("databaseMenu"));
         databaseMenu.setMnemonic(KeyEvent.VK_D);
         menuBar.add(databaseMenu);
 
-        newDatabaseMenuItem = new JMenuItem(NEW_DATABASE_TXT, KeyEvent.VK_N);
+        newDatabaseMenuItem = new JMenuItem(Translator.translate(NEW_DATABASE_TXT), KeyEvent.VK_N);
         newDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(newDatabaseMenuItem);
         newDatabaseMenuItem.addActionListener(this);
+        newDatabaseMenuItem.setActionCommand(NEW_DATABASE_TXT);
  
-        openDatabaseMenuItem = new JMenuItem(OPEN_DATABASE_TXT, KeyEvent.VK_O);
+        openDatabaseMenuItem = new JMenuItem(Translator.translate(OPEN_DATABASE_TXT), KeyEvent.VK_O);
         openDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(openDatabaseMenuItem);
         openDatabaseMenuItem.addActionListener(this);
+        openDatabaseMenuItem.setActionCommand(OPEN_DATABASE_TXT);
 
-        openDatabaseFromURLMenuItem = new JMenuItem(OPEN_DATABASE_FROM_URL_TXT, KeyEvent.VK_L);
+        openDatabaseFromURLMenuItem = new JMenuItem(Translator.translate(OPEN_DATABASE_FROM_URL_TXT), KeyEvent.VK_L);
         openDatabaseFromURLMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(openDatabaseFromURLMenuItem);
         openDatabaseFromURLMenuItem.addActionListener(this);
+        openDatabaseFromURLMenuItem.setActionCommand(OPEN_DATABASE_FROM_URL_TXT);
 
         databaseMenu.addSeparator();
 
-        syncWithRemoteDatabaseMenuItem = new JMenuItem(SYNC_DATABASE_TXT, KeyEvent.VK_S);
+        syncWithRemoteDatabaseMenuItem = new JMenuItem(Translator.translate(SYNC_DATABASE_TXT), KeyEvent.VK_S);
         syncWithRemoteDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(syncWithRemoteDatabaseMenuItem);
         syncWithRemoteDatabaseMenuItem.addActionListener(this);
         syncWithRemoteDatabaseMenuItem.setEnabled(false);
+        syncWithRemoteDatabaseMenuItem.setActionCommand(SYNC_DATABASE_TXT);
         
-        changeMasterPasswordMenuItem = new JMenuItem(CHANGE_MASTER_PASSWORD_TXT, KeyEvent.VK_G);
+        changeMasterPasswordMenuItem = new JMenuItem(Translator.translate(CHANGE_MASTER_PASSWORD_TXT), KeyEvent.VK_G);
         changeMasterPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(changeMasterPasswordMenuItem);
         changeMasterPasswordMenuItem.addActionListener(this);
         changeMasterPasswordMenuItem.setEnabled(false);
+        changeMasterPasswordMenuItem.setActionCommand(CHANGE_MASTER_PASSWORD_TXT);
 
-        databasePropertiesMenuItem = new JMenuItem(DATABASE_PROPERTIES_TXT, KeyEvent.VK_I);
+        databasePropertiesMenuItem = new JMenuItem(Translator.translate(DATABASE_PROPERTIES_TXT), KeyEvent.VK_I);
         databasePropertiesMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         databaseMenu.add(databasePropertiesMenuItem);
         databasePropertiesMenuItem.addActionListener(this);
         databasePropertiesMenuItem.setEnabled(false);
+        databasePropertiesMenuItem.setActionCommand(DATABASE_PROPERTIES_TXT);
 
-        accountMenu = new JMenu("Account");
+        accountMenu = new JMenu(Translator.translate("accountMenu"));
         accountMenu.setMnemonic(KeyEvent.VK_A);
         menuBar.add(accountMenu);
         
-        addAccountMenuItem = new JMenuItem(ADD_ACCOUNT_TXT, KeyEvent.VK_A);
+        addAccountMenuItem = new JMenuItem(Translator.translate(ADD_ACCOUNT_TXT), KeyEvent.VK_A);
         addAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(addAccountMenuItem);
         addAccountMenuItem.addActionListener(this);
         addAccountMenuItem.setEnabled(false);
+        addAccountMenuItem.setActionCommand(ADD_ACCOUNT_TXT);
         
-        editAccountMenuItem = new JMenuItem(EDIT_ACCOUNT_TXT, KeyEvent.VK_E);
+        editAccountMenuItem = new JMenuItem(Translator.translate(EDIT_ACCOUNT_TXT), KeyEvent.VK_E);
         editAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(editAccountMenuItem);
         editAccountMenuItem.addActionListener(this);
         editAccountMenuItem.setEnabled(false);
+        editAccountMenuItem.setActionCommand(EDIT_ACCOUNT_TXT);
 
-        deleteAccountMenuItem = new JMenuItem(DELETE_ACCOUNT_TXT, KeyEvent.VK_D);
+        deleteAccountMenuItem = new JMenuItem(Translator.translate(DELETE_ACCOUNT_TXT), KeyEvent.VK_D);
         deleteAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(deleteAccountMenuItem);
         deleteAccountMenuItem.addActionListener(this);
         deleteAccountMenuItem.setEnabled(false);
+        deleteAccountMenuItem.setActionCommand(DELETE_ACCOUNT_TXT);
         
-        copyUsernameMenuItem = new JMenuItem(COPY_USERNAME_TXT, KeyEvent.VK_U);
+        copyUsernameMenuItem = new JMenuItem(Translator.translate(COPY_USERNAME_TXT), KeyEvent.VK_U);
         copyUsernameMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(copyUsernameMenuItem);
@@ -535,8 +547,9 @@ public class MainWindow extends JFrame implements ActionListener {
             }
         });
         copyUsernameMenuItem.setEnabled(false);
+        copyUsernameMenuItem.setActionCommand(COPY_USERNAME_TXT);
 
-        copyPasswordMenuItem = new JMenuItem(COPY_PASSWORD_TXT, KeyEvent.VK_P);
+        copyPasswordMenuItem = new JMenuItem(Translator.translate(COPY_PASSWORD_TXT), KeyEvent.VK_P);
         copyPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         accountMenu.add(copyPasswordMenuItem);
@@ -546,15 +559,18 @@ public class MainWindow extends JFrame implements ActionListener {
             }
         });
         copyPasswordMenuItem.setEnabled(false);
+        copyPasswordMenuItem.setActionCommand(COPY_PASSWORD_TXT);
 
         
-        exitMenuItem = new JMenuItem(EXIT_TXT, KeyEvent.VK_X);
+        exitMenuItem = new JMenuItem(Translator.translate(EXIT_TXT), KeyEvent.VK_X);
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         exitMenuItem.addActionListener(this);
+        exitMenuItem.setActionCommand(EXIT_TXT);
 
-        aboutMenuItem = new JMenuItem(ABOUT_TXT, KeyEvent.VK_A);
+        aboutMenuItem = new JMenuItem(Translator.translate(ABOUT_TXT), KeyEvent.VK_A);
         aboutMenuItem.addActionListener(this);
+        aboutMenuItem.setActionCommand(ABOUT_TXT);
 
         //Because the MAC version of UPM will have a program item in the menu bar then these items
         //only need to be added on non-mac platforms
@@ -562,7 +578,7 @@ public class MainWindow extends JFrame implements ActionListener {
             databaseMenu.addSeparator();
             databaseMenu.add(exitMenuItem);
 
-            helpMenu = new JMenu("Help");
+            helpMenu = new JMenu(Translator.translate("helpMenu"));
             helpMenu.setMnemonic(KeyEvent.VK_H);
             menuBar.add(helpMenu);
     
@@ -577,14 +593,14 @@ public class MainWindow extends JFrame implements ActionListener {
     public JList getAccountsListview() {
     	return accountsListview;
     }
-    
-    
+
+
     private void copyUsernameToClipboard() {
         AccountInformation accInfo = dbActions.getSelectedAccount();
         copyToClipboard(new String(accInfo.getUserId()));
     }
 
-    
+
     private void copyPasswordToClipboard() {
         AccountInformation accInfo = dbActions.getSelectedAccount();
         copyToClipboard(new String(accInfo.getPassword()));
@@ -596,7 +612,8 @@ public class MainWindow extends JFrame implements ActionListener {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, stringSelection);
     }
-    
+
+
 	public JButton getCopyPasswordButton() {
 		return copyPasswordButton;
 	}
@@ -626,27 +643,27 @@ public class MainWindow extends JFrame implements ActionListener {
         return deleteAccountButton;
     }
 
-    
+
     public JTextField getSearchField() {
         return searchField;
     }
 
-    
+
     public JLabel getSearchIcon() {
         return searchIcon;
     }
 
-    
+
     public JButton getResetSearchButton() {
         return resetSearchButton;
     }
 
-    
+
     public JMenuItem getAboutMenuItem() {
         return aboutMenuItem;
     }
 
-    
+
     public JMenuItem getExitMenuItem() {
         return exitMenuItem;
     }
@@ -686,11 +703,12 @@ public class MainWindow extends JFrame implements ActionListener {
         return changeMasterPasswordMenuItem;
     }
 
+
     public JMenuItem getDatabasePropertiesMenuItem() {
         return databasePropertiesMenuItem;
     }
 
-    
+
     public void actionPerformed(ActionEvent event) {
         try {
             if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
@@ -724,11 +742,11 @@ public class MainWindow extends JFrame implements ActionListener {
             }
         } catch (InvalidKeyException e) {
             JOptionPane.showMessageDialog(this,
-                    "You don't appear to have the Java Cryptography Extension (JCE)\n" +
-                    "Unlimited Strength Jurisdiction Policy Files installed.\n\n" +
-                    "These are required for passwords of 8 characters or more.\n\n" +
-                    "Please visit http://java.sun.com for details on how to download\n" +
-                    "and install these files", "JCE Exception", JOptionPane.ERROR_MESSAGE);
+            		Translator.translate("needJCE1") + '\n' +
+            		Translator.translate("needJCE2") + "\n\n" +
+            		Translator.translate("needJCE3") + "\n\n" +
+            		Translator.translate("needJCE4") + '\n' +
+            		Translator.translate("needJCE5"), Translator.translate("jceException"), JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             dbActions.errorHandler(e);
         }

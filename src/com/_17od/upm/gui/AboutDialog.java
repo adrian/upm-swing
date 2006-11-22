@@ -35,13 +35,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
 
 public class AboutDialog extends EscapeDialog {
 
     
     public AboutDialog(JFrame frame) {
-        super(frame, "About UPM", true);
+        super(frame, Translator.translate("aboutUPM"), true);
         
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
@@ -76,7 +77,7 @@ public class AboutDialog extends EscapeDialog {
 
         panel.add(Box.createRigidArea(new Dimension(0,10)));
 
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(Translator.translate("ok"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);

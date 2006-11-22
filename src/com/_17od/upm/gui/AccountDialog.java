@@ -28,9 +28,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,6 +42,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import com._17od.upm.database.AccountInformation;
+import com._17od.upm.util.Translator;
 
 
 public class AccountDialog extends EscapeDialog {
@@ -53,17 +55,15 @@ public class AccountDialog extends EscapeDialog {
     private JTextField accountName;
     private boolean okClicked = false;
     private ArrayList existingAccounts;
-    private boolean accNameEditable;
     private JFrame parentWindow;
     private boolean accountChanged = false;
     
     
-    public AccountDialog(AccountInformation account, JFrame parentWindow, String title, boolean accNameEditable, ArrayList existingAccounts) {
+    public AccountDialog(AccountInformation account, JFrame parentWindow, String title, ArrayList existingAccounts) {
         super(parentWindow, title, true);
 
         this.pAccount = account;
         this.existingAccounts = existingAccounts;
-        this.accNameEditable = accNameEditable;
         this.parentWindow = parentWindow;
         
         getContentPane().setLayout(new GridBagLayout());
@@ -72,7 +72,7 @@ public class AccountDialog extends EscapeDialog {
         Container container = getContentPane();
 
         //The AccountName Row
-        JLabel accountLabel = new JLabel("Account");
+        JLabel accountLabel = new JLabel(Translator.translate("account"));
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -84,7 +84,6 @@ public class AccountDialog extends EscapeDialog {
         container.add(accountLabel, c);
         
         accountName = new JTextField(new String(pAccount.getAccountName()), 20);
-        accountName.setEditable(accNameEditable);
         c.gridx = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -94,10 +93,15 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(accountName, c);
+        accountName.addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		accountName.selectAll();
+        	}
+        });
 
-        
+
         //Userid Row
-        JLabel useridLabel = new JLabel("User Id");
+        JLabel useridLabel = new JLabel(Translator.translate("userid"));
         c.gridx = 0;
         c.gridy = 1;
         c.anchor = GridBagConstraints.LINE_START;
@@ -118,10 +122,15 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(userId, c);
+        userId.addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		userId.selectAll();
+        	}
+        });
         
         
         //Password Row
-        JLabel passwordLabel = new JLabel("Password");
+        JLabel passwordLabel = new JLabel(Translator.translate("password"));
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
@@ -142,10 +151,15 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(password, c);
+        password.addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		password.selectAll();
+        	}
+        });
         
         
         //URL Row
-        JLabel urlLabel = new JLabel("URL");
+        JLabel urlLabel = new JLabel(Translator.translate("url"));
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_START;
@@ -166,10 +180,15 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(url, c);
+        url.addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		url.selectAll();
+        	}
+        });
         
         
         //Notes Row
-        JLabel notesLabel = new JLabel("Notes");
+        JLabel notesLabel = new JLabel(Translator.translate("notes"));
         c.gridx = 0;
         c.gridy = 4;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -191,6 +210,11 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 2;
         c.fill = GridBagConstraints.BOTH;
         container.add(notesScrollPane, c);
+        notes.addFocusListener(new FocusAdapter() {
+        	public void focusGained(FocusEvent e) {
+        		notes.selectAll();
+        	}
+        });
         
         
         //Seperator Row
@@ -208,14 +232,14 @@ public class AccountDialog extends EscapeDialog {
 
         //Button Row
         JPanel buttonPanel = new JPanel();
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(Translator.translate("ok"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 okButtonAction();
             }
         });
         buttonPanel.add(okButton);
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(Translator.translate("cancel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 closeButtonAction();
@@ -246,15 +270,20 @@ public class AccountDialog extends EscapeDialog {
     
     
     private void okButtonAction() {
-        //[1375397] Ensure that an account with the name name doesn't already exist
-        //(by checking 'accountNames' we're checking both visible and filtered accounts 
-        if (accNameEditable && existingAccounts.indexOf(accountName.getText()) > -1) {
-            JOptionPane.showMessageDialog(parentWindow, "An account with the name [" + accountName.getText() + "] already exists", "Account already exists...", JOptionPane.ERROR_MESSAGE);
+
+    	// Check if the account name has changed.
+        if (!pAccount.getAccountName().equals(accountName.getText().trim())) {
+            accountChanged = true;
+        }
+
+        //[1375397] Ensure that an account with the supplied name doesn't already exist.
+        //By checking 'accountNames' we're checking both visible and filtered accounts
+        //
+        // Only check if an account with the same name exists if the account name has actually changed
+        if (accountChanged && existingAccounts.indexOf(accountName.getText().trim()) > -1) {
+            JOptionPane.showMessageDialog(parentWindow, Translator.translate("accountAlreadyExistsWithName", accountName.getText().trim()), Translator.translate("accountAlreadyExists"), JOptionPane.ERROR_MESSAGE);
         } else {
             // Check for changes
-            if (!pAccount.getAccountName().equals(accountName.getText())) {
-                accountChanged = true;
-            }
             if (!Arrays.equals(pAccount.getUserId(), userId.getText().getBytes())) {
                 accountChanged = true;
             }
@@ -268,7 +297,7 @@ public class AccountDialog extends EscapeDialog {
                 accountChanged = true;
             }
 
-            pAccount.setAccountName(accountName.getText());
+            pAccount.setAccountName(accountName.getText().trim());
             pAccount.setUserId(userId.getText().getBytes());
             pAccount.setPassword(password.getText().getBytes());
             pAccount.setUrl(url.getText().getBytes());

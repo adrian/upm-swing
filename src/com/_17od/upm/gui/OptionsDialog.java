@@ -44,6 +44,7 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import com._17od.upm.util.Preferences;
+import com._17od.upm.util.Translator;
 
 
 public class OptionsDialog extends EscapeDialog {
@@ -56,7 +57,7 @@ public class OptionsDialog extends EscapeDialog {
     
     
     public OptionsDialog(JFrame frame) {
-        super(frame, "Options", true);
+        super(frame, Translator.translate("options"), true);
         
         Container container = getContentPane();
 
@@ -69,7 +70,7 @@ public class OptionsDialog extends EscapeDialog {
 
         // Create a pane with an title etched border
         Border etchedBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-        Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, " Startup ");
+        Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("startup") + ' ');
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBorder(etchedTitleBorder);
         emptyBorderPanel.add(mainPanel);
@@ -77,7 +78,7 @@ public class OptionsDialog extends EscapeDialog {
         GridBagConstraints c = new GridBagConstraints();
 
         // The "Database to Load on Startup" row
-        JLabel urlLabel = new JLabel("Database To Load On Startup");
+        JLabel urlLabel = new JLabel(Translator.translate("dbToLoadOnStartup"));
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -124,13 +125,13 @@ public class OptionsDialog extends EscapeDialog {
         // *** The Proxy Section
         // ******************
         // Create a pane with an title etched border
-        Border proxyEtchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, " HTTP Proxy ");
+        Border proxyEtchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("httpProxy") + ' ');
         JPanel proxyPanel = new JPanel(new GridBagLayout());
         proxyPanel.setBorder(proxyEtchedTitleBorder);
         emptyBorderPanel.add(proxyPanel);
 
         // The "HTTP Proxy" label row
-        JLabel proxyLabel = new JLabel("HTTP Proxy");
+        JLabel proxyLabel = new JLabel(Translator.translate("httpProxy"));
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -142,7 +143,7 @@ public class OptionsDialog extends EscapeDialog {
         proxyPanel.add(proxyLabel, c);
 
         // The "HTTP Proxy Port" label row
-        JLabel proxyPortLabel = new JLabel("Port");
+        JLabel proxyPortLabel = new JLabel(Translator.translate("port"));
         c.gridx = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -182,7 +183,7 @@ public class OptionsDialog extends EscapeDialog {
         // The buttons row
         JPanel buttonPanel = new JPanel(new FlowLayout());
         emptyBorderPanel.add(buttonPanel);
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(Translator.translate("ok"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 okButtonAction();
@@ -190,7 +191,7 @@ public class OptionsDialog extends EscapeDialog {
         });
         buttonPanel.add(okButton);
         
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(Translator.translate("cancel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
@@ -217,14 +218,14 @@ public class OptionsDialog extends EscapeDialog {
             dispose();
             okClicked = true;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(parentFrame, e.getStackTrace(), "Error...", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parentFrame, e.getStackTrace(), Translator.translate("error"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
     
     private void getDBToLoadOnStartup() {
         JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("DB To Open On Startup......");
+        fc.setDialogTitle(Translator.translate("dbToOpenOnStartup"));
         int returnVal = fc.showOpenDialog(parentFrame);
         
         if (returnVal == JFileChooser.APPROVE_OPTION) {

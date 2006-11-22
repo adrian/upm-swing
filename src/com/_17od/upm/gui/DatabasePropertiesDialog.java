@@ -48,6 +48,8 @@ import javax.swing.border.EtchedBorder;
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.transport.Transport;
 import com._17od.upm.transport.TransportException;
+import com._17od.upm.util.Translator;
+
 import java.util.Arrays;
 
 
@@ -56,7 +58,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
     private boolean databaseNeedsSaving = false;
     
     public DatabasePropertiesDialog(final JFrame frame, ArrayList accountNames, final PasswordDatabase database) {
-        super(frame, "Database Properties", true);
+        super(frame, Translator.translate("databaseProperties"), true);
         
         Container container = getContentPane();
 
@@ -69,7 +71,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
 
         // Create a pane with an title etched border
         Border etchedBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-        Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, " Remote Location ");
+        Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("remoteLocation") + ' ');
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBorder(etchedTitleBorder);
         emptyBorderPanel.add(mainPanel);
@@ -77,7 +79,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
         GridBagConstraints c = new GridBagConstraints();
 
         // The Remote URL Label row
-        JLabel urlLabel = new JLabel("URL");
+        JLabel urlLabel = new JLabel(Translator.translate("url"));
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -101,7 +103,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
         mainPanel.add(urlTextField, c);
 
         // The Authentication Credentials label row
-        JLabel authLabel = new JLabel("Authentication Credentials");
+        JLabel authLabel = new JLabel(Translator.translate("authenticationCredentials"));
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
@@ -139,7 +141,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
         // The buttons row
         JPanel buttonPanel = new JPanel(new FlowLayout());
         emptyBorderPanel.add(buttonPanel);
-        JButton okButton = new JButton("OK");
+        JButton okButton = new JButton(Translator.translate("ok"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 saveDatabaseOptions(frame, urlTextField.getText().trim(), (String) auth.getSelectedItem(), database);
@@ -147,7 +149,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
         });
         buttonPanel.add(okButton);
         
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton(Translator.translate("cancel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 databaseNeedsSaving = false;
@@ -208,19 +210,19 @@ public class DatabasePropertiesDialog extends EscapeDialog {
                             }
                             canCloseWindow = true;
                         } catch (TransportException e ){
-                            JOptionPane.showMessageDialog(parentFrame, e.getMessage(), "Transport Error", JOptionPane.ERROR_MESSAGE);                            
+                            JOptionPane.showMessageDialog(parentFrame, e.getMessage(), Translator.translate("transportError"), JOptionPane.ERROR_MESSAGE);                            
                         }
                     } else {
                         canCloseWindow = true;
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(parentFrame, "The given URL uses an unsupported protocol", "Invalid Protocol", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(parentFrame, Translator.translate("unsupportedProtocol"), Translator.translate("invalidProtocol"), JOptionPane.ERROR_MESSAGE);
                 }
 
             } else {
                 // If we got here the the URL is invalid
-                JOptionPane.showMessageDialog(parentFrame, "The given URL is invalid", "Invalid URL", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(parentFrame, Translator.translate("givenURLIsInvalid"), Translator.translate("invalidURL"), JOptionPane.ERROR_MESSAGE);
             }
             
         } else {
@@ -239,7 +241,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
                 setVisible(false);
                 dispose();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(parentFrame, e.getMessage(), "Problem Saving Database", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(parentFrame, e.getMessage(), Translator.translate("problemSavingDB"), JOptionPane.ERROR_MESSAGE);
             }
         }
         

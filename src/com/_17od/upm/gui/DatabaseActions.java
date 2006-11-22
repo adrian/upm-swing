@@ -42,6 +42,7 @@ import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.transport.Transport;
 import com._17od.upm.transport.TransportException;
+import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
 
 
@@ -71,7 +72,7 @@ public class DatabaseActions {
      */
     public void newDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
     
-        File newDatabaseFile = getSaveAsFile("New Password Database...");
+        File newDatabaseFile = getSaveAsFile(Translator.translate("newPasswordDatabase"));
         if (newDatabaseFile == null) {
             return;
         }
@@ -84,13 +85,13 @@ public class DatabaseActions {
             
             masterPassword = new JPasswordField("");
             JPasswordField confirmedMasterPassword = new JPasswordField("");
-            JOptionPane pane = new JOptionPane(new Object[] {"Please enter a master password for your new database...", masterPassword, "Confirmation...", confirmedMasterPassword},	JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-            JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
+            JOptionPane pane = new JOptionPane(new Object[] {Translator.translate("enterMasterPassword"), masterPassword, Translator.translate("confirmation"), confirmedMasterPassword}, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+            JDialog dialog = pane.createDialog(mainWindow, Translator.translate("masterPassword"));
             dialog.show();
             
             if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
                 if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
-                    JOptionPane.showMessageDialog(mainWindow, "The two passwords you entered don't match");
+                    JOptionPane.showMessageDialog(mainWindow, Translator.translate("passwordsDontMatch"));
                 } else {
                     passwordsMatch = true;
                 }
@@ -119,7 +120,7 @@ public class DatabaseActions {
             boolean passwordCorrect = false;
             boolean okClicked = true;
             do {
-                char[] password = askUserForPassword("Please enter the master password for this database");
+                char[] password = askUserForPassword(Translator.translate("enterDatabasePassword"));
                 if (password == null) {
                     okClicked = false;
                 } else {
@@ -127,7 +128,7 @@ public class DatabaseActions {
                         new PasswordDatabase(database.getDatabaseFile(), password);
                         passwordCorrect = true;
                     } catch (InvalidPasswordException e) {
-                        JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
+                        JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
                     }
                 }
             } while (!passwordCorrect && okClicked);
@@ -145,14 +146,14 @@ public class DatabaseActions {
         	
         	            masterPassword = new JPasswordField("");
         	            JPasswordField confirmedMasterPassword = new JPasswordField("");
-        	            JOptionPane pane = new JOptionPane(new Object[] {"Please enter a new master password for your database...", masterPassword, "Confirmation...", confirmedMasterPassword},	JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-        	            JDialog dialog = pane.createDialog(mainWindow, "Change Master Password...");
+        	            JOptionPane pane = new JOptionPane(new Object[] {Translator.translate("enterNewMasterPassword"), masterPassword, Translator.translate("confirmation"), confirmedMasterPassword}, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        	            JDialog dialog = pane.createDialog(mainWindow, Translator.translate("changeMasterPassword"));
         	            dialog.show();
         	            
         	            buttonClicked = pane.getValue();
         	            if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION))) {
         	                if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
-        	                    JOptionPane.showMessageDialog(mainWindow, "The two passwords you entered don't match");
+        	                    JOptionPane.showMessageDialog(mainWindow, Translator.translate("passwordsDontMatch"));
         	                } else {
         	                    passwordsMatch = true;
         	                }
@@ -178,7 +179,7 @@ public class DatabaseActions {
         if (errorMessage == null) {
             errorMessage = e.getClass().getName();
         }
-        JOptionPane.showMessageDialog(mainWindow, errorMessage, "Error...", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(mainWindow, errorMessage, Translator.translate("error"), JOptionPane.ERROR_MESSAGE);
     }
     
     
@@ -223,7 +224,7 @@ public class DatabaseActions {
             
         JPasswordField masterPassword = new JPasswordField("");
         JOptionPane pane = new JOptionPane(new Object[] {message, masterPassword }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-        JDialog dialog = pane.createDialog(mainWindow, "Master Password...");
+        JDialog dialog = pane.createDialog(mainWindow, Translator.translate("masterPassword"));
         dialog.show();
         
         if (pane.getValue() != null && pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
@@ -246,7 +247,7 @@ public class DatabaseActions {
         while (!passwordCorrect && okClicked) {
             // If we weren't given a password then ask the user to enter one
             if (password == null) {
-                password = askUserForPassword("Please enter the master password for this database");
+                password = askUserForPassword(Translator.translate("enterDatabasePassword"));
                 if (password == null) {
                     okClicked = false;
                 }
@@ -259,7 +260,7 @@ public class DatabaseActions {
                     database = new PasswordDatabase(new File(databaseFilename), password);
                     passwordCorrect = true;
                 } catch (InvalidPasswordException e) {
-                    JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
+                    JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
                     password = null;
                 }
             }
@@ -274,7 +275,7 @@ public class DatabaseActions {
     
     public void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
         JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("Open Password Database...");
+        fc.setDialogTitle(Translator.translate("openDatabase"));
         int returnVal = fc.showOpenDialog(mainWindow);
         
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -282,7 +283,7 @@ public class DatabaseActions {
             if (databaseFile.exists()) {
                 openDatabase(databaseFile.getAbsolutePath());
             } else {
-                JOptionPane.showMessageDialog(mainWindow, "The file [" + databaseFile.getAbsolutePath() + "] doesn't exist", "File doesn't exist", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(mainWindow, Translator.translate("fileDoesntExistWithName", databaseFile.getAbsolutePath()), Translator.translate("fileDoesntExist"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -294,7 +295,7 @@ public class DatabaseActions {
             SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
             String selectedAccName = (String) mainWindow.getAccountsListview().getSelectedValue();
     
-            int buttonSelected = JOptionPane.showConfirmDialog(mainWindow, "Are you sure you want to delete the account [" + selectedAccName + "]", "Confirm delete account", JOptionPane.YES_NO_OPTION);
+            int buttonSelected = JOptionPane.showConfirmDialog(mainWindow, Translator.translate("askConfirmDeleteAccount", selectedAccName), Translator.translate("confirmDeleteAccount"), JOptionPane.YES_NO_OPTION);
             if (buttonSelected == JOptionPane.OK_OPTION) {
                 //Remove the account from the listview, accountNames arraylist & the database
                 listview.removeElement(selectedAccName);
@@ -317,7 +318,7 @@ public class DatabaseActions {
 
             //Initialise the AccountDialog
             AccountInformation accInfo = new AccountInformation();
-            AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Add Account", true, accountNames);
+            AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, Translator.translate("addAccount"), accountNames);
             accDialog.pack();
             accDialog.setLocationRelativeTo(mainWindow);
             accDialog.show();
@@ -348,7 +349,7 @@ public class DatabaseActions {
 
         // Ensure we're working with the latest version of the database
         if (databaseHasRemoteInstance() && localDatabaseDirty) {
-            int answer = JOptionPane.showConfirmDialog(mainWindow, "Sync with remote database?", "Sync Database?",JOptionPane.YES_NO_OPTION);
+            int answer = JOptionPane.showConfirmDialog(mainWindow, Translator.translate("askSyncWithRemoteDB"), Translator.translate("syncDatabase"), JOptionPane.YES_NO_OPTION);
             if (answer == JOptionPane.YES_OPTION) {
                 latestVersionDownloaded = syncWithRemoteDatabase();
             }
@@ -374,7 +375,7 @@ public class DatabaseActions {
         if (getLatestVersionOfDatabase()) {
             AccountInformation accInfo = getSelectedAccount();
             String selectedAccName = (String) accInfo.getAccountName();
-            AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, "Edit Account", false, accountNames);
+            AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, Translator.translate("editAccount"), accountNames);
             accDialog.pack();
             accDialog.setLocationRelativeTo(mainWindow);
             accDialog.show();
@@ -486,10 +487,10 @@ public class DatabaseActions {
         if (successful) {
             successful = newDatabase.getDatabaseFile().renameTo(new File(dbFileName));
             if (!successful) {
-                throw new PasswordDatabaseException("Couldn't rename the existing password database (to make way for the new database) [" + existingDatabase.getDatabaseFile().getAbsolutePath() + "] to [" + existingDatabase.getDatabaseFile().getName() + ".tmp]");
+                throw new PasswordDatabaseException(Translator.translate("couldntRename", new Object[] {existingDatabase.getDatabaseFile().getAbsolutePath(), existingDatabase.getDatabaseFile().getName()}));
             }
         } else {
-            throw new PasswordDatabaseException("Couldn't delete the existing password database");
+            throw new PasswordDatabaseException(Translator.translate("couldntDelete"));
         }
     }
 
@@ -506,7 +507,7 @@ public class DatabaseActions {
                 }
             }
         } catch (TransportException e) {
-            int response = JOptionPane.showConfirmDialog(mainWindow, "Problem retrieving remote database. Would you like to make this database local only?", "Detach database from remote instance? ", JOptionPane.YES_NO_OPTION);
+            int response = JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemRetrievingRemoteDB"), Translator.translate("detachDatabase"), JOptionPane.YES_NO_OPTION);
             if (response == JOptionPane.YES_OPTION) {
                 database.getDbOptions().setRemoteLocation("");
                 database.getDbOptions().setAuthDBEntry("");
@@ -531,7 +532,7 @@ public class DatabaseActions {
             String password = openDBDialog.getPasswordTextField().getText();
 
             // Ask the user for a location to save the database file to
-            File saveDatabaseTo = getSaveAsFile("Save Database as...");
+            File saveDatabaseTo = getSaveAsFile(Translator.translate("saveDatabaseAs"));
             
             if (saveDatabaseTo != null) {
                 
@@ -586,7 +587,7 @@ public class DatabaseActions {
             // (most likely the user changed the local database's master password)
             boolean okClicked = false;
             do {
-                password = askUserForPassword("Please enter the master password for the REMOTE database");
+                password = askUserForPassword(Translator.translate("enterPaswordForRemoteDB"));
                 if (password == null) {
                     okClicked = false;
                 } else {
@@ -595,7 +596,7 @@ public class DatabaseActions {
                         remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
                         successfullyDecryptedDb = true;
                     } catch (InvalidPasswordException invalidPassword) {
-                        JOptionPane.showMessageDialog(mainWindow, "Incorrect password");
+                        JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
                     }
                 }
             } while (okClicked && !successfullyDecryptedDb);
@@ -656,7 +657,11 @@ public class DatabaseActions {
         
             //Warn the user if the database file already exists
             if (newDatabaseFile.exists()) {
-                int i = JOptionPane.showConfirmDialog(mainWindow, "The file " + newDatabaseFile.getAbsolutePath() + " already exists.\nDo you want to overwrite it?", "File Already Exists...", JOptionPane.YES_NO_OPTION);
+                int i = JOptionPane.showConfirmDialog(mainWindow, 
+                		Translator.translate("fileAlreadyExistsWithFileName", newDatabaseFile.getAbsolutePath()) + '\n' + 
+                		Translator.translate("overwrite"), 
+                		Translator.translate("fileAlreadyExists"), 
+                		JOptionPane.YES_NO_OPTION);
                 if (i == JOptionPane.YES_OPTION) {
                     gotValidFile = true;
                 }
@@ -705,15 +710,15 @@ public class DatabaseActions {
         Color color = null;
         if (databaseHasRemoteInstance()) {
             if (localDatabaseDirty) {
-                status = "Unsynchronised";
+                status = Translator.translate("unsynchronised");
                 color = Color.RED;
             } else {
-                status = "Synchronised";
+                status = Translator.translate("synchronised");
                 color = Color.BLACK;
             }
-            status = "Revision " + String.valueOf(database.getRevision()) + " - " + status;
+            status = Translator.translate("revision") + ' ' + String.valueOf(database.getRevision()) + " - " + status;
         } else {
-            status = "Local Database";
+            status = Translator.translate("localDatabase");
             color = Color.BLACK;
         }
         mainWindow.getStatusBar().setText(status);

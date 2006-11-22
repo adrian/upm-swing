@@ -43,6 +43,8 @@ public class Preferences {
 
         public static final String HTTP_PROXY_HOST="http.proxy.host";
         public static final String HTTP_PROXY_PORT="http.proxy.port";
+        
+        public static final String LOCALE="locale";
     }
 
     public class DatabaseOptions {
