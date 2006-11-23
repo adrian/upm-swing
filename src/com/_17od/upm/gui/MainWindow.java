@@ -288,7 +288,7 @@ public class MainWindow extends JFrame implements ActionListener {
         resetSearchButton = new JButton(Util.loadImage("stop.gif"));
         resetSearchButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
         resetSearchButton.setEnabled(false);
-        resetSearchButton.setToolTipText(RESET_SEARCH_TXT);
+        resetSearchButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
         resetSearchButton.setActionCommand(RESET_SEARCH_TXT);
         resetSearchButton.addActionListener(this);
         resetSearchButton.setBorder(BorderFactory.createEmptyBorder());
@@ -370,7 +370,7 @@ public class MainWindow extends JFrame implements ActionListener {
         
         // The "Add Account" button
         addAccountButton = new JButton();
-        addAccountButton.setToolTipText(ADD_ACCOUNT_TXT);
+        addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
         addAccountButton.setIcon(Util.loadImage("add_account.gif"));
         addAccountButton.setDisabledIcon(Util.loadImage("add_account_d.gif"));;
         addAccountButton.addActionListener(this);
@@ -380,7 +380,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         // The "Edit Account" button
         editAccountButton = new JButton();
-        editAccountButton.setToolTipText(EDIT_ACCOUNT_TXT);
+        editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
         editAccountButton.setIcon(Util.loadImage("edit_account.gif"));
         editAccountButton.setDisabledIcon(Util.loadImage("edit_account_d.gif"));;
         editAccountButton.addActionListener(this);
@@ -390,7 +390,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         // The "Delete Account" button
         deleteAccountButton = new JButton();
-        deleteAccountButton.setToolTipText(DELETE_ACCOUNT_TXT);
+        deleteAccountButton.setToolTipText(Translator.translate(DELETE_ACCOUNT_TXT));
         deleteAccountButton.setIcon(Util.loadImage("delete_account.gif"));
         deleteAccountButton.setDisabledIcon(Util.loadImage("delete_account_d.gif"));;
         deleteAccountButton.addActionListener(this);
@@ -402,7 +402,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         // The "Copy Username" button
         copyUsernameButton = new JButton();
-        copyUsernameButton.setToolTipText(COPY_USERNAME_TXT);
+        copyUsernameButton.setToolTipText(Translator.translate(COPY_USERNAME_TXT));
         copyUsernameButton.setIcon(Util.loadImage("copy_username.gif"));
         copyUsernameButton.setDisabledIcon(Util.loadImage("copy_username_d.gif"));;
         copyUsernameButton.addActionListener(new ActionListener() {
@@ -415,7 +415,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         // The "Copy Password" button
         copyPasswordButton = new JButton();
-        copyPasswordButton.setToolTipText(COPY_PASSWORD_TXT);
+        copyPasswordButton.setToolTipText(Translator.translate(COPY_PASSWORD_TXT));
         copyPasswordButton.setIcon(Util.loadImage("copy_password.gif"));
         copyPasswordButton.setDisabledIcon(Util.loadImage("copy_password_d.gif"));;
         copyPasswordButton.addActionListener(new ActionListener() {
@@ -430,7 +430,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         // The "Option" button
         optionsButton = new JButton();
-        optionsButton.setToolTipText(OPTIONS_TXT);
+        optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
         optionsButton.setIcon(Util.loadImage("options.gif"));
         optionsButton.setDisabledIcon(Util.loadImage("options_d.gif"));;
         optionsButton.addActionListener(this);
@@ -442,7 +442,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         // The Sync database button
         syncDatabaseButton = new JButton();
-        syncDatabaseButton.setToolTipText(SYNC_DATABASE_TXT);
+        syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
         syncDatabaseButton.setIcon(Util.loadImage("sync.png"));
         syncDatabaseButton.setDisabledIcon(Util.loadImage("sync_d.png"));;
         syncDatabaseButton.addActionListener(this);
@@ -767,4 +767,42 @@ public class MainWindow extends JFrame implements ActionListener {
         return statusBar;
     }
 
+    
+    /**
+     * Initialise all the menus, buttons, etc to take account of the language selected by the user
+     */
+    public void initialiseControlsWithDefaultLanguage() {
+        databaseMenu.setText(Translator.translate("databaseMenu"));
+        newDatabaseMenuItem.setText(Translator.translate(NEW_DATABASE_TXT));
+        openDatabaseMenuItem.setText(Translator.translate(OPEN_DATABASE_TXT));
+        openDatabaseFromURLMenuItem.setText(Translator.translate(OPEN_DATABASE_FROM_URL_TXT));
+        syncWithRemoteDatabaseMenuItem.setText(Translator.translate(SYNC_DATABASE_TXT));
+        changeMasterPasswordMenuItem.setText(Translator.translate(CHANGE_MASTER_PASSWORD_TXT));
+        databasePropertiesMenuItem.setText(Translator.translate(DATABASE_PROPERTIES_TXT));
+        accountMenu.setText(Translator.translate("accountMenu"));
+        addAccountMenuItem.setText(Translator.translate(ADD_ACCOUNT_TXT));
+        editAccountMenuItem.setText(Translator.translate(EDIT_ACCOUNT_TXT));
+        deleteAccountMenuItem.setText(Translator.translate(DELETE_ACCOUNT_TXT));
+        copyUsernameMenuItem.setText(Translator.translate(COPY_USERNAME_TXT));
+        copyPasswordMenuItem.setText(Translator.translate(COPY_PASSWORD_TXT));
+        exitMenuItem.setText(Translator.translate(EXIT_TXT));
+        aboutMenuItem.setText(Translator.translate(ABOUT_TXT));
+
+        //Because the MAC version of UPM will have a program item in the menu bar then these items
+        //only need to be added on non-mac platforms
+        if (!PlatformSpecificCode.isMAC()) {
+            helpMenu = new JMenu(Translator.translate("helpMenu"));
+        }
+        
+        addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
+        editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
+        deleteAccountButton.setToolTipText(Translator.translate(DELETE_ACCOUNT_TXT));
+        copyUsernameButton.setToolTipText(Translator.translate(COPY_USERNAME_TXT));
+        copyPasswordButton.setToolTipText(Translator.translate(COPY_PASSWORD_TXT));
+        optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
+        syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
+        optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
+        resetSearchButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
+    }
+    
 }

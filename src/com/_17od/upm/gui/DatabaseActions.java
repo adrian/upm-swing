@@ -464,6 +464,10 @@ public class DatabaseActions {
         oppDialog.pack();
         oppDialog.setLocationRelativeTo(mainWindow);
         oppDialog.show();
+        
+        if (oppDialog.hasLanguageChanged()) {
+            mainWindow.initialiseControlsWithDefaultLanguage();
+        }
     }
 
     
