@@ -31,10 +31,14 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Locale;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -52,10 +56,12 @@ public class OptionsDialog extends EscapeDialog {
     private JTextField dbToLoadOnStartup;
     private JTextField httpProxyHost;
     private JTextField httpProxyPort;
+    private JComboBox localeComboBox;
     private boolean okClicked = false;
     private JFrame parentFrame;
-    
-    
+    private boolean languageChanged;
+
+
     public OptionsDialog(JFrame frame) {
         super(frame, Translator.translate("options"), true);
         
@@ -68,6 +74,9 @@ public class OptionsDialog extends EscapeDialog {
         emptyBorderPanel.setBorder(emptyBorder);
         container.add(emptyBorderPanel);
 
+        // ******************
+        // *** The DB TO Load On Startup Section
+        // ******************
         // Create a pane with an title etched border
         Border etchedBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
         Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("startup") + ' ');
@@ -119,8 +128,51 @@ public class OptionsDialog extends EscapeDialog {
         mainPanel.add(dbToLoadOnStartupButton, c);
 
         // Some space
-        emptyBorderPanel.add(Box.createRigidArea(new Dimension(1, 10)));
-        
+        emptyBorderPanel.add(Box.createVerticalGlue());
+
+
+        // ******************
+        // *** The Language Section
+        // ******************
+        // Create a pane with an title etched border
+        Border languageEtchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("language") + ' ');
+        JPanel languagePanel = new JPanel(new GridBagLayout());
+        languagePanel.setBorder(languageEtchedTitleBorder);
+        emptyBorderPanel.add(languagePanel);
+
+        // The "Language" label row
+        JLabel localeLabel = new JLabel(Translator.translate("language"));
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 0, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.NONE;
+        languagePanel.add(localeLabel, c);
+
+        // The "Locale" field row
+        localeComboBox = new JComboBox(getSupportedLocaleNames());
+        for (int i=0; i<localeComboBox.getItemCount(); i++) {
+        	if (Translator.getCurrentLocale().getLanguage().equals(Translator.SUPPORTED_LOCALES[i].getLanguage())) {
+                localeComboBox.setSelectedIndex(i);
+                break;
+        	}
+        }
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        languagePanel.add(localeComboBox, c);
+
+        // Some spacing
+        emptyBorderPanel.add(Box.createVerticalGlue());
+
         // ******************
         // *** The Proxy Section
         // ******************
@@ -179,7 +231,7 @@ public class OptionsDialog extends EscapeDialog {
 
         // Some spacing
         emptyBorderPanel.add(Box.createVerticalGlue());
-        
+
         // The buttons row
         JPanel buttonPanel = new JPanel(new FlowLayout());
         emptyBorderPanel.add(buttonPanel);
@@ -206,13 +258,24 @@ public class OptionsDialog extends EscapeDialog {
     public boolean okClicked() {
         return okClicked;
     }
-    
-    
+
+
     private void okButtonAction() {
         try {
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_HOST, httpProxyHost.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PORT, httpProxyPort.getText());
+
+            // Save the new language and set a flag if it has changed
+            String beforeLocale = Preferences.get(Preferences.ApplicationOptions.LOCALE);
+            Locale selectedLocale = Translator.SUPPORTED_LOCALES[localeComboBox.getSelectedIndex()];
+            String afterLocale = selectedLocale.getLanguage();
+            if (!afterLocale.equals(beforeLocale)) {
+                Preferences.set(Preferences.ApplicationOptions.LOCALE, selectedLocale.getLanguage());
+                Translator.loadBundle(selectedLocale);
+                languageChanged = true;
+            }
+
         	Preferences.save();
             setVisible(false);
             dispose();
@@ -233,5 +296,21 @@ public class OptionsDialog extends EscapeDialog {
             dbToLoadOnStartup.setText(databaseFile.getAbsoluteFile().toString());
         }
     }
+
     
+    private Object[] getSupportedLocaleNames() {
+    	Object[] names = new Object[Translator.SUPPORTED_LOCALES.length]; 
+
+    	for (int i=0; i<Translator.SUPPORTED_LOCALES.length; i++) {
+	    	names[i] = Translator.SUPPORTED_LOCALES[i].getDisplayName(Translator.getCurrentLocale());
+    	}
+
+    	return names;
+    }
+
+    
+    public boolean hasLanguageChanged() {
+    	return languageChanged;
+    }
+
 }

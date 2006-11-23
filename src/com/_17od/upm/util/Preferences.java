@@ -56,6 +56,7 @@ public class Preferences {
     private static Properties preferences; 
     private static String propertiesFile;
 
+
     public static String get(String name) {
         String retVal = preferences.getProperty(name); 
         if (log.isDebugEnabled()) {

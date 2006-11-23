@@ -1,15 +1,16 @@
 package com._17od.upm.invest;
 
+import java.util.Locale;
+
 public class ConsoleApp {
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-        byte[] b = "UPM".getBytes();
-        System.out.println(b.length);
-        System.out.println(b);
-        System.out.println(" ".getBytes().length);
+    	Locale locale = Locale.getDefault();
+    	System.out.println(locale.getLanguage());
+    	System.out.println(locale.toString());
     }
 
 }

@@ -109,7 +109,11 @@
             <fileset dir="images" includes="*.gif *.png"/>
         </copy>
 
-        <copy file="${src}\simplelog.properties" todir="${build}"/>
+        <copy todir="${build}">
+            <fileset dir="${src}">
+                <exclude name="**\*.java"/>
+            </fileset>
+        </copy>
         
         <!-- Compile platform specific code -->
         <antcall target="compile.macosx"/>

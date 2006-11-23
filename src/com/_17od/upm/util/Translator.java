@@ -7,7 +7,8 @@ import java.util.ResourceBundle;
 
 public class Translator {
 
-	private static Locale locale = Locale.ENGLISH;
+	public static Locale[] SUPPORTED_LOCALES = {Locale.ENGLISH, Locale.FRENCH};
+
 	private static ResourceBundle resourceBundle;
 	private static MessageFormat formatter;
 
@@ -29,20 +30,22 @@ public class Translator {
 	}
 
 
-	public static Locale getLocale() {
-		if (locale == null) {
-		}
-		return locale;
+	public static Locale getCurrentLocale() {
+		return resourceBundle.getLocale();
 	}
 
 
     public static void initialise() {
-    	// Get the locale to use from the user's preferences (if there is one)
+    	Locale locale = Locale.ENGLISH;
     	String localePreference = Preferences.get(Preferences.ApplicationOptions.LOCALE);
     	if (localePreference != null) {
     		locale = new Locale(localePreference);
     	}
+    	loadBundle(locale);
+    }
 
+    
+    public static void loadBundle(Locale locale) {
     	resourceBundle = ResourceBundle.getBundle("upm", locale);
     	formatter = new MessageFormat("");
     	formatter.setLocale(locale);
