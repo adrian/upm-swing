@@ -150,7 +150,7 @@
 
         <!-- Build the basic JAR distribution -->
         <mkdir dir="${dist}\build"/>    
-        <jar destfile="${dist}\build\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif **\*.png" excludes="**\invest\**">
+        <jar destfile="${dist}\build\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif **\*.png **\*.properties" excludes="**\invest\**">
             <manifest>
                 <attribute name="Implementation-Title" value="${short.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>

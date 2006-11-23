@@ -86,13 +86,17 @@ Roadmap
 -------
 .Password generator
 .Native Linux distributions (RPM, DEB)
-.Internationalisation
 .Commandline interface
 
 
 -------
 History
 -------
+??-??-???? : Version 1.4b1
+   * Added support for internationalisation. The English and French language bundles are included.
+   * Added support for editing the account name
+
+
 23-Sep-2006 : Version 1.3
    The primary purpose of this release is the introduction of AES database encryption.
 
