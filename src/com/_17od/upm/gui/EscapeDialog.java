@@ -39,7 +39,12 @@ public class EscapeDialog extends JDialog {
 		super(frame, title, modal);
 	}
 	
-	
+
+	public EscapeDialog(JFrame frame, boolean modal) {
+		super(frame, modal);
+	}
+
+
 	protected JRootPane createRootPane() {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {

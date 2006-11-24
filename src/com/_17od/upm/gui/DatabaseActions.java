@@ -318,7 +318,7 @@ public class DatabaseActions {
 
             //Initialise the AccountDialog
             AccountInformation accInfo = new AccountInformation();
-            AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, Translator.translate("addAccount"), accountNames);
+            AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, false, accountNames);
             accDialog.pack();
             accDialog.setLocationRelativeTo(mainWindow);
             accDialog.show();
@@ -359,8 +359,8 @@ public class DatabaseActions {
 
         return latestVersionDownloaded;
     }
-    
-    
+
+
     private boolean databaseHasRemoteInstance() {
         if (database.getDbOptions().getRemoteLocation().equals("")) {
             return false;
@@ -370,12 +370,22 @@ public class DatabaseActions {
     }
 
 
+    public void viewAccount() {
+        AccountInformation accInfo = getSelectedAccount();
+        String selectedAccName = (String) accInfo.getAccountName();
+        AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, true, accountNames);
+        accDialog.pack();
+        accDialog.setLocationRelativeTo(mainWindow);
+        accDialog.show();
+    }
+
+
     public void editAccount() throws IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
 
         if (getLatestVersionOfDatabase()) {
             AccountInformation accInfo = getSelectedAccount();
             String selectedAccName = (String) accInfo.getAccountName();
-            AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, Translator.translate("editAccount"), accountNames);
+            AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, false, accountNames);
             accDialog.pack();
             accDialog.setLocationRelativeTo(mainWindow);
             accDialog.show();
@@ -446,6 +456,7 @@ public class DatabaseActions {
             mainWindow.getCopyUsernameMenuItem().setEnabled(false);
             mainWindow.getCopyPasswordMenuItem().setEnabled(false);
             mainWindow.getDeleteAccountMenuItem().setEnabled(false);
+            mainWindow.getViewAccountMenuItem().setEnabled(false);
         } else {
             mainWindow.getEditAccountButton().setEnabled(true);
             mainWindow.getCopyUsernameButton().setEnabled(true);
@@ -455,6 +466,7 @@ public class DatabaseActions {
             mainWindow.getCopyUsernameMenuItem().setEnabled(true);
             mainWindow.getCopyPasswordMenuItem().setEnabled(true);
             mainWindow.getDeleteAccountMenuItem().setEnabled(true);
+            mainWindow.getViewAccountMenuItem().setEnabled(true);
         }
     }
 

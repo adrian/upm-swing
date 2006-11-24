@@ -59,9 +59,22 @@ public class AccountDialog extends EscapeDialog {
     private boolean accountChanged = false;
     
     
-    public AccountDialog(AccountInformation account, JFrame parentWindow, String title, ArrayList existingAccounts) {
-        super(parentWindow, title, true);
+    public AccountDialog(AccountInformation account, JFrame parentWindow, boolean readOnly, ArrayList existingAccounts) {
+        super(parentWindow, true);
 
+        // Set the title based on weather we've been opened in readonly mode and weather the
+        // Account passed in is empty or not
+    	String title = null;
+    	if (readOnly) {
+    		title = Translator.translate("viewAccount");
+    	} else if (!readOnly && account.getAccountName().trim().equals("")) {
+    		title = Translator.translate("addAccount");
+    	} else {
+    		title = Translator.translate("editAccount");
+    	}
+    	setTitle(title);
+    	
+    		
         this.pAccount = account;
         this.existingAccounts = existingAccounts;
         this.parentWindow = parentWindow;
@@ -84,6 +97,9 @@ public class AccountDialog extends EscapeDialog {
         container.add(accountLabel, c);
         
         accountName = new JTextField(new String(pAccount.getAccountName()), 20);
+        if (readOnly) {
+        	accountName.setEditable(false);
+        }
         c.gridx = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -113,6 +129,9 @@ public class AccountDialog extends EscapeDialog {
         container.add(useridLabel, c);
         
         userId = new JTextField(new String(pAccount.getUserId()), 20);
+        if (readOnly) {
+        	userId.setEditable(false);
+        }
         c.gridx = 1;
         c.gridy = 1;
         c.anchor = GridBagConstraints.LINE_START;
@@ -142,6 +161,9 @@ public class AccountDialog extends EscapeDialog {
         container.add(passwordLabel, c);
         
         password = new JTextField(new String(pAccount.getPassword()), 20);
+        if (readOnly) {
+        	password.setEditable(false);
+        }
         c.gridx = 1;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
@@ -171,6 +193,9 @@ public class AccountDialog extends EscapeDialog {
         container.add(urlLabel, c);
         
         url = new JTextField(new String(pAccount.getUrl()), 20);
+        if (readOnly) {
+        	url.setEditable(false);
+        }
         c.gridx = 1;
         c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_START;
@@ -200,6 +225,9 @@ public class AccountDialog extends EscapeDialog {
         container.add(notesLabel, c);
         
         notes = new JTextArea(new String(pAccount.getNotes()), 10, 20);
+        if (readOnly) {
+        	notes.setEditable(false);
+        }
         JScrollPane notesScrollPane = new JScrollPane(notes);
         c.gridx = 1;
         c.gridy = 4;
@@ -239,13 +267,15 @@ public class AccountDialog extends EscapeDialog {
             }
         });
         buttonPanel.add(okButton);
-        JButton cancelButton = new JButton(Translator.translate("cancel"));
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                closeButtonAction();
-            }
-        });
-        buttonPanel.add(cancelButton);
+        if (!readOnly) {
+	        JButton cancelButton = new JButton(Translator.translate("cancel"));
+	        cancelButton.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                closeButtonAction();
+	            }
+	        });
+	        buttonPanel.add(cancelButton);
+        }
         c.gridx = 0;
         c.gridy = 6;
         c.anchor = GridBagConstraints.PAGE_END;

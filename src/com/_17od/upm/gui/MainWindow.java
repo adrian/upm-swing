@@ -87,6 +87,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String ADD_ACCOUNT_TXT = "addAccountMenuItem";
     public static final String EDIT_ACCOUNT_TXT = "editAccountMenuItem";
     public static final String DELETE_ACCOUNT_TXT = "deleteAccountMenuItem";
+    public static final String VIEW_ACCOUNT_TXT = "viewAccountMenuItem";
     public static final String COPY_USERNAME_TXT = "copyUsernameMenuItem";
     public static final String COPY_PASSWORD_TXT = "copyPasswordMenuItem";
     public static final String OPTIONS_TXT = "optionsMenuItem";
@@ -119,6 +120,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem addAccountMenuItem;
     private JMenuItem editAccountMenuItem;
     private JMenuItem deleteAccountMenuItem;
+    private JMenuItem viewAccountMenuItem;
     private JMenuItem copyUsernameMenuItem;
     private JMenuItem copyPasswordMenuItem;
 
@@ -327,14 +329,14 @@ public class MainWindow extends JFrame implements ActionListener {
         accountsListview.addMouseListener(new MouseAdapter() {
            public void mouseClicked(MouseEvent e) {
                if (e.getClickCount() == 2) {
-                   editAccountButton.doClick();
+            	   viewAccountMenuItem.doClick();
                }
            }
         });
         accountsListview.addKeyListener(new KeyAdapter() {
         	public void keyReleased(KeyEvent e) {
         		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-        			editAccountButton.doClick();
+        			viewAccountMenuItem.doClick();
         		}
         	}
         });
@@ -537,6 +539,14 @@ public class MainWindow extends JFrame implements ActionListener {
         deleteAccountMenuItem.setEnabled(false);
         deleteAccountMenuItem.setActionCommand(DELETE_ACCOUNT_TXT);
         
+        viewAccountMenuItem = new JMenuItem(Translator.translate(VIEW_ACCOUNT_TXT), KeyEvent.VK_V);
+        viewAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        accountMenu.add(viewAccountMenuItem);
+        viewAccountMenuItem.addActionListener(this);
+        viewAccountMenuItem.setEnabled(false);
+        viewAccountMenuItem.setActionCommand(VIEW_ACCOUNT_TXT);
+        
         copyUsernameMenuItem = new JMenuItem(Translator.translate(COPY_USERNAME_TXT), KeyEvent.VK_U);
         copyUsernameMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -684,6 +694,11 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
 
+    public JMenuItem getViewAccountMenuItem() {
+        return viewAccountMenuItem;
+    }
+
+    
     public JMenuItem getEditAccountMenuItem() {
         return editAccountMenuItem;
     }
@@ -725,6 +740,8 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.editAccount();
             } else if (event.getActionCommand() == MainWindow.DELETE_ACCOUNT_TXT) {
                 dbActions.deleteAccount();
+            } else if (event.getActionCommand() == MainWindow.VIEW_ACCOUNT_TXT) {
+                dbActions.viewAccount();
             } else if (event.getActionCommand() == MainWindow.OPTIONS_TXT) {
                 dbActions.options();
             } else if (event.getActionCommand() == MainWindow.ABOUT_TXT) {
@@ -783,6 +800,7 @@ public class MainWindow extends JFrame implements ActionListener {
         addAccountMenuItem.setText(Translator.translate(ADD_ACCOUNT_TXT));
         editAccountMenuItem.setText(Translator.translate(EDIT_ACCOUNT_TXT));
         deleteAccountMenuItem.setText(Translator.translate(DELETE_ACCOUNT_TXT));
+        viewAccountMenuItem.setText(Translator.translate(VIEW_ACCOUNT_TXT));
         copyUsernameMenuItem.setText(Translator.translate(COPY_USERNAME_TXT));
         copyPasswordMenuItem.setText(Translator.translate(COPY_PASSWORD_TXT));
         exitMenuItem.setText(Translator.translate(EXIT_TXT));
