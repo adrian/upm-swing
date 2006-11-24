@@ -467,6 +467,9 @@ public class DatabaseActions {
         
         if (oppDialog.hasLanguageChanged()) {
             mainWindow.initialiseControlsWithDefaultLanguage();
+            if (database != null) {
+            	setStatusBarText();
+            }
         }
     }
 
