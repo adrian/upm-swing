@@ -272,7 +272,7 @@ public class MainWindow extends JFrame implements ActionListener {
 					//the listview has already been selected. this is done automatically in the 
 					//DatabaseActions.filter() method)
 				    if (accountsListview.getModel().getSize() == 1) {
-                        editAccountButton.doClick();
+                        viewAccountMenuItem.doClick();
 				    }
 				}
 			}
