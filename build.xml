@@ -186,7 +186,7 @@
                 <include name="test\**"/>
                 <include name="lib\**"/>
                 <include name="website\**"/>
-                <include name="nsis\**"/>
+                <include name="nsis\upm.nsi"/>
                 <include name="server\**"/>
                 <include name="bin\**"/>
             </tarfileset>
