@@ -81,20 +81,34 @@ local changes. Be aware that UPM will not upload your database if you exit the
 application any other way.
 
 
+--------------------
+Internationalization
+--------------------
+As of version 1.4 UPM supports multiple languages. For each language a seperate
+resource bundle file is included. UPM 1.4 includes resource bundles for both 
+English and French. My apologies to all French speakers but you might find that
+the French messages are a bit weird. I used Google's translator tool and I have
+a feeling it didn't really work out too well. I'd really appreciate help from
+anyone willing to provide translations for UPM's messages. You can find the
+English resource bundle (upm.properties) in the upm.jar file that ships with
+UPM.
+
+
 -------
 Roadmap
 -------
-.Password generator
+.Allow multipe edits on the local database between synchronizations
 .Native Linux distributions (RPM, DEB)
+.Password generator
 .Commandline interface
 
 
 -------
 History
 -------
-??-??-???? : Version 1.4b1
-   * Added support for internationalisation. The English and French language bundles are included.
-   * Added support for editing the account name
+27-Nov-2006 : Version 1.4
+   - Added support for internationalisation. English and French language bundles are included.
+   - Added support for editing the account name
 
 
 23-Sep-2006 : Version 1.3
