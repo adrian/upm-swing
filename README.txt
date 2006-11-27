@@ -107,8 +107,12 @@ Roadmap
 History
 -------
 27-Nov-2006 : Version 1.4
-   - Added support for internationalisation. English and French language bundles are included.
+   - Added support for internationalisation. English and French language bundles
+     are included.
    - Added support for editing the account name
+   - Double clicking or hitting enter on an account opens the account in 
+     read-only view mode. Edit it still available on the toolbar, menu bar and
+     as a keyboard shortcut.
 
 
 23-Sep-2006 : Version 1.3
