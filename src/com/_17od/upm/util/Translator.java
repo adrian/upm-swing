@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 public class Translator {
 
-	public static Locale[] SUPPORTED_LOCALES = {Locale.ENGLISH, Locale.FRENCH};
+	public static Locale[] SUPPORTED_LOCALES = {Locale.ENGLISH, Locale.FRENCH, new Locale("cs","","")};
 
 	private static ResourceBundle resourceBundle;
 	private static MessageFormat formatter;

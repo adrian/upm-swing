@@ -37,3 +37,12 @@ To fix this I...
  3. In the "Ant Home Entries" list hit "Add External Jar" and select the
     junit.jar file just referenced
 
+
+Converting a Unicode Big Endian File to an Acceptable ResourceBundle Format
+===========================================================================
+Resource bundles must represent unicode characters using the \uxxxx format.
+
+If you have a big endian unicode file you can convert it to this format using the command...
+native2ascii -encoding UTF-16BE upm_cs.properties.biged > upm_cs.properties
+
+native2ascii is a tool that comes with the Java JDK.
