@@ -155,7 +155,15 @@ public class OptionsDialog extends EscapeDialog {
         // The "Locale" field row
         localeComboBox = new JComboBox(getSupportedLocaleNames());
         for (int i=0; i<localeComboBox.getItemCount(); i++) {
-        	if (Translator.getCurrentLocale().getLanguage().equals(Translator.SUPPORTED_LOCALES[i].getLanguage())) {
+        	// If the locale language is blank then set it to the English language
+        	// I'm not sure why this happens. Maybe it's because the default locale
+        	// is English???
+        	String currentLanguage = Translator.getCurrentLocale().getLanguage();
+        	if (currentLanguage.equals("")) {
+        		currentLanguage = "en";
+        	}
+        	
+        	if (currentLanguage.equals(Translator.SUPPORTED_LOCALES[i].getLanguage())) {
                 localeComboBox.setSelectedIndex(i);
                 break;
         	}
@@ -302,7 +310,9 @@ public class OptionsDialog extends EscapeDialog {
     	Object[] names = new Object[Translator.SUPPORTED_LOCALES.length]; 
 
     	for (int i=0; i<Translator.SUPPORTED_LOCALES.length; i++) {
-	    	names[i] = Translator.SUPPORTED_LOCALES[i].getDisplayName(Translator.getCurrentLocale());
+	    	names[i] = Translator.SUPPORTED_LOCALES[i].getDisplayName() +
+	    		" (" + Translator.SUPPORTED_LOCALES[i].getDisplayName(Translator.getCurrentLocale())
+	    		+ ')';
     	}
 
     	return names;
