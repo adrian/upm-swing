@@ -296,7 +296,10 @@ public class OptionsDialog extends EscapeDialog {
 
         // The "HTTP Proxy Password" field row
         String encodedPassword = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PASSWORD);
-        String decodedPassword = new String(Base64.decodeBase64(encodedPassword.getBytes()));
+        String decodedPassword = null;
+        if (encodedPassword != null) {
+        	decodedPassword = new String(Base64.decodeBase64(encodedPassword.getBytes()));
+        }
         httpProxyPassword = new JPasswordField(decodedPassword, 20);
         c.gridx = 0;
         c.gridy = 6;

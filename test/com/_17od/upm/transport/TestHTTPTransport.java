@@ -130,10 +130,10 @@ public class TestHTTPTransport extends TestCase {
             transport.get(baseURL + fileToUpload.getName(), httpUsername, httpPassword);
 
             //Should have got an error here
-            fail("Should have got an error when uploading an existing file");
+            fail("Should have got an error when retrieving a non-existant file");
         } catch (Exception e) {
-            if (!(e.getMessage().indexOf("404") > 0)) {
-                fail("Should have got a HTTP 404 error when uploading an existing file");
+            if (!(e.getMessage().indexOf("Not Found") > 0)) {
+                fail("Should have got a HTTP 404 (Not Found) error when retrieving a non-existant file");
             }
         }
 

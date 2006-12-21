@@ -118,8 +118,12 @@ public class HTTPTransport extends Transport {
             	status = client.executeMethod(post);            	
             }
 
-            if (status != HttpStatus.SC_OK || !post.getResponseBodyAsString().equals("OK") ) {
+            if (status != HttpStatus.SC_OK) {
                 throw new TransportException("There's been some kind of problem uploading a file to the HTTP server.\n\nThe HTTP error message is [" + HttpStatus.getStatusText(status) + "]");
+            }
+            
+            if (!post.getResponseBodyAsString().equals("OK") ) {
+            	throw new TransportException("There's been some kind of problem uploading a file to the HTTP server.\n\nThe error message is [" + post.getResponseBodyAsString() + "]");
             }
             
         } catch (FileNotFoundException e) {
@@ -241,8 +245,12 @@ public class HTTPTransport extends Transport {
             }
 
             int status = client.executeMethod(post);
-            if (status != HttpStatus.SC_OK || !post.getResponseBodyAsString().equals("OK") ) {
-                throw new TransportException("There's been some kind of problem deleting a file to the HTTP server. The return code returned was [" + post.getResponseBodyAsString() + "]");
+            if (status != HttpStatus.SC_OK) {
+                throw new TransportException("There's been some kind of problem deleting a file on the HTTP server.\n\nThe HTTP error message is [" + HttpStatus.getStatusText(status) + "]");
+            }
+            
+            if (!post.getResponseBodyAsString().equals("OK") ) {
+            	throw new TransportException("There's been some kind of problem deleting a file to the HTTP server.\n\nThe error message is [" + post.getResponseBodyAsString() + "]");
             }
 
         } catch (MalformedURLException e) {
