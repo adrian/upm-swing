@@ -23,6 +23,7 @@
 package com._17od.upm.gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.IOException;
@@ -372,7 +373,6 @@ public class DatabaseActions {
 
     public void viewAccount() {
         AccountInformation accInfo = getSelectedAccount();
-        String selectedAccName = (String) accInfo.getAccountName();
         AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, true, accountNames);
         accDialog.pack();
         accDialog.setLocationRelativeTo(mainWindow);
@@ -558,7 +558,7 @@ public class DatabaseActions {
                 // Download the database
                 Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
                 File downloadedDatabaseFile = transport.getRemoteFile(remoteLocation, username.getBytes(), password.getBytes());
-
+                
                 // Delete the file is it already exists
                 if (saveDatabaseTo.exists()) {
                     saveDatabaseTo.delete();
@@ -569,7 +569,7 @@ public class DatabaseActions {
                 
                 // Now open the downloaded database 
                 openDatabase(saveDatabaseTo.getAbsolutePath());
-                
+
             }
         }
         
@@ -578,70 +578,78 @@ public class DatabaseActions {
     
     public boolean syncWithRemoteDatabase() throws TransportException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, PasswordDatabaseException {
 
-        boolean syncSuccessful = false;
-        
-        // Get the remote database options
-        String remoteLocation = database.getDbOptions().getRemoteLocation();
-        String authDBEntry = database.getDbOptions().getAuthDBEntry();
-        byte[] httpUsername = null;
-        byte[] httpPassword = null;
-        if (!authDBEntry.equals("")) {
-            httpUsername = database.getAccount(authDBEntry).getUserId();
-            httpPassword = database.getAccount(authDBEntry).getPassword();
-        }
+    	boolean syncSuccessful = false;
+	        
+    	try {
 
-        // Download the database that's already at the remote location
-        Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
-        File remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
-        
-        // Attempt to decrypt the database using the password the user entered
-        PasswordDatabase remoteDatabase = null;
-        char[] password = null;
-        boolean successfullyDecryptedDb = false;
-        try {
-            remoteDatabase = new PasswordDatabase(remoteDatabaseFile, database.getPassword());
-            successfullyDecryptedDb = true;
-        } catch (InvalidPasswordException e) {
-            // The password for the downloaded database is different to that of the open database
-            // (most likely the user changed the local database's master password)
-            boolean okClicked = false;
-            do {
-                password = askUserForPassword(Translator.translate("enterPaswordForRemoteDB"));
-                if (password == null) {
-                    okClicked = false;
-                } else {
-                    okClicked = true;
-                    try {
-                        remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
-                        successfullyDecryptedDb = true;
-                    } catch (InvalidPasswordException invalidPassword) {
-                        JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
-                    }
-                }
-            } while (okClicked && !successfullyDecryptedDb);
-        }
-                
-        /* If the local database revision > remote database version => upload local database 
-           If the local database revision < remote database version => replace local database with remote database
-           If the local database revision = remote database version => do nothing */
-        if (successfullyDecryptedDb) {
-            if (database.getRevision() > remoteDatabase.getRevision()) {
-                transport.delete(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
-                transport.put(remoteLocation, database.getDatabaseFile(), httpUsername, httpPassword);
-                syncSuccessful = true;
-            } else if (database.getRevision() < remoteDatabase.getRevision()) {
-                replaceDatabase(database, remoteDatabase);
-                openDatabase(database.getDatabaseFile().getAbsolutePath(), database.getPassword());
-                syncSuccessful = true;
-            } else {
-                syncSuccessful = true;
-            }
+    		mainWindow.getContentPane().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+    		
+    		// Get the remote database options
+	        String remoteLocation = database.getDbOptions().getRemoteLocation();
+	        String authDBEntry = database.getDbOptions().getAuthDBEntry();
+	        byte[] httpUsername = null;
+	        byte[] httpPassword = null;
+	        if (!authDBEntry.equals("")) {
+	            httpUsername = database.getAccount(authDBEntry).getUserId();
+	            httpPassword = database.getAccount(authDBEntry).getPassword();
+	        }
+	
+	        // Download the database that's already at the remote location
+	        Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
+	        File remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
+	        
+	        // Attempt to decrypt the database using the password the user entered
+	        PasswordDatabase remoteDatabase = null;
+	        char[] password = null;
+	        boolean successfullyDecryptedDb = false;
+	        try {
+	            remoteDatabase = new PasswordDatabase(remoteDatabaseFile, database.getPassword());
+	            successfullyDecryptedDb = true;
+	        } catch (InvalidPasswordException e) {
+	            // The password for the downloaded database is different to that of the open database
+	            // (most likely the user changed the local database's master password)
+	            boolean okClicked = false;
+	            do {
+	                password = askUserForPassword(Translator.translate("enterPaswordForRemoteDB"));
+	                if (password == null) {
+	                    okClicked = false;
+	                } else {
+	                    okClicked = true;
+	                    try {
+	                        remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
+	                        successfullyDecryptedDb = true;
+	                    } catch (InvalidPasswordException invalidPassword) {
+	                        JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
+	                    }
+	                }
+	            } while (okClicked && !successfullyDecryptedDb);
+	        }
+	                
+	        /* If the local database revision > remote database version => upload local database 
+	           If the local database revision < remote database version => replace local database with remote database
+	           If the local database revision = remote database version => do nothing */
+	        if (successfullyDecryptedDb) {
+	            if (database.getRevision() > remoteDatabase.getRevision()) {
+	                transport.delete(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
+	                transport.put(remoteLocation, database.getDatabaseFile(), httpUsername, httpPassword);
+	                syncSuccessful = true;
+	            } else if (database.getRevision() < remoteDatabase.getRevision()) {
+	                replaceDatabase(database, remoteDatabase);
+	                openDatabase(database.getDatabaseFile().getAbsolutePath(), database.getPassword());
+	                syncSuccessful = true;
+	            } else {
+	                syncSuccessful = true;
+	            }
+	
+	            if (syncSuccessful) {
+	                setLocalDatabaseDirty(false);
+	            }
+	        }
 
-            if (syncSuccessful) {
-                setLocalDatabaseDirty(false);
-            }
-        }
-
+    	} finally {
+    		mainWindow.getContentPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    	}
+    	
         return syncSuccessful;
         
     }

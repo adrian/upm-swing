@@ -23,30 +23,34 @@
 package com._17od.upm.gui;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Locale;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+
+import org.apache.commons.codec.binary.Base64;
+
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
 
@@ -54,8 +58,16 @@ import com._17od.upm.util.Translator;
 public class OptionsDialog extends EscapeDialog {
 
     private JTextField dbToLoadOnStartup;
+    private JCheckBox enableProxyCheckbox;
     private JTextField httpProxyHost;
     private JTextField httpProxyPort;
+    private JTextField httpProxyUsername;
+    private JPasswordField httpProxyPassword;
+    private JCheckBox hidePasswordCheckbox;
+    private JLabel proxyLabel;
+    private JLabel proxyPortLabel;
+    private JLabel proxyUsernameLabel;
+    private JLabel proxyPasswordLabel;
     private JComboBox localeComboBox;
     private boolean okClicked = false;
     private JFrame parentFrame;
@@ -79,7 +91,7 @@ public class OptionsDialog extends EscapeDialog {
         // ******************
         // Create a pane with an title etched border
         Border etchedBorder = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-        Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("startup") + ' ');
+        Border etchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("general") + ' ');
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBorder(etchedTitleBorder);
         emptyBorderPanel.add(mainPanel);
@@ -91,7 +103,7 @@ public class OptionsDialog extends EscapeDialog {
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 5, 0, 0);
+        c.insets = new Insets(0, 5, 3, 0);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 2;
@@ -127,30 +139,17 @@ public class OptionsDialog extends EscapeDialog {
         c.fill = GridBagConstraints.NONE;
         mainPanel.add(dbToLoadOnStartupButton, c);
 
-        // Some space
-        emptyBorderPanel.add(Box.createVerticalGlue());
-
-
-        // ******************
-        // *** The Language Section
-        // ******************
-        // Create a pane with an title etched border
-        Border languageEtchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("language") + ' ');
-        JPanel languagePanel = new JPanel(new GridBagLayout());
-        languagePanel.setBorder(languageEtchedTitleBorder);
-        emptyBorderPanel.add(languagePanel);
-
         // The "Language" label row
         JLabel localeLabel = new JLabel(Translator.translate("language"));
         c.gridx = 0;
-        c.gridy = 0;
+        c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 5, 0, 0);
+        c.insets = new Insets(0, 5, 3, 0);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.NONE;
-        languagePanel.add(localeLabel, c);
+        mainPanel.add(localeLabel, c);
 
         // The "Locale" field row
         localeComboBox = new JComboBox(getSupportedLocaleNames());
@@ -169,14 +168,14 @@ public class OptionsDialog extends EscapeDialog {
         	}
         }
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 5, 5, 0);
+        c.insets = new Insets(0, 5, 8, 5);
         c.weightx = 1;
         c.weighty = 0;
-        c.gridwidth = 1;
+        c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
-        languagePanel.add(localeComboBox, c);
+        mainPanel.add(localeComboBox, c);
 
         // Some spacing
         emptyBorderPanel.add(Box.createVerticalGlue());
@@ -186,28 +185,50 @@ public class OptionsDialog extends EscapeDialog {
         // ******************
         // Create a pane with an title etched border
         Border proxyEtchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, ' ' + Translator.translate("httpProxy") + ' ');
-        JPanel proxyPanel = new JPanel(new GridBagLayout());
+        final JPanel proxyPanel = new JPanel(new GridBagLayout());
         proxyPanel.setBorder(proxyEtchedTitleBorder);
         emptyBorderPanel.add(proxyPanel);
 
-        // The "HTTP Proxy" label row
-        JLabel proxyLabel = new JLabel(Translator.translate("httpProxy"));
+        // The "Enable Proxy" row
+        Boolean proxyEnabled = new Boolean(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_ENABLED));
+        enableProxyCheckbox = new JCheckBox(Translator.translate("enableProxy"), proxyEnabled.booleanValue());
+        enableProxyCheckbox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	if (e.getStateChange() == ItemEvent.SELECTED) {
+            		enableProxyComponents(true);
+            	} else {
+            		enableProxyComponents(false);
+            	}
+            }
+        });
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 5, 0, 0);
+        c.insets = new Insets(0, 2, 5, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        proxyPanel.add(enableProxyCheckbox, c);
+        
+        // The "HTTP Proxy" label row
+        proxyLabel = new JLabel(Translator.translate("httpProxy"));
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 3, 0);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.NONE;
         proxyPanel.add(proxyLabel, c);
 
-        // The "HTTP Proxy Port" label row
-        JLabel proxyPortLabel = new JLabel(Translator.translate("port"));
+        // The "HTTP Proxy Port" label
+        proxyPortLabel = new JLabel(Translator.translate("port"));
         c.gridx = 1;
-        c.gridy = 0;
+        c.gridy = 1;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 5, 5, 5);
+        c.insets = new Insets(0, 5, 3, 5);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 1;
@@ -217,7 +238,7 @@ public class OptionsDialog extends EscapeDialog {
         // The "HTTP Proxy" field row
         httpProxyHost = new JTextField(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST), 20);
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(0, 5, 5, 0);
         c.weightx = 1;
@@ -228,7 +249,7 @@ public class OptionsDialog extends EscapeDialog {
 
         httpProxyPort = new JTextField(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT), 6);
         c.gridx = 1;
-        c.gridy = 1;
+        c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(0, 5, 5, 5);
         c.weightx = 0;
@@ -236,6 +257,76 @@ public class OptionsDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         proxyPanel.add(httpProxyPort, c);
+
+        // The "HTTP Proxy Username" label row
+        proxyUsernameLabel = new JLabel(Translator.translate("httpProxyUsername"));
+        c.gridx = 0;
+        c.gridy = 3;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 3, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.NONE;
+        proxyPanel.add(proxyUsernameLabel, c);
+
+        // The "HTTP Proxy Username" field row
+        httpProxyUsername = new JTextField(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME), 20);
+        c.gridx = 0;
+        c.gridy = 4;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 5);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        proxyPanel.add(httpProxyUsername, c);
+
+        // The "HTTP Proxy Password" label row
+        proxyPasswordLabel = new JLabel(Translator.translate("httpProxyPassword"));
+        c.gridx = 0;
+        c.gridy = 5;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 3, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.NONE;
+        proxyPanel.add(proxyPasswordLabel, c);
+
+        // The "HTTP Proxy Password" field row
+        String encodedPassword = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PASSWORD);
+        String decodedPassword = new String(Base64.decodeBase64(encodedPassword.getBytes()));
+        httpProxyPassword = new JPasswordField(decodedPassword, 20);
+        c.gridx = 0;
+        c.gridy = 6;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 5);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        proxyPanel.add(httpProxyPassword, c);
+
+        hidePasswordCheckbox = new JCheckBox(Translator.translate("hide"), true);
+        hidePasswordCheckbox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	if (e.getStateChange() == ItemEvent.SELECTED) {
+            		httpProxyPassword.setEchoChar('*');
+            	} else {
+            		httpProxyPassword.setEchoChar((char) 0);
+            	}
+            }
+        });
+        c.gridx = 1;
+        c.gridy = 6;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 0);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        proxyPanel.add(hidePasswordCheckbox, c);
 
         // Some spacing
         emptyBorderPanel.add(Box.createVerticalGlue());
@@ -260,8 +351,22 @@ public class OptionsDialog extends EscapeDialog {
         });
         buttonPanel.add(cancelButton);
 
+        enableProxyComponents(proxyEnabled.booleanValue());
     }
     
+
+    private void enableProxyComponents(boolean enable) {
+        httpProxyHost.setEnabled(enable);
+        httpProxyPort.setEnabled(enable);
+        httpProxyUsername.setEnabled(enable);
+        httpProxyPassword.setEnabled(enable);
+        proxyLabel.setEnabled(enable);
+        proxyPortLabel.setEnabled(enable);
+        proxyUsernameLabel.setEnabled(enable);
+        proxyPasswordLabel.setEnabled(enable);
+        hidePasswordCheckbox.setEnabled(enable);
+    }
+
 
     public boolean okClicked() {
         return okClicked;
@@ -273,6 +378,10 @@ public class OptionsDialog extends EscapeDialog {
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_HOST, httpProxyHost.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PORT, httpProxyPort.getText());
+            Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME, httpProxyUsername.getText());
+            String encodedPassword = new String(Base64.encodeBase64(new String(httpProxyPassword.getPassword()).getBytes()));
+            Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PASSWORD, encodedPassword);
+            Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_ENABLED, String.valueOf(enableProxyCheckbox.isSelected()));
 
             // Save the new language and set a flag if it has changed
             String beforeLocale = Preferences.get(Preferences.ApplicationOptions.LOCALE);

@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -52,14 +54,25 @@ public class HTTPTransport extends Transport {
         client = new HttpClient();
 
         //Get the proxy settings
-        String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
-        if (proxyHost != null && !proxyHost.trim().equals("")) {
-            String proxyPortStr = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
-            int proxyPort = 0;
-            if (proxyPortStr != null && !proxyPortStr.trim().equals("")) {
-                proxyPort = Integer.parseInt(proxyPortStr);
-                client.getHostConfiguration().setProxy(proxyHost, proxyPort);
-            }
+        Boolean proxyEnabled = new Boolean(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_ENABLED));
+        if (proxyEnabled.booleanValue()) {
+	        String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
+	        String proxyPortStr = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
+	        String proxyUserName = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME);
+	        String proxyPassword = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PASSWORD);
+	        String decodedPassword = new String(Base64.decodeBase64(proxyPassword.getBytes()));
+	        
+	        if (isNotEmpty(proxyHost)) {
+	            int proxyPort = 0;
+	            if (isNotEmpty(proxyPortStr)) {
+	                proxyPort = Integer.parseInt(proxyPortStr);
+	                client.getHostConfiguration().setProxy(proxyHost, proxyPort);
+	                if (isNotEmpty(proxyUserName) && isNotEmpty(proxyPassword)) {
+	                	client.getState().setProxyCredentials(AuthScope.ANY, 
+	                			new UsernamePasswordCredentials(proxyUserName, decodedPassword));
+	                }
+	            }
+	        }
         }
 
     }
@@ -106,7 +119,7 @@ public class HTTPTransport extends Transport {
             }
 
             if (status != HttpStatus.SC_OK || !post.getResponseBodyAsString().equals("OK") ) {
-                throw new TransportException("There's been some kind of problem uploading a file to the HTTP server. The return code returned was [" + post.getResponseBodyAsString() + "]");
+                throw new TransportException("There's been some kind of problem uploading a file to the HTTP server.\n\nThe HTTP error message is [" + HttpStatus.getStatusText(status) + "]");
             }
             
         } catch (FileNotFoundException e) {
@@ -157,7 +170,7 @@ public class HTTPTransport extends Transport {
             int statusCode = client.executeMethod(method);
 
             if (statusCode != HttpStatus.SC_OK) {
-                throw new TransportException("There's been some kind of problem getting the URL [" + url + "]. The status code is [" + statusCode + "]");
+                throw new TransportException("There's been some kind of problem getting the URL [" + url + "].\n\nThe HTTP error message is [" + HttpStatus.getStatusText(statusCode) + "]");
             }
 
             retVal = method.getResponseBody();
@@ -255,6 +268,15 @@ public class HTTPTransport extends Transport {
             url = url + '/';
         }
         return url;
+    }
+
+    
+    private boolean isNotEmpty(String stringToCheck) {
+    	boolean retVal = false;
+    	if (stringToCheck != null && !stringToCheck.trim().equals("")) {
+    		retVal = true;
+    	}
+    	return retVal;
     }
 
 }

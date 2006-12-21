@@ -30,13 +30,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
@@ -49,7 +53,7 @@ public class AccountDialog extends EscapeDialog {
 
     private AccountInformation pAccount;
     private JTextField userId;
-    private JTextField password;
+    private JPasswordField password;
     private JTextArea notes;
     private JTextField url;
     private JTextField accountName;
@@ -95,7 +99,7 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(accountLabel, c);
-        
+
         accountName = new JTextField(new String(pAccount.getAccountName()), 20);
         if (readOnly) {
         	accountName.setEditable(false);
@@ -104,7 +108,7 @@ public class AccountDialog extends EscapeDialog {
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;
+        c.weightx = 0;
         c.weighty = 0;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -136,7 +140,7 @@ public class AccountDialog extends EscapeDialog {
         c.gridy = 1;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;
+        c.weightx = 0;
         c.weighty = 0;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -160,17 +164,17 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.NONE;
         container.add(passwordLabel, c);
         
-        password = new JTextField(new String(pAccount.getPassword()), 20);
+        password = new JPasswordField(new String(pAccount.getPassword()), 20);
         if (readOnly) {
         	password.setEditable(false);
         }
         c.gridx = 1;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;
+        c.insets = new Insets(10, 10, 10, 5);
+        c.weightx = 1;
         c.weighty = 0;
-        c.gridwidth = 2;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(password, c);
         password.addFocusListener(new FocusAdapter() {
@@ -178,8 +182,27 @@ public class AccountDialog extends EscapeDialog {
         		password.selectAll();
         	}
         });
-        
-        
+
+        JCheckBox hidePasswordCheckbox = new JCheckBox(Translator.translate("hide"), true);
+        hidePasswordCheckbox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	if (e.getStateChange() == ItemEvent.SELECTED) {
+            		password.setEchoChar('*');
+            	} else {
+            		password.setEchoChar((char) 0);
+            	}
+            }
+        });
+        c.gridx = 2;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(10, 0, 10, 10);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        container.add(hidePasswordCheckbox, c);
+
         //URL Row
         JLabel urlLabel = new JLabel(Translator.translate("url"));
         c.gridx = 0;
@@ -200,7 +223,7 @@ public class AccountDialog extends EscapeDialog {
         c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;
+        c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -233,8 +256,8 @@ public class AccountDialog extends EscapeDialog {
         c.gridy = 4;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+        c.weightx = 0;
+        c.weighty = 0;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.BOTH;
         container.add(notesScrollPane, c);
@@ -251,7 +274,7 @@ public class AccountDialog extends EscapeDialog {
         c.gridy = 5;
         c.anchor = GridBagConstraints.PAGE_END;
         c.insets = new Insets(0, 0, 0, 0);
-        c.weightx = 1.0;
+        c.weightx = 0;
         c.weighty = 0;
         c.gridwidth = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
