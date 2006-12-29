@@ -61,6 +61,7 @@ public class AccountDialog extends EscapeDialog {
     private ArrayList existingAccounts;
     private JFrame parentWindow;
     private boolean accountChanged = false;
+    private char defaultEchoChar;
     
     
     public AccountDialog(AccountInformation account, JFrame parentWindow, boolean readOnly, ArrayList existingAccounts) {
@@ -184,10 +185,11 @@ public class AccountDialog extends EscapeDialog {
         });
 
         JCheckBox hidePasswordCheckbox = new JCheckBox(Translator.translate("hide"), true);
+        defaultEchoChar = password.getEchoChar();
         hidePasswordCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
             	if (e.getStateChange() == ItemEvent.SELECTED) {
-            		password.setEchoChar('*');
+            		password.setEchoChar(defaultEchoChar);
             	} else {
             		password.setEchoChar((char) 0);
             	}

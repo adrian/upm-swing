@@ -72,6 +72,7 @@ public class OptionsDialog extends EscapeDialog {
     private boolean okClicked = false;
     private JFrame parentFrame;
     private boolean languageChanged;
+    private char defaultEchoChar;
 
 
     public OptionsDialog(JFrame frame) {
@@ -312,10 +313,11 @@ public class OptionsDialog extends EscapeDialog {
         proxyPanel.add(httpProxyPassword, c);
 
         hidePasswordCheckbox = new JCheckBox(Translator.translate("hide"), true);
+        defaultEchoChar = httpProxyPassword.getEchoChar();
         hidePasswordCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
             	if (e.getStateChange() == ItemEvent.SELECTED) {
-            		httpProxyPassword.setEchoChar('*');
+            		httpProxyPassword.setEchoChar(defaultEchoChar);
             	} else {
             		httpProxyPassword.setEchoChar((char) 0);
             	}
