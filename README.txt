@@ -126,7 +126,7 @@ Contents
 
 6. History
    -------
-   30-Dec-2006 : Version 1.5
+   31-Dec-2006 : Version 1.5
       - Added Czech and German translations (courtesy of Petr Ustohal)
       - Added username and password fields to the HTTP proxy options
       - The HTTP Proxy can be enabled/disabled using a checkbox while still
