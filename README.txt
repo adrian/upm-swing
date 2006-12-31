@@ -135,6 +135,8 @@ Contents
         To view it you untick a checkbox. Thanks to Jelle De Pot for suggesting 
         this feature
       - Removed the French localisation (no French translator available)
+      - Fixed a problem that caused a NullPointerException on the Mac OS X
+        version when exiting the Options dialog after changing the language
       - A few small bugfixes here and there
 
 

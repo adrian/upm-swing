@@ -113,6 +113,7 @@ public class OptionsDialog extends EscapeDialog {
 
         // The "Database to Load on Startup" input field row
         dbToLoadOnStartup = new JTextField(Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP), 25);
+        dbToLoadOnStartup.setHorizontalAlignment(JTextField.LEFT);
         c.gridx = 0;
         c.gridy = 1;
         c.anchor = GridBagConstraints.LINE_START;

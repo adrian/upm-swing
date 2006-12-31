@@ -811,7 +811,6 @@ public class MainWindow extends JFrame implements ActionListener {
         copyUsernameMenuItem.setText(Translator.translate(COPY_USERNAME_TXT));
         copyPasswordMenuItem.setText(Translator.translate(COPY_PASSWORD_TXT));
         exitMenuItem.setText(Translator.translate(EXIT_TXT));
-        helpMenu.setText(Translator.translate("helpMenu"));
         aboutMenuItem.setText(Translator.translate(ABOUT_TXT));
 
         //Because the MAC version of UPM will have a program item in the menu bar then these items
