@@ -45,4 +45,6 @@ Resource bundles must represent unicode characters using the \uxxxx format.
 If you have a big endian unicode file you can convert it to this format using the command...
 native2ascii -encoding UTF-16BE upm_cs.properties.biged > upm_cs.properties
 
+UTF-8 is another common unicode encoding.
+
 native2ascii is a tool that comes with the Java JDK.
