@@ -134,6 +134,7 @@ Contents
       - In the account information dialog the password is masked by default.
         To view it you untick a checkbox. Thanks to Jelle De Pot for suggesting 
         this feature
+      - Removed the French localisation (no French translator available)
       - A few small bugfixes here and there
 
 
