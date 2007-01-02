@@ -1,0 +1,110 @@
+﻿# Main Window messages
+databaseMenu = Database
+accountMenu = Account
+helpMenu = Aiuto
+requireJava14 = Questa applicazione richiede Java 1.4 o superiori
+problem = Problema...
+needJCE1 = sembra che tu non abbia la Java Cryptography Extension (JCE)
+needJCE2 = Unlimited Strength Jurisdiction Policy Files installata.
+needJCE3 = Sono richiesti per password di 8 o più caratteri.
+needJCE4 = Per favore visita il sito http://java.sun.com per avere dettagli su come scaricare
+needJCE5 = e installare questi file
+jceException = JCE Exception
+
+# Database Menu Items
+newDatabaseMenuItem = Nuovo Database
+openDatabaseMenuItem = Apri Database
+openDatabaseFromURLMenuItem = Apri Database da URL
+syncWithRemoteDatabaseMenuItem = Sync con Database Remoto
+changeMasterPasswordMenuItem = Modifica Password Master
+databasePropertiesMenuItem = Proprietà del Database
+exitMenuItem = Esci
+optionsMenuItem = Opzioni
+resetSearchMenuItem = Cancella Ricerca
+
+# Account Menu Items
+addAccountMenuItem = Aggiungi Account
+editAccountMenuItem = Modifica Account
+deleteAccountMenuItem = Cancella Account
+viewAccountMenuItem = Guarda Account
+copyUsernameMenuItem = Copia Username
+copyPasswordMenuItem = Copia Password
+
+# Help Menu Item
+aboutMenuItem = Informazioni su
+
+# DatabaseActions messages
+dbDoesNotExist = Il Database di startup [{0}] non esiste
+fileDoesntExistWithName = Il file [{0}] non esiste
+fileDoesntExist = Il file non esiste
+newPasswordDatabase = Nuova Password per il Database...
+enterMasterPassword = Per favore inserisci una password master per il tuo nuovo Database...
+confirmation = Conferma...
+masterPassword = Password Master...
+passwordsDontMatch = Le due Passwords inserite non sono uguali
+enterDatabasePassword = Per favore inserisci la Password Master per questo Database
+incorrectPassword = Password non corretta
+enterNewMasterPassword = Per favore inserisci una nuova Password Master per il tuo Database...
+changeMasterPassword = Modifica Password Master...
+error = Errore...
+openDatabase = Apri Password Database...
+askConfirmDeleteAccount = Sei sicuro di volere eliminare l'Account [{0}]
+confirmDeleteAccount = Conferma eliminazione Account
+addAccount = Aggiungi Account
+askSyncWithRemoteDB = Sync con il Database Remoto?
+syncDatabase = Sync Database?
+editAccount = Modifica Account
+viewAccount = Guarda Account
+couldntRename = Non posso rinominare l''attuale password del Database (per rendere attivo il nuovo Database) [{0}] in [{1}.tmp]
+couldntDelete = Non posso eliminare l''attuale password del Database
+problemRetrievingRemoteDB = Ci sono problemi nel raggiungere il Database remoto. Vuoi rendere questo database solo locale?
+detachDatabase = Identifica il Database da una istanza remota?
+saveDatabaseAs = Salva Database come...
+enterPaswordForRemoteDB = Per favore inserisci la PAssword Master per il Database REMOTO
+fileAlreadyExistsWithFileName = Il file [{0}] esiste già.
+overwrite = Vuoi sovrascriverlo?
+fileAlreadyExists = Il file esiste già...
+unsynchronised = Non sincronizzato
+synchronised = Sincronizzato
+revision = Revisione
+localDatabase = Database Locale
+
+# Add/Edit Account dialog messages
+account = Account
+userid = User Id
+password = Password
+url = URL
+notes = Note
+ok = OK
+cancel = Annulla
+accountAlreadyExistsWithName = Esiste già un account col nome [{0}]
+accountAlreadyExists = L'Account esiste già...
+
+# Options dialog messages
+options = Opzioni
+startup = Avvio
+dbToLoadOnStartup = Database da caricare all''avvio
+httpProxy = HTTP Proxy
+port = Porta
+dbToOpenOnStartup = DB da aprire all''avvio......
+language = Language
+
+# About dialog message
+aboutUPM = Informazioni su UPM
+
+# Database Properties dialog messages
+databaseProperties = Proprietà del Database
+remoteLocation = Remote Location
+authenticationCredentials = Credenziali per l''autenticazione
+transportError = errore di trasporto
+unsupportedProtocol = L'URL usa un protocollo non supportato
+invalidProtocol = Protocollo non valido
+givenURLIsInvalid = L'URL non è valida
+invalidURL = URL non valida
+problemSavingDB = C''è un problema nel salvataggio del Database
+
+# Open Database From URL dialog messages
+openDatabaseFromURL = Apri Database da URL
+remoteLocation = Remote Location
+username = User Name
+
