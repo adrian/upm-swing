@@ -259,4 +259,9 @@
         <cobertura-report format="html" destdir="${coveragereport.dir}" srcdir="${src}"/>
     </target>
 
+
+    <target name="localise">
+        <native2ascii encoding="UTF-16BE" src="${src}" dest="${src}" includes="**/*.unicode" ext=".properties"/>
+    </target>
+
 </project>
