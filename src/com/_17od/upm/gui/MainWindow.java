@@ -759,8 +759,6 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.changeMasterPassword();
             } else if (event.getActionCommand() == MainWindow.DATABASE_PROPERTIES_TXT) {
                 dbActions.showDatabaseProperties();
-            } else if (event.getActionCommand() == MainWindow.SYNC_DATABASE_TXT) {
-                dbActions.syncWithRemoteDatabase();
             } else if (event.getActionCommand() == MainWindow.EXIT_TXT) {
                 dbActions.exitApplication();
             }

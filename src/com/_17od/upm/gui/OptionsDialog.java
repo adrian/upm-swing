@@ -124,7 +124,6 @@ public class OptionsDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(dbToLoadOnStartup, c);
 
-        //JButton dbToLoadOnStartupButton = new JButton(Util.loadImage("open.gif"));
         JButton dbToLoadOnStartupButton = new JButton("...");
         dbToLoadOnStartupButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

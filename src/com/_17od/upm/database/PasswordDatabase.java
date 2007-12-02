@@ -91,6 +91,7 @@ public class PasswordDatabase {
 			dbOptions = new DatabaseOptions();
 			accounts = new HashMap();
 			encryptionService = new EncryptionService(password);
+			setPassword(password);
 		} else {
 			load(password);
 		}

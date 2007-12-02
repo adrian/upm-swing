@@ -104,10 +104,6 @@
         <javac srcdir="${test.src}" destdir="${test.build}" debug="on" failonerror="true">
             <classpath refid="project.class.path"/>
         </javac>
-      
-        <copy todir="${build}\com\_17od\upm\util\images">
-            <fileset dir="images" includes="*.gif *.png"/>
-        </copy>
 
         <copy todir="${build}">
             <fileset dir="${src}">
@@ -197,6 +193,10 @@
         <!-- Build the Mac OS X distribution -->
         <antcall target="build.macosx"/>
 
+    </target>
+
+
+    <target name="build.deb">
     </target>
 
 
