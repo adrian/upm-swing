@@ -46,3 +46,7 @@ If you have a big endian unicode file you can convert it to this format using th
 native2ascii -encoding UTF-16BE upm_cs.properties.biged > upm_cs.properties
 
 native2ascii is a tool that comes with the Java JDK.
+
+Uploading website to Sourceforge
+================================
+scp <filename> adrianshome@shell.sourceforge.net:/home/groups/u/up/upm/htdocs
