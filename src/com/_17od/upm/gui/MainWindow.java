@@ -176,7 +176,9 @@ public class MainWindow extends JFrame implements ActionListener {
         }
         
         //Give the search field focus
-        searchField.requestFocus();
+        // I'm using requestFocusInWindow() rathar than requestFocus()
+        // because the javadocs recommend it
+        searchField.requestFocusInWindow();
         
     }
    

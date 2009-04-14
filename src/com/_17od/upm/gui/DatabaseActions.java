@@ -25,6 +25,8 @@ package com._17od.upm.gui;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.HeadlessException;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -223,11 +225,16 @@ public class DatabaseActions {
     private char[] askUserForPassword(String message) {
         char[] password = null; 
             
-        JPasswordField masterPassword = new JPasswordField("");
+        final JPasswordField masterPassword = new JPasswordField("");
         JOptionPane pane = new JOptionPane(new Object[] {message, masterPassword }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
         JDialog dialog = pane.createDialog(mainWindow, Translator.translate("masterPassword"));
+        dialog.addComponentListener(new ComponentAdapter(){
+        	public void componentShown(ComponentEvent e){
+        		masterPassword.requestFocusInWindow();
+        	}
+        });
         dialog.show();
-        
+
         if (pane.getValue() != null && pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
             password = masterPassword.getPassword();
         }
