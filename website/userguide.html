@@ -32,20 +32,32 @@
 
                     <h3>Server Side Steps</h3>
                     <p>
-                        To use database sharing you need to specify where you want your remote database stored. At present UPM only supports HTTP locations (both password protected by basic authentication and non password protected).
+                        To use database sharing you need to specify where you want your remote database stored. At present UPM only supports HTTP locations (both password protected by basic authentication and non password protected). You'll need access to a public webserver to use this feature.
                     </p>
                     <p>
-                        To upload your database UPM comes with a PHP script (upload.php) that needs to be placed in the directory where you want to store the database. You'll find this script in the .\server\http directory of your UPM installation.
+                        To support database sharing UPM requires two PHP files on your webserver, deletefile.php and upload.php. Both of these files come packaged with the desktop version of UPM in the .\server\http directory. Alternatively they can be downloaded directly from <a href="http://upm.svn.sourceforge.net/viewvc/upm/swing/trunk/server/http/">here</a>.
                     </p>
 
-                    <h3>Database Configuration</h3>
+                    <h3>Database Configuration - Desktop Version</h3>
                     <p>
-                    To configure your database with the remote location open your database and go to the <i>Database -> Database Properties</i> menu item. In the URL field enter the URL of your remote location. If you put the upload.php file at http://www.mydomain.com/securedir/upload.php then enter http://www.mydomain.com/securedir in the URL field. If this URL is password protected then select the account in your database that has the relevant username and password.
+                        To configure your database with the remote location open your database and go to the <i>Database -> Database Properties</i> menu item. In the URL field enter the URL of your remote location. If you put the upload.php file at http://www.mydomain.com/securedir/upload.php then enter http://www.mydomain.com/securedir in the URL field. If this URL is password protected then select the account in your database that has the relevant username and password.
                     </p>
 
-                    <h3>Application Prompts</h3>
                     <p>
                         When the text "Revision x - Unsynchronised" appears in red in the status bar this means that your local and remote databases may by out of sync. To synchronise them press the <i>Synchronise</i> button or the menu item <i>Database -> Sync with Remote Database</i>. When the databases are in sync the status bar will read "Revision x - Synchronised".
+                    </p>
+
+                    <h3>Database Configuration - Android Version</h3>
+                    <p>
+                        <ul>
+                            <li>Open your database and select <i>Menu -> Preferences</i>.</li>
+                            <li>Select <i>URL</i> and enter the URL of the directory containing the UPM PHP files, e.g. http://www.myserver.com/upm</li>
+                            <li>If your webserver directory is password protected use the <i>HTTP Authentication Account</i> preference to select an account from your database containing the username and password.
+                        </ul>
+                    </p>
+                    
+                    <p>
+                        UPM will request that you sync with your remote database before allowing you to perform and Add/Edit/Delete operation. Once you've synced you'll have 5 minutes to make changes before you need to sync again. Don't forget to sync up after you've made your changes to ensure that your modifications are made available to your other UPM instances.
                     </p>
 
                 </div>
