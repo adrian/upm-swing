@@ -25,12 +25,26 @@
                         <a href="http://sourceforge.net/projects/upm/support">Support</a>
                     </div>
 
-                    <h2>Database Sharing</h2>
+                    <h1>Contents</h1>
+                    <ul>
+                        <li><a href="#installing-jce">Installing the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a></li>
+                        <li><a href="#database-sharing">Database Sharing</a></li>
+                        <li><a href="#how-to-install-and-run-upm-on-linux">How to Install and Run UPM on Linux</a></li>
+                    </ul>
+
+                    <a name="installing-jce"></a>
+                    <h1>Installing the Java Cryptography Extension Unlimited Strength Jurisdiction Policy Files</h1>
+                    <p>
+                       The SUN JRE ships with a weak set of cryptographic algorithims. This is due to US export/import restrictions. To install the max strength algorithims you'll need to install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These can be downloaded from <a href="http://java.sun.com/javase/downloads/index.jsp">this page</a>, (the last download link near the bottom of the page). The downloaded zip will contain a few files, the most important being local_policy.jar and US_export_policy.jar. These two files need to replace two with the same name located in your JRE's installation directory. This directory can be a bit tricky to locate. On Windows it will be C:\Program Files\Java\jre6. On Ubuntu it will be something like /usr/lib/jvm/java-6-sun/jre. The files you want to replace are in the directory &lt;JRE install dir&gt;\lib\security.
+                    </p>
+
+                    <a name="database-sharing"></a>
+                    <h1>Database Sharing</h1>
                     <p>
                         Database sharing came about because I needed a way of keeping my database in sync across multiple machines. It works by allowing you to upload and download your database to a HTTP location.
                     </p>
 
-                    <h3>Server Side Steps</h3>
+                    <h2>Server Side Steps</h2>
                     <p>
                         To use database sharing you need to specify where you want your remote database stored. At present UPM only supports HTTP locations (both password protected by basic authentication and non password protected). You'll need access to a public webserver to use this feature.
                     </p>
@@ -38,7 +52,7 @@
                         To support database sharing UPM requires two PHP files on your webserver, deletefile.php and upload.php. Both of these files come packaged with the desktop version of UPM in the .\server\http directory. Alternatively they can be downloaded directly from <a href="http://upm.svn.sourceforge.net/viewvc/upm/swing/trunk/server/http/">here</a>.
                     </p>
 
-                    <h3>Database Configuration - Desktop Version</h3>
+                    <h2>Database Configuration - Desktop Version</h2>
                     <p>
                         To configure your database with the remote location open your database and go to the <i>Database -> Database Properties</i> menu item. In the URL field enter the URL of your remote location. If you put the upload.php file at http://www.mydomain.com/securedir/upload.php then enter http://www.mydomain.com/securedir in the URL field. If this URL is password protected then select the account in your database that has the relevant username and password.
                     </p>
@@ -47,17 +61,31 @@
                         When the text "Revision x - Unsynchronised" appears in red in the status bar this means that your local and remote databases may by out of sync. To synchronise them press the <i>Synchronise</i> button or the menu item <i>Database -> Sync with Remote Database</i>. When the databases are in sync the status bar will read "Revision x - Synchronised".
                     </p>
 
-                    <h3>Database Configuration - Android Version</h3>
+                    <h2>Database Configuration - Android Version</h2>
                     <p>
-                        <ul>
-                            <li>Open your database and select <i>Menu -> Preferences</i>.</li>
-                            <li>Select <i>URL</i> and enter the URL of the directory containing the UPM PHP files, e.g. http://www.myserver.com/upm</li>
-                            <li>If your webserver directory is password protected use the <i>HTTP Authentication Account</i> preference to select an account from your database containing the username and password.
-                        </ul>
+                       <ul>
+                         <li>Open your database and select <i>Menu -> Preferences</i>.</li>
+                         <li>Select <i>URL</i> and enter the URL of the directory containing the UPM PHP files, e.g. http://www.myserver.com/upm</li>
+                         <li>If your webserver directory is password protected use the <i>HTTP Authentication Account</i> preference to select an account from your database containing the username and password.
+                       </ul>
                     </p>
                     
                     <p>
-                        UPM will request that you sync with your remote database before allowing you to perform and Add/Edit/Delete operation. Once you've synced you'll have 5 minutes to make changes before you need to sync again. Don't forget to sync up after you've made your changes to ensure that your modifications are made available to your other UPM instances.
+                       UPM will request that you sync with your remote database before allowing you to perform and Add/Edit/Delete operation. Once you've synced you'll have 5 minutes to make changes before you need to sync again. Don't forget to sync up after you've made your changes to ensure that your modifications are made available to your other UPM instances.
+                    </p>
+
+                    <a name="how-to-install-and-run-upm-on-linux"></a>
+                    <h1>How to Install and Run UPM on Linux</h1>
+                    <p>
+                       First of all make sure you have Java installed. If you're running Ubuntu <a href="http://www.ubuntugeek.com/install-java-runtime-environment-jre-in-ubuntu-9-10-karmic.html">these instructions</a> are pretty good.
+                    </p>
+                    
+                    <p>
+                       Next you'll need to <a href="#installing-jce">install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a>.
+                    </p>
+
+                    <p>
+                       You're now ready to run UPM. You can do this one of two ways. You can right click the file upm.jar and select "Open with Sun Java6 Runtime" or you can start a command shell, go to the directory containing upm.jar and enter 'java -jar upm.jar'.
                     </p>
 
                 </div>
