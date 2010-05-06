@@ -21,7 +21,7 @@ Preparing Build Environment
      iv) Configure the PHP upload setting in the PHP ini file. Mine is
          '/etc/php5/apache2/php.ini' and the setting to change is,
          'upload_tmp_dir = /home/adrian/dev/UPM/server/http'
-      v) Ensure the APache user has write access to this directory.
+      v) Ensure the Apache user has write access to this directory.
          Something like this will do,
          'chmod a+w /home/adrian/dev/UPM/server/http'
 

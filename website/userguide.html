@@ -30,6 +30,7 @@
                         <li><a href="#installing-jce">Installing the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a></li>
                         <li><a href="#database-sharing">Database Sharing</a></li>
                         <li><a href="#how-to-install-and-run-upm-on-linux">How to Install and Run UPM on Linux</a></li>
+                        <li><a href="#howto-add-a-trusted-https-certificate">How to Add a Trusted HTTPS Certificate</a></li>
                     </ul>
 
                     <a name="installing-jce"></a>
@@ -86,6 +87,21 @@
 
                     <p>
                        You're now ready to run UPM. You can do this one of two ways. You can right click the file upm.jar and select "Open with Sun Java6 Runtime" or you can start a command shell, go to the directory containing upm.jar and enter 'java -jar upm.jar'.
+                    </p>
+
+                    <a name="howto-add-a-trusted-https-certificate"></a>
+                    <h1>How to Add a Trusted HTTPS Certificate</h1>
+                    <p>
+                       If you use a HTTPS URL for your remote database and the server is using a self signed certificate you'll get this error, <i>javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target</i>. What you need to do is add the server's certificate to your trusted certificate keystore. Here's how,
+                    </p>
+
+                    <p>
+                       <ul>
+                         <li>Open a command prompt and cd to the directory where UPM is installed</li>
+                         <li>Execute "java -classpath upm.jar InstallCert &lt;url&gt;"</li>
+                         <li>When prompted hit enter (to accept the default option)</li>
+                         <li>There should now be a file called jssecacerts in the current directory. Copy this file into the ".\lib\security" directory where your Java runtime is installed.</li>
+                       </ul>
                     </p>
 
                 </div>

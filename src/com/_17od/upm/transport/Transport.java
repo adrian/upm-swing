@@ -58,6 +58,8 @@ public abstract class Transport {
         Transport retVal = null;
         if (url.getProtocol().equals("http")) {
             retVal = new HTTPTransport();
+        } else if (url.getProtocol().equals("https")) {
+            retVal = new HTTPTransport();
         }
         return retVal;
     }
@@ -65,6 +67,8 @@ public abstract class Transport {
     public static boolean isASupportedProtocol(String protocol) {
         boolean supported = false;
         if (protocol.equals("http")) {
+            supported = true;
+        } else if (protocol.equals("https")) {
             supported = true;
         } else if (protocol.equals("file")) {
             supported = true;
