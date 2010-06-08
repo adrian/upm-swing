@@ -259,7 +259,7 @@ public class AccountDialog extends EscapeDialog {
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 0;
-        c.weighty = 0;
+        c.weighty = 1;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.BOTH;
         container.add(notesScrollPane, c);
