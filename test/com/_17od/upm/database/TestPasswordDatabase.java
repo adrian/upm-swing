@@ -22,15 +22,14 @@
  */
 package com._17od.upm.database;
 
-import junit.framework.TestCase;
 import java.io.File;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
-import javax.crypto.IllegalBlockSizeException;
+import junit.framework.TestCase;
 
+import com._17od.upm.crypto.CryptoException;
+import com._17od.upm.crypto.EncryptionService;
 import com._17od.upm.crypto.InvalidPasswordException;
-import com._17od.upm.database.PasswordDatabase;
 
 
 public class TestPasswordDatabase extends TestCase {
@@ -44,12 +43,14 @@ public class TestPasswordDatabase extends TestCase {
 	}
 	
 	
-	public void testOpenNonExistantFile() throws Exception {
+	public void testOpenNonExistantFile() throws CryptoException, IOException {
 
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
 
-		new PasswordDatabase(new File(databaseFileName), password);
+		EncryptionService encryptionService = new EncryptionService(password); 
+		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName));
+		db.save(encryptionService);
 
 		File f = new File(databaseFileName);
 		if (f.exists() == false) {
@@ -59,25 +60,27 @@ public class TestPasswordDatabase extends TestCase {
 	}
 
 
-	public void testOpenExistingDB() throws Exception {
+	public void testOpenExistingDB() throws CryptoException, IOException, ProblemReadingDatabaseFile, InvalidPasswordException {
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
 		
 		//Create the db on this line
-		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName), password);
-		db.save();
+		EncryptionService encryptionService = new EncryptionService(password); 
+		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName));
+		db.save(encryptionService);
 		
 		//Now try to open the db again
-		new PasswordDatabase(new File(databaseFileName), password);
+        PasswordDatabasePersistence dbPers = new PasswordDatabasePersistence();
+        dbPers.load(new File(databaseFileName), password);
 	}
 	
 	
-	public void testAddAccount() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
+	public void testAddAccount() throws CryptoException, IOException, ProblemReadingDatabaseFile, InvalidPasswordException {
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
 		
 		//Create the db
-		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName), password);
+		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName));
 		
 		//Add an account
 		AccountInformation ai = new AccountInformation("Hotmail",
@@ -86,11 +89,13 @@ public class TestPasswordDatabase extends TestCase {
 				"this is the url".getBytes(),
 				"this is the notes".getBytes());
 		db.addAccount(ai);
-		db.save();
-		
-		//Load the db 
-		db = new PasswordDatabase(new File(databaseFileName), password);
-		
+        EncryptionService encryptionService = new EncryptionService(password);
+		db.save(encryptionService);
+
+		//Load the db
+		PasswordDatabasePersistence dbPers = new PasswordDatabasePersistence();
+		db = dbPers.load(new File(databaseFileName), password);
+
 		//Check to ensure the account was loaded back in
 		AccountInformation ai2 = db.getAccount("Hotmail");
 
@@ -101,12 +106,12 @@ public class TestPasswordDatabase extends TestCase {
 	}
 	
 
-	public void testRemoveAccount() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
+	public void testRemoveAccount() throws CryptoException, IOException, ProblemReadingDatabaseFile, InvalidPasswordException {
 		//Make sure the file doesn't exist
 		deleteFile(databaseFileName);
 		
 		//Create the db
-		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName), password);
+		PasswordDatabase db = new PasswordDatabase(new File(databaseFileName));
 		
 		//Add an account
 		AccountInformation ai = new AccountInformation("Hotmail",
@@ -121,17 +126,19 @@ public class TestPasswordDatabase extends TestCase {
 				"this is the notes2".getBytes());
 		db.addAccount(ai);
 		db.addAccount(ai2);
-		db.save();
+		EncryptionService encryptionService = new EncryptionService(password);
+        db.save(encryptionService);
 		
 		//Load the db 
-		db = new PasswordDatabase(new File(databaseFileName), password);
+		PasswordDatabasePersistence dbPers = new PasswordDatabasePersistence();
+		db = dbPers.load(new File(databaseFileName), password);
 		
 		//Delete an account
 		db.deleteAccount("Yahoo Mail");
-		db.save();
+		db.save(encryptionService);
 
 		//Load the db again 
-		db = new PasswordDatabase(new File(databaseFileName), password);
+		db = dbPers.load(new File(databaseFileName), password);
 		
 		//Check to ensure the Hotmail account still exists
 		AccountInformation hotmailAccount = db.getAccount("Hotmail");

@@ -22,18 +22,20 @@
  */
 package com._17od.upm.crypto;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.BadPaddingException;
 
 
 public class DESDecryptionService {
@@ -49,34 +51,55 @@ public class DESDecryptionService {
      * @param salt
      * @param ciphertext
      * @return The decrypted bytes
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeySpecException 
-     * @throws NoSuchPaddingException 
-     * @throws InvalidKeyException 
-     * @throws InvalidAlgorithmParameterException 
-     * @throws IllegalBlockSizeException 
-     * @throws InvalidPasswordException 
+     * @throws CryptoException 
      */
-    public static byte[] decrypt(char[] password, byte[] salt, byte[] ciphertext) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, InvalidPasswordException {
-
-        PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 20);
-        PBEKeySpec pbeKeySpec = new PBEKeySpec(password);
-        SecretKeyFactory keyFac = SecretKeyFactory.getInstance(PBEWithMD5AndDES);
-        SecretKey pbeKey = keyFac.generateSecret(pbeKeySpec);
-
-        Cipher desDecryptionCipher = Cipher.getInstance(PBEWithMD5AndDES);
-
-        desDecryptionCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
-
-        // Do the decryption
-        byte[] retVal;
-        try {
-            retVal = desDecryptionCipher.doFinal(ciphertext);
-        } catch (BadPaddingException e) {
-            throw new InvalidPasswordException(); 
-        }
-        return retVal;
-
+    public static byte[] decrypt(char[] password, byte[] salt, byte[] cipherText) throws CryptoException {
+        return process(password, Cipher.DECRYPT_MODE, salt, cipherText); 
     }
     
+    public static byte[] encrypt(char[] password,  byte[] salt, byte[] plainText) throws CryptoException {
+        return process(password, Cipher.ENCRYPT_MODE, salt, plainText); 
+    }
+
+    private static byte[] process(char[] password, int mode, byte[] salt, byte[] plainText) throws CryptoException {
+        byte[] retVal = null;
+        try {
+            PBEKeySpec pbeKeySpec = new PBEKeySpec(password);
+            SecretKeyFactory keyFac = SecretKeyFactory.getInstance(PBEWithMD5AndDES);
+            SecretKey secreyKey = keyFac.generateSecret(pbeKeySpec);
+            PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 20);
+            Cipher desDecryptionCipher = Cipher.getInstance(PBEWithMD5AndDES);
+            desDecryptionCipher.init(mode, secreyKey, pbeParamSpec);
+            retVal = desDecryptionCipher.doFinal(plainText);
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new CryptoException(e);
+        } catch (BadPaddingException e) {
+            throw new CryptoException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new CryptoException(e);
+        } catch (InvalidKeySpecException e) {
+            throw new CryptoException(e);
+        } catch (InvalidKeyException e) {
+            throw new CryptoException(e);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new CryptoException(e);
+        }
+
+        return retVal;
+    }
+
+    public static byte[] generateSalt() throws CryptoException {
+        SecureRandom saltGen;
+        try {
+            saltGen = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoException(e);
+        }
+        byte pSalt[] = new byte[8];
+        saltGen.nextBytes(pSalt);
+        return pSalt;
+    }
+
 }

@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 
 public class TestEncryptionService extends TestCase {
 
-	public void testEncryptDecryptString() throws Exception {
+	public void testEncryptDecryptString() throws CryptoException {
 		char[] password = "test password".toCharArray();
 		EncryptionService encryptionService = new EncryptionService(password);
 		byte[] cleartext = "samplestring".getBytes();
@@ -38,7 +38,7 @@ public class TestEncryptionService extends TestCase {
 	}
 
 	
-	public void testChangePassword() throws Exception {
+	public void testChangePassword() throws CryptoException {
 
 		char[] password = "test password".toCharArray();
 		EncryptionService encryptionService = new EncryptionService(password);
@@ -53,13 +53,13 @@ public class TestEncryptionService extends TestCase {
 		try {
 			encryptionService2.decrypt(cipherText);
 			fail("Should have got an InvalidPasswordException because we changed the password");
-		} catch (InvalidPasswordException e) {
+		} catch (CryptoException e) {
 			//should get here
 		}
 	}
 
 	
-	public void testSaltIsRandom() throws Exception {
+	public void testSaltIsRandom() throws CryptoException, InterruptedException {
 
 		char[] password = "test password".toCharArray();
 		EncryptionService encryptionService = new EncryptionService(password);

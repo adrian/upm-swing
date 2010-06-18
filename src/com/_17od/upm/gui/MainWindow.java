@@ -40,7 +40,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
+
 import javax.crypto.IllegalBlockSizeException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -63,6 +63,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import com._17od.upm.crypto.CryptoException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.platformspecific.PlatformSpecificCode;
@@ -164,7 +166,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	            	dbActions.openDatabase(db);
 	            }
             }
-        } catch (InvalidKeyException e) {
+        } catch (CryptoException e) {
             JOptionPane.showMessageDialog(this,
             		Translator.translate("needJCE1") + '\n' +
             		Translator.translate("needJCE2") + "\n\n" +
@@ -764,7 +766,7 @@ public class MainWindow extends JFrame implements ActionListener {
             } else if (event.getActionCommand() == MainWindow.EXIT_TXT) {
                 dbActions.exitApplication();
             }
-        } catch (InvalidKeyException e) {
+        } catch (CryptoException e) {
             JOptionPane.showMessageDialog(this,
             		Translator.translate("needJCE1") + '\n' +
             		Translator.translate("needJCE2") + "\n\n" +

@@ -22,89 +22,92 @@
  */
 package com._17od.upm.crypto;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
-import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.Security;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.BadPaddingException;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import org.bouncycastle.crypto.BufferedBlockCipher;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.PBEParametersGenerator;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.paddings.PKCS7Padding;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 
 
 public class EncryptionService {
 
-    private static final String PBEWithSHA256And256BitAES = "PBEWithSHA256And256BitAES-CBC-BC";
     private static final String randomAlgorithm = "SHA1PRNG";
     public static final int SALT_LENGTH = 8;
 
-    private Cipher encryptionCipher; 
-    private Cipher decryptionCipher;
     private byte[] salt;
+    private BufferedBlockCipher encryptCipher;
+    private BufferedBlockCipher decryptCipher;
 
+    public EncryptionService(char[] password) throws CryptoException {
+        try {
+            this.salt = generateSalt();
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoException(e);
+        }
+        initCipher(password);
+    }
 
-    public EncryptionService(char[] password) throws GeneralSecurityException {
-        //Generate a random salt
+    public EncryptionService(char[] password, byte[] salt) {
+        this.salt = salt;
+        initCipher(password);
+    }
+
+    public void initCipher(char[] password) {
+        PBEParametersGenerator keyGenerator = new PKCS12ParametersGenerator(new SHA256Digest());
+        keyGenerator.init(PKCS12ParametersGenerator.PKCS12PasswordToBytes(password), salt, 20);
+        CipherParameters keyParams = keyGenerator.generateDerivedParameters(256, 128);
+        
+        encryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()), new PKCS7Padding());
+        encryptCipher.init(true, keyParams);
+        decryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()), new PKCS7Padding());
+        decryptCipher.init(false, keyParams);
+    }
+
+    private byte[] generateSalt() throws NoSuchAlgorithmException {
         SecureRandom saltGen = SecureRandom.getInstance(randomAlgorithm);
         byte pSalt[] = new byte[SALT_LENGTH];
         saltGen.nextBytes(pSalt);
-
-        init(password, pSalt);
+        return pSalt;
     }
 
-
-    public EncryptionService(char[] password, byte[] salt) throws GeneralSecurityException {
-        init(password, salt);
-    }
-
-
-	private void init(char[] password, byte[] salt) throws GeneralSecurityException {
-
-        // Load the BouncyCastle JCE provider (for the AES algorithim)
-        Security.addProvider(new BouncyCastleProvider());
-
-        PBEKeySpec pbeKeySpec;
-        PBEParameterSpec pbeParamSpec;
-        SecretKeyFactory keyFac;
-
-        this.salt = salt;
-        int count = 20;
-
-        pbeParamSpec = new PBEParameterSpec(salt, count);
-
-        pbeKeySpec = new PBEKeySpec(password);
-        keyFac = SecretKeyFactory.getInstance(PBEWithSHA256And256BitAES);
-        SecretKey pbeKey = keyFac.generateSecret(pbeKeySpec);
-
-        encryptionCipher = Cipher.getInstance(PBEWithSHA256And256BitAES);
-        decryptionCipher = Cipher.getInstance(PBEWithSHA256And256BitAES);
-
-        encryptionCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
-        decryptionCipher.init(Cipher.DECRYPT_MODE, pbeKey, pbeParamSpec);
-    }
-
-
-	public byte[] encrypt(byte[] cleartext) throws IllegalBlockSizeException, BadPaddingException {
-        return encryptionCipher.doFinal(cleartext);
-	}
-
-
-    public byte[] decrypt(byte[] ciphertext) throws IllegalBlockSizeException, InvalidPasswordException {
-        byte[] retVal;
+    public byte[] encrypt(byte[] plainText) throws CryptoException {
+        byte[] encryptedBytes = new byte[encryptCipher.getOutputSize(plainText.length)];
+        int outputLength = encryptCipher.processBytes(plainText, 0, plainText.length, encryptedBytes, 0);
         try {
-            retVal = decryptionCipher.doFinal(ciphertext);
-        } catch (BadPaddingException e) {
-            throw new InvalidPasswordException(); 
+            outputLength += encryptCipher.doFinal(encryptedBytes, outputLength);
+        } catch (InvalidCipherTextException e) {
+            throw new CryptoException(e);
         }
-        return retVal;
-    }
 
+        byte[] results = new byte[outputLength];
+        System.arraycopy(encryptedBytes, 0, results, 0, outputLength);
+        return results;
+    }
+    
+    public byte[] decrypt(byte[] encryptedBytes) throws CryptoException {
+        byte[] decryptedBytes = new byte[decryptCipher.getOutputSize(encryptedBytes.length)];
+        int outputLength = decryptCipher.processBytes(encryptedBytes, 0, encryptedBytes.length, decryptedBytes, 0);
+        try {
+            outputLength += decryptCipher.doFinal(decryptedBytes, outputLength);
+        } catch (InvalidCipherTextException e) {
+            throw new CryptoException(e);
+        }
+
+        byte[] results = new byte[outputLength];
+        System.arraycopy(decryptedBytes, 0, results, 0, outputLength);
+        return results;
+    }
 
     public byte[] getSalt() {
         return salt;
     }
-    
+
 }

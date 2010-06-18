@@ -24,24 +24,24 @@ package com._17od.upm.gui;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.HeadlessException;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
+
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+
+import com._17od.upm.crypto.CryptoException;
 import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.PasswordDatabase;
+import com._17od.upm.database.PasswordDatabasePersistence;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.transport.Transport;
 import com._17od.upm.transport.TransportException;
@@ -55,6 +55,7 @@ public class DatabaseActions {
     private PasswordDatabase database;
     private ArrayList accountNames;
     private boolean localDatabaseDirty = true;
+    private PasswordDatabasePersistence dbPers;
 
 
     public DatabaseActions(MainWindow mainWindow) {
@@ -66,14 +67,10 @@ public class DatabaseActions {
      * This method asks the user for the name of a new database and then creates
      * it. If the file already exists then the user is asked if they'd like to
      * overwrite it.
-     * 
-     * @throws IOException
-     * @throws GeneralSecurityException
-     * @throws ProblemReadingDatabaseFile
-     * @throws InvalidPasswordException
-     * @throws IllegalBlockSizeException
+     * @throws CryptoException 
+     * @throws IOException 
      */
-    public void newDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException {
+    public void newDatabase() throws IOException, CryptoException {
     
         File newDatabaseFile = getSaveAsFile(Translator.translate("newPasswordDatabase"));
         if (newDatabaseFile == null) {
@@ -107,8 +104,9 @@ public class DatabaseActions {
         if (newDatabaseFile.exists()) {
             newDatabaseFile.delete();
         }
-        
-        database = new PasswordDatabase(newDatabaseFile, masterPassword.getPassword());
+
+        database = new PasswordDatabase(newDatabaseFile);
+        dbPers = new PasswordDatabasePersistence(masterPassword.getPassword());
         saveDatabase();
         accountNames = new ArrayList();
         doOpenDatabaseActions();
@@ -116,7 +114,7 @@ public class DatabaseActions {
     }
 
 
-    public void changeMasterPassword() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, HeadlessException, InvalidPasswordException, TransportException, PasswordDatabaseException {
+    public void changeMasterPassword() throws IOException, ProblemReadingDatabaseFile, CryptoException, PasswordDatabaseException, TransportException {
 
         if (getLatestVersionOfDatabase()) {
         	//The first task is to get the current master password
@@ -128,7 +126,7 @@ public class DatabaseActions {
                     okClicked = false;
                 } else {
                     try {
-                        new PasswordDatabase(database.getDatabaseFile(), password);
+                        dbPers.load(database.getDatabaseFile(), password);
                         passwordCorrect = true;
                     } catch (InvalidPasswordException e) {
                         JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
@@ -166,7 +164,7 @@ public class DatabaseActions {
         	
         	        //If the user clicked OK and the passwords match then change the database password
         	        if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && passwordsMatch) {
-        		        database.changePassword(masterPassword.getPassword());
+        	            this.dbPers.getEncryptionService().initCipher(masterPassword.getPassword());
         		        saveDatabase();
         	        }
     
@@ -243,12 +241,12 @@ public class DatabaseActions {
     }
     
 
-    public void openDatabase(String databaseFilename) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+    public void openDatabase(String databaseFilename) throws IOException, ProblemReadingDatabaseFile, CryptoException {
         openDatabase(databaseFilename, null);
     }
     
     
-    public void openDatabase(String databaseFilename, char[] password) throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+    public void openDatabase(String databaseFilename, char[] password) throws IOException, ProblemReadingDatabaseFile, CryptoException {
 
         boolean passwordCorrect = false;
         boolean okClicked = true;
@@ -265,7 +263,8 @@ public class DatabaseActions {
             
             if (okClicked) {
                 try {
-                    database = new PasswordDatabase(new File(databaseFilename), password);
+                    dbPers = new PasswordDatabasePersistence();
+                    database = dbPers.load(new File(databaseFilename), password);
                     passwordCorrect = true;
                 } catch (InvalidPasswordException e) {
                     JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
@@ -279,9 +278,9 @@ public class DatabaseActions {
         }
 
     }
-    
-    
-    public void openDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+
+
+    public void openDatabase() throws IOException, ProblemReadingDatabaseFile, CryptoException {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle(Translator.translate("openDatabase"));
         int returnVal = fc.showOpenDialog(mainWindow);
@@ -297,7 +296,7 @@ public class DatabaseActions {
     }
     
 
-    public void deleteAccount() throws IOException, HeadlessException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+    public void deleteAccount() throws IOException, CryptoException, TransportException, ProblemReadingDatabaseFile, PasswordDatabaseException {
         
         if (getLatestVersionOfDatabase()) {
             SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
@@ -320,7 +319,7 @@ public class DatabaseActions {
     }
     
     
-    public void addAccount() throws IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+    public void addAccount() throws IOException, CryptoException, TransportException, ProblemReadingDatabaseFile, PasswordDatabaseException {
 		
         if (getLatestVersionOfDatabase()) {
 
@@ -352,7 +351,7 @@ public class DatabaseActions {
     }
 
 
-    private boolean getLatestVersionOfDatabase() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+    private boolean getLatestVersionOfDatabase() throws TransportException, ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
         boolean latestVersionDownloaded = false;
 
         // Ensure we're working with the latest version of the database
@@ -387,7 +386,7 @@ public class DatabaseActions {
     }
 
 
-    public void editAccount() throws IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+    public void editAccount() throws TransportException, ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
 
         if (getLatestVersionOfDatabase()) {
             AccountInformation accInfo = getSelectedAccount();
@@ -521,7 +520,7 @@ public class DatabaseActions {
     }
 
     
-    public void showDatabaseProperties() throws IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, PasswordDatabaseException {
+    public void showDatabaseProperties() throws ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
         try {
             if (getLatestVersionOfDatabase()) {
                 DatabasePropertiesDialog dbPropsDialog = new DatabasePropertiesDialog(mainWindow, getAccountNames(), database);
@@ -543,7 +542,7 @@ public class DatabaseActions {
     }
 
 
-    public void openDatabaseFromURL() throws TransportException, IOException, IllegalBlockSizeException, GeneralSecurityException, ProblemReadingDatabaseFile {
+    public void openDatabaseFromURL() throws TransportException, IOException, ProblemReadingDatabaseFile, CryptoException {
         
         // Ask the user for the remote database location
         OpenDatabaseFromURLDialog openDBDialog = new OpenDatabaseFromURLDialog(mainWindow);
@@ -583,7 +582,7 @@ public class DatabaseActions {
     }
 
     
-    public boolean syncWithRemoteDatabase() throws TransportException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, PasswordDatabaseException {
+    public boolean syncWithRemoteDatabase() throws TransportException, ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
 
     	boolean syncSuccessful = false;
 	        
@@ -610,7 +609,7 @@ public class DatabaseActions {
 	        char[] password = null;
 	        boolean successfullyDecryptedDb = false;
 	        try {
-	            remoteDatabase = new PasswordDatabase(remoteDatabaseFile, database.getPassword());
+	            remoteDatabase = dbPers.load(remoteDatabaseFile);
 	            successfullyDecryptedDb = true;
 	        } catch (InvalidPasswordException e) {
 	            // The password for the downloaded database is different to that of the open database
@@ -623,7 +622,7 @@ public class DatabaseActions {
 	                } else {
 	                    okClicked = true;
 	                    try {
-	                        remoteDatabase = new PasswordDatabase(remoteDatabaseFile, password);
+	                        remoteDatabase = dbPers.load(remoteDatabaseFile, password);
 	                        successfullyDecryptedDb = true;
 	                    } catch (InvalidPasswordException invalidPassword) {
 	                        JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
@@ -631,7 +630,7 @@ public class DatabaseActions {
 	                }
 	            } while (okClicked && !successfullyDecryptedDb);
 	        }
-	                
+
 	        /* If the local database revision > remote database version => upload local database 
 	           If the local database revision < remote database version => replace local database with remote database
 	           If the local database revision = remote database version => do nothing */
@@ -642,12 +641,17 @@ public class DatabaseActions {
 	                syncSuccessful = true;
 	            } else if (database.getRevision() < remoteDatabase.getRevision()) {
 	                replaceDatabase(database, remoteDatabase);
-	                openDatabase(database.getDatabaseFile().getAbsolutePath(), database.getPassword());
+	                database = new PasswordDatabase(
+	                        remoteDatabase.getRevisionObj(),
+	                        remoteDatabase.getDbOptions(),
+	                        remoteDatabase.getAccountsHash(),
+	                        database.getDatabaseFile());
+	                doOpenDatabaseActions();
 	                syncSuccessful = true;
 	            } else {
 	                syncSuccessful = true;
 	            }
-	
+
 	            if (syncSuccessful) {
 	                setLocalDatabaseDirty(false);
 	            }
@@ -656,17 +660,17 @@ public class DatabaseActions {
     	} finally {
     		mainWindow.getContentPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     	}
-    	
+
         return syncSuccessful;
         
     }
 
-    
-    public void exitApplication() throws IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile, InvalidPasswordException, TransportException, PasswordDatabaseException {
+
+    public void exitApplication() {
         System.exit(0);
     }
-    
-    
+
+
     /**
      * This method prompts the user for the name of a file.
      * If the file exists then it will ask if they want to overwrite (the file isn't overwritten though,
@@ -709,8 +713,8 @@ public class DatabaseActions {
     }
     
     
-    private void saveDatabase() throws IllegalBlockSizeException, BadPaddingException, IOException {
-        database.save();
+    private void saveDatabase() throws IOException, CryptoException {
+        database.save(dbPers.getEncryptionService());
         if (databaseHasRemoteInstance()) {
             setLocalDatabaseDirty(true);
         } else {
