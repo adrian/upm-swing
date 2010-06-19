@@ -40,6 +40,9 @@ import javax.swing.JPasswordField;
 import com._17od.upm.crypto.CryptoException;
 import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.database.AccountInformation;
+import com._17od.upm.database.AccountsCSVMarshaller;
+import com._17od.upm.database.ExportException;
+import com._17od.upm.database.ImportException;
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.PasswordDatabasePersistence;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
@@ -193,6 +196,8 @@ public class DatabaseActions {
         mainWindow.getResetSearchButton().setEnabled(true);
         mainWindow.getChangeMasterPasswordMenuItem().setEnabled(true);
         mainWindow.getDatabasePropertiesMenuItem().setEnabled(true);
+        mainWindow.getExportMenuItem().setEnabled(true);
+        mainWindow.getImportMenuItem().setEnabled(true);
 
         mainWindow.setTitle(database.getDatabaseFile() + " - " + MainWindow.getApplicationName());
         
@@ -671,6 +676,90 @@ public class DatabaseActions {
     }
 
 
+    public void export() {
+        File exportFile = getSaveAsFile(Translator.translate("exportFile"));
+        if (exportFile == null) {
+            return;
+        }
+
+        AccountsCSVMarshaller marshaller = new AccountsCSVMarshaller();
+        try {
+            marshaller.marshal(this.database.getAccounts(), exportFile);
+        } catch (ExportException e) {
+            JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemExporting"), e.getMessage(), JOptionPane.OK_OPTION);
+        }
+    }
+
+
+    public void importAccounts() {
+        // Prompt for the file to import
+        JFileChooser fc = new JFileChooser();
+        fc.setDialogTitle(Translator.translate("import"));
+        int returnVal = fc.showOpenDialog(mainWindow);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File csvFile = fc.getSelectedFile();
+            if (csvFile.exists()) {
+
+                // Unmarshall the accounts from the CSV file
+                try {
+                    AccountsCSVMarshaller marshaller = new AccountsCSVMarshaller();
+                    ArrayList accountsInCSVFile = marshaller.unmarshal(csvFile);
+                    ArrayList accountsToImport = new ArrayList();
+
+                    boolean importCancelled = false;
+                    // Add each account to the open database. If the account
+                    // already exits the prompt to overwrite
+                    for (int i=0; i<accountsInCSVFile.size(); i++) {
+                        AccountInformation importedAccount = (AccountInformation) accountsInCSVFile.get(i);
+                        if (database.getAccount(importedAccount.getAccountName()) != null) {
+                            Object[] options = {"Overwrite Existing", "Keep Existing", "Cancel"};
+                            int answer = JOptionPane.showOptionDialog(
+                                    mainWindow, 
+                                    Translator.translate("importExistingQuestion", importedAccount.getAccountName()),
+                                    Translator.translate("importExistingTitle"),
+                                    JOptionPane.YES_NO_CANCEL_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE,
+                                    null,
+                                    options,
+                                    options[1]);
+
+                            if (answer == 1) {
+                                continue; // If keep existing then continue to the next iteration
+                            } else if (answer == 2) {
+                                importCancelled = true;
+                                break; // Cancel the import
+                            }
+                        }
+
+                        accountsToImport.add(importedAccount);
+                    }
+
+                    if (!importCancelled) {
+                        for (int i=0; i<accountsToImport.size(); i++) {
+                            AccountInformation accountToImport = (AccountInformation) accountsToImport.get(i);
+                            database.deleteAccount(accountToImport.getAccountName());
+                            database.addAccount(accountToImport);
+                        }
+                        saveDatabase();
+                        accountNames = getAccountNames();
+                        filter();
+                    }
+
+                } catch (ImportException e) {
+                    JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemImporting"), e.getMessage(), JOptionPane.OK_OPTION);
+                } catch (IOException e) {
+                    JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemImporting"), e.getMessage(), JOptionPane.OK_OPTION);
+                } catch (CryptoException e) {
+                    JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemImporting"), e.getMessage(), JOptionPane.OK_OPTION);
+                }
+            } else {
+                JOptionPane.showMessageDialog(mainWindow, Translator.translate("fileDoesntExistWithName", csvFile.getAbsolutePath()), Translator.translate("fileDoesntExist"), JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+
     /**
      * This method prompts the user for the name of a file.
      * If the file exists then it will ask if they want to overwrite (the file isn't overwritten though,
@@ -679,40 +768,45 @@ public class DatabaseActions {
      * @return The file to save to or null
      */
     private File getSaveAsFile(String title) {
-        File newDatabaseFile;
-        
+        File selectedFile;
+
         boolean gotValidFile = false;
         do {
             JFileChooser fc = new JFileChooser();
             fc.setDialogTitle(title);
             int returnVal = fc.showSaveDialog(mainWindow);
-        
+
             if (returnVal != JFileChooser.APPROVE_OPTION) {
                 return null;
             }
-        
-            newDatabaseFile = fc.getSelectedFile();
-        
+
+            selectedFile = fc.getSelectedFile();
+
             //Warn the user if the database file already exists
-            if (newDatabaseFile.exists()) {
-                int i = JOptionPane.showConfirmDialog(mainWindow, 
-                		Translator.translate("fileAlreadyExistsWithFileName", newDatabaseFile.getAbsolutePath()) + '\n' + 
-                		Translator.translate("overwrite"), 
-                		Translator.translate("fileAlreadyExists"), 
-                		JOptionPane.YES_NO_OPTION);
+            if (selectedFile.exists()) {
+                Object[] options = {"Yes", "No"};
+                int i = JOptionPane.showOptionDialog(mainWindow, 
+                        Translator.translate("fileAlreadyExistsWithFileName", selectedFile.getAbsolutePath()) + '\n' + 
+                            Translator.translate("overwrite"), 
+                            Translator.translate("fileAlreadyExists"), 
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[1]);
                 if (i == JOptionPane.YES_OPTION) {
                     gotValidFile = true;
                 }
             } else {
                 gotValidFile = true;
             }
-        
+
         } while (!gotValidFile);
-        
-        return newDatabaseFile;
+
+        return selectedFile;
     }
-    
-    
+
+
     private void saveDatabase() throws IOException, CryptoException {
         database.save(dbPers.getEncryptionService());
         if (databaseHasRemoteInstance()) {

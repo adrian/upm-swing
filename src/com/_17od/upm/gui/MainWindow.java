@@ -64,7 +64,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com._17od.upm.crypto.CryptoException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.platformspecific.PlatformSpecificCode;
@@ -96,6 +95,8 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String ABOUT_TXT = "aboutMenuItem";
     public static final String RESET_SEARCH_TXT = "resetSearchMenuItem";
     public static final String EXIT_TXT = "exitMenuItem";
+    public static final String EXPORT_TXT = "exportMenuItem";
+    public static final String IMPORT_TXT = "importMenuItem";
 
     private JButton addAccountButton;
     private JButton editAccountButton;
@@ -125,6 +126,8 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem viewAccountMenuItem;
     private JMenuItem copyUsernameMenuItem;
     private JMenuItem copyPasswordMenuItem;
+    private JMenuItem exportMenuItem;
+    private JMenuItem importMenuItem;
 
     private JList accountsListview;
     private JLabel statusBar = new JLabel(" ");
@@ -515,6 +518,20 @@ public class MainWindow extends JFrame implements ActionListener {
         databasePropertiesMenuItem.setEnabled(false);
         databasePropertiesMenuItem.setActionCommand(DATABASE_PROPERTIES_TXT);
 
+        databaseMenu.addSeparator();
+
+        exportMenuItem = new JMenuItem(Translator.translate(EXPORT_TXT));
+        databaseMenu.add(exportMenuItem);
+        exportMenuItem.addActionListener(this);
+        exportMenuItem.setEnabled(false);
+        exportMenuItem.setActionCommand(EXPORT_TXT);
+
+        importMenuItem = new JMenuItem(Translator.translate(IMPORT_TXT));
+        databaseMenu.add(importMenuItem);
+        importMenuItem.addActionListener(this);
+        importMenuItem.setEnabled(false);
+        importMenuItem.setActionCommand(IMPORT_TXT);
+
         accountMenu = new JMenu(Translator.translate("accountMenu"));
         accountMenu.setMnemonic(KeyEvent.VK_A);
         menuBar.add(accountMenu);
@@ -575,7 +592,6 @@ public class MainWindow extends JFrame implements ActionListener {
         copyPasswordMenuItem.setEnabled(false);
         copyPasswordMenuItem.setActionCommand(COPY_PASSWORD_TXT);
 
-        
         exitMenuItem = new JMenuItem(Translator.translate(EXIT_TXT), KeyEvent.VK_X);
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -758,6 +774,10 @@ public class MainWindow extends JFrame implements ActionListener {
                 dbActions.showDatabaseProperties();
             } else if (event.getActionCommand() == MainWindow.EXIT_TXT) {
                 dbActions.exitApplication();
+            } else if (event.getActionCommand() == MainWindow.EXPORT_TXT) {
+                dbActions.export();
+            } else if (event.getActionCommand() == MainWindow.IMPORT_TXT) {
+                dbActions.importAccounts();
             }
         } catch (Exception e) {
             dbActions.errorHandler(e);
@@ -772,6 +792,16 @@ public class MainWindow extends JFrame implements ActionListener {
 
     public JMenuItem getSyncWithRemoteDatabaseMenuItem() {
         return syncWithRemoteDatabaseMenuItem;
+    }
+
+
+    public JMenuItem getExportMenuItem() {
+        return exportMenuItem;
+    }
+
+
+    public JMenuItem getImportMenuItem() {
+        return importMenuItem;
     }
 
 
@@ -800,13 +830,15 @@ public class MainWindow extends JFrame implements ActionListener {
         copyPasswordMenuItem.setText(Translator.translate(COPY_PASSWORD_TXT));
         exitMenuItem.setText(Translator.translate(EXIT_TXT));
         aboutMenuItem.setText(Translator.translate(ABOUT_TXT));
+        exportMenuItem.setText(Translator.translate(EXPORT_TXT));
+        importMenuItem.setText(Translator.translate(IMPORT_TXT));
 
         //Because the MAC version of UPM will have a program item in the menu bar then these items
         //only need to be added on non-mac platforms
         if (!PlatformSpecificCode.isMAC()) {
             helpMenu.setText(Translator.translate("helpMenu"));
         }
-        
+
         addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
         editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
         deleteAccountButton.setToolTipText(Translator.translate(DELETE_ACCOUNT_TXT));
