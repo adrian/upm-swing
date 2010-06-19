@@ -8,9 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com._17od.upm.util.Translator;
-
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
+import com.csvreader.CsvReader;
+import com.csvreader.CsvWriter;
 
 public class AccountsCSVMarshaller {
 
@@ -23,9 +22,9 @@ public class AccountsCSVMarshaller {
         try {
             FileWriter writer = new FileWriter(file);
     
-            CSVWriter csvWriter = new CSVWriter(writer);
+            CsvWriter csvWriter = new CsvWriter(writer, ',');
             for (int i=0; i<accounts.size(); i++) {
-                csvWriter.writeNext(
+                csvWriter.writeRecord(
                         getAccountAsStringArray(
                                 (AccountInformation) accounts.get(i)
                         )
@@ -42,18 +41,18 @@ public class AccountsCSVMarshaller {
         ArrayList accounts = new ArrayList();
 
         try {
-            CSVReader csvReader = new CSVReader(new FileReader(file));
-            String[] nextLine;
-            while ((nextLine = csvReader.readNext()) != null) {
+            CsvReader csvReader = new CsvReader(new FileReader(file));
+            while (csvReader.readRecord()) {
+                if (csvReader.getColumnCount() != 5) {
+                    throw new ImportException(Translator.translate("notCSVFileError", file.getAbsoluteFile())); 
+                }
                 accounts.add(new AccountInformation(
-                        nextLine[0],
-                        nextLine[1].getBytes(),
-                        nextLine[2].getBytes(),
-                        nextLine[3].getBytes(),
-                        nextLine[4].getBytes()));
+                        csvReader.get(0),
+                        csvReader.get(1).getBytes(),
+                        csvReader.get(2).getBytes(),
+                        csvReader.get(3).getBytes(),
+                        csvReader.get(4).getBytes()));
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ImportException(Translator.translate("notCSVFileError", file.getAbsoluteFile()), e);
         } catch (FileNotFoundException e) {
             throw new ImportException(e);
         } catch (IOException e) {

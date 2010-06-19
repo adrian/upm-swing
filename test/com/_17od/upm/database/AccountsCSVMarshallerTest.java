@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-import au.com.bytecode.opencsv.CSVReader;
+
+import com.csvreader.CsvReader;
 
 public class AccountsCSVMarshallerTest extends TestCase {
 
@@ -40,8 +41,9 @@ public class AccountsCSVMarshallerTest extends TestCase {
         marshaller.marshal(accounts, csvFile);
 
         // check that the file contents are what we expect
-        CSVReader reader = new CSVReader(new FileReader(csvFile));
-        assertEquals(account, reader.readNext());
+        CsvReader reader = new CsvReader(new FileReader(csvFile));
+        reader.readRecord();
+        assertEquals(account, reader.getValues());
     }
 
     public void testWithMultipleSimpleAccounts() throws IOException, ExportException {
@@ -76,10 +78,13 @@ public class AccountsCSVMarshallerTest extends TestCase {
         marshaller.marshal(accounts, csvFile);
 
         // check that the file contents are what we expect
-        CSVReader reader = new CSVReader(new FileReader(csvFile));
-        assertEquals(account1, reader.readNext());
-        assertEquals(account2, reader.readNext());
-        assertEquals(account3, reader.readNext());
+        CsvReader reader = new CsvReader(new FileReader(csvFile));
+        reader.readRecord();
+        assertEquals(account1, reader.getValues());
+        reader.readRecord();
+        assertEquals(account2, reader.getValues());
+        reader.readRecord();
+        assertEquals(account3, reader.getValues());
     }
 
     public void testWhenNotesHaveCRLF() throws IOException, ExportException {
@@ -100,8 +105,9 @@ public class AccountsCSVMarshallerTest extends TestCase {
         marshaller.marshal(accounts, csvFile);
 
         // check that the file contents are what we expect
-        CSVReader reader = new CSVReader(new FileReader(csvFile));
-        assertEquals(account, reader.readNext());
+        CsvReader reader = new CsvReader(new FileReader(csvFile));
+        reader.readRecord();
+        assertEquals(account, reader.getValues());
     }
 
     public void testWhenNotesHasComma() throws IOException, ExportException {
@@ -122,8 +128,9 @@ public class AccountsCSVMarshallerTest extends TestCase {
         marshaller.marshal(accounts, csvFile);
 
         // check that the file contents are what we expect
-        CSVReader reader = new CSVReader(new FileReader(csvFile));
-        assertEquals(account, reader.readNext());
+        CsvReader reader = new CsvReader(new FileReader(csvFile));
+        reader.readRecord();
+        assertEquals(account, reader.getValues());
     }
 
     public void testImport() throws IOException, ExportException, ImportException {

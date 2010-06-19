@@ -690,11 +690,15 @@ public class DatabaseActions {
             return;
         }
 
+        if (exportFile.exists()) {
+            exportFile.delete();
+        }
+
         AccountsCSVMarshaller marshaller = new AccountsCSVMarshaller();
         try {
             marshaller.marshal(this.database.getAccounts(), exportFile);
         } catch (ExportException e) {
-            JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemExporting"), e.getMessage(), JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Translator.translate("problemExporting"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
