@@ -65,7 +65,7 @@ public class DatabaseActions {
         this.mainWindow = mainWindow;
     }
 
-	
+    
     /**
      * This method asks the user for the name of a new database and then creates
      * it. If the file already exists then the user is asked if they'd like to
@@ -123,7 +123,7 @@ public class DatabaseActions {
     public void changeMasterPassword() throws IOException, ProblemReadingDatabaseFile, CryptoException, PasswordDatabaseException, TransportException {
 
         if (getLatestVersionOfDatabase()) {
-        	//The first task is to get the current master password
+            //The first task is to get the current master password
             boolean passwordCorrect = false;
             boolean okClicked = true;
             do {
@@ -143,41 +143,41 @@ public class DatabaseActions {
             //If the master password was entered correctly then the next step is to get the new master password
             if (passwordCorrect == true) {
     
-        	        final JPasswordField masterPassword = new JPasswordField("");
-        	        boolean passwordsMatch = false;
-        	        Object buttonClicked;
-        	        
-        	        //Ask the user for the new master password
-        	        //This loop will continue until the two passwords entered match or until the user hits the cancel button
-        	        do {
-        	
-        	            
-        	            JPasswordField confirmedMasterPassword = new JPasswordField("");
-        	            JOptionPane pane = new JOptionPane(new Object[] {Translator.translate("enterNewMasterPassword"), masterPassword, Translator.translate("confirmation"), confirmedMasterPassword}, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-        	            JDialog dialog = pane.createDialog(mainWindow, Translator.translate("changeMasterPassword"));
-        	            dialog.addComponentListener(new ComponentAdapter(){
-        	                public void componentShown(ComponentEvent e){
-        	                    masterPassword.requestFocusInWindow();
-        	                }
-        	            });
-        	            dialog.show();
-        	            
-        	            buttonClicked = pane.getValue();
-        	            if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION))) {
-        	                if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
-        	                    JOptionPane.showMessageDialog(mainWindow, Translator.translate("passwordsDontMatch"));
-        	                } else {
-        	                    passwordsMatch = true;
-        	                }
-        	            }
-        	        
-        	        } while (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && !passwordsMatch);
-        	
-        	        //If the user clicked OK and the passwords match then change the database password
-        	        if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && passwordsMatch) {
-        	            this.dbPers.getEncryptionService().initCipher(masterPassword.getPassword());
-        		        saveDatabase();
-        	        }
+                    final JPasswordField masterPassword = new JPasswordField("");
+                    boolean passwordsMatch = false;
+                    Object buttonClicked;
+                    
+                    //Ask the user for the new master password
+                    //This loop will continue until the two passwords entered match or until the user hits the cancel button
+                    do {
+            
+                        
+                        JPasswordField confirmedMasterPassword = new JPasswordField("");
+                        JOptionPane pane = new JOptionPane(new Object[] {Translator.translate("enterNewMasterPassword"), masterPassword, Translator.translate("confirmation"), confirmedMasterPassword}, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+                        JDialog dialog = pane.createDialog(mainWindow, Translator.translate("changeMasterPassword"));
+                        dialog.addComponentListener(new ComponentAdapter(){
+                            public void componentShown(ComponentEvent e){
+                                masterPassword.requestFocusInWindow();
+                            }
+                        });
+                        dialog.show();
+                        
+                        buttonClicked = pane.getValue();
+                        if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION))) {
+                            if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
+                                JOptionPane.showMessageDialog(mainWindow, Translator.translate("passwordsDontMatch"));
+                            } else {
+                                passwordsMatch = true;
+                            }
+                        }
+                    
+                    } while (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && !passwordsMatch);
+            
+                    //If the user clicked OK and the passwords match then change the database password
+                    if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION)) && passwordsMatch) {
+                        this.dbPers.getEncryptionService().initCipher(masterPassword.getPassword());
+                        saveDatabase();
+                    }
     
             }
         }
@@ -240,9 +240,9 @@ public class DatabaseActions {
         JOptionPane pane = new JOptionPane(new Object[] {message, masterPassword }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
         JDialog dialog = pane.createDialog(mainWindow, Translator.translate("masterPassword"));
         dialog.addComponentListener(new ComponentAdapter(){
-        	public void componentShown(ComponentEvent e){
-        		masterPassword.requestFocusInWindow();
-        	}
+            public void componentShown(ComponentEvent e){
+                masterPassword.requestFocusInWindow();
+            }
         });
         dialog.show();
 
@@ -333,7 +333,7 @@ public class DatabaseActions {
     
     
     public void addAccount() throws IOException, CryptoException, TransportException, ProblemReadingDatabaseFile, PasswordDatabaseException {
-		
+        
         if (getLatestVersionOfDatabase()) {
 
             //Initialise the AccountDialog
@@ -445,9 +445,9 @@ public class DatabaseActions {
         populateListview(filteredAccountsList);
         
         //If there's only one item in the listview then select it 
-	    if (mainWindow.getAccountsListview().getModel().getSize() == 1) {
-	    	mainWindow.getAccountsListview().setSelectedIndex(0);
-	    }
+        if (mainWindow.getAccountsListview().getModel().getSize() == 1) {
+            mainWindow.getAccountsListview().setSelectedIndex(0);
+        }
     }
 
 
@@ -466,7 +466,7 @@ public class DatabaseActions {
 
     
     public void setButtonState() {
-    	if (mainWindow.getAccountsListview().getSelectedValue() == null) {
+        if (mainWindow.getAccountsListview().getSelectedValue() == null) {
             mainWindow.getEditAccountButton().setEnabled(false);
             mainWindow.getCopyUsernameButton().setEnabled(false);
             mainWindow.getCopyPasswordButton().setEnabled(false);
@@ -489,7 +489,7 @@ public class DatabaseActions {
         }
     }
 
-	
+    
     public void options() {
         OptionsDialog oppDialog = new OptionsDialog(mainWindow);
         oppDialog.pack();
@@ -499,7 +499,7 @@ public class DatabaseActions {
         if (oppDialog.hasLanguageChanged()) {
             mainWindow.initialiseControlsWithDefaultLanguage();
             if (database != null) {
-            	setStatusBarText();
+                setStatusBarText();
             }
         }
     }
@@ -597,82 +597,82 @@ public class DatabaseActions {
     
     public boolean syncWithRemoteDatabase() throws TransportException, ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
 
-    	boolean syncSuccessful = false;
-	        
-    	try {
+        boolean syncSuccessful = false;
+            
+        try {
 
-    		mainWindow.getContentPane().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-    		
-    		// Get the remote database options
-	        String remoteLocation = database.getDbOptions().getRemoteLocation();
-	        String authDBEntry = database.getDbOptions().getAuthDBEntry();
-	        byte[] httpUsername = null;
-	        byte[] httpPassword = null;
-	        if (!authDBEntry.equals("")) {
-	            httpUsername = database.getAccount(authDBEntry).getUserId();
-	            httpPassword = database.getAccount(authDBEntry).getPassword();
-	        }
-	
-	        // Download the database that's already at the remote location
-	        Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
-	        File remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
-	        
-	        // Attempt to decrypt the database using the password the user entered
-	        PasswordDatabase remoteDatabase = null;
-	        char[] password = null;
-	        boolean successfullyDecryptedDb = false;
-	        try {
-	            remoteDatabase = dbPers.load(remoteDatabaseFile);
-	            successfullyDecryptedDb = true;
-	        } catch (InvalidPasswordException e) {
-	            // The password for the downloaded database is different to that of the open database
-	            // (most likely the user changed the local database's master password)
-	            boolean okClicked = false;
-	            do {
-	                password = askUserForPassword(Translator.translate("enterPaswordForRemoteDB"));
-	                if (password == null) {
-	                    okClicked = false;
-	                } else {
-	                    okClicked = true;
-	                    try {
-	                        remoteDatabase = dbPers.load(remoteDatabaseFile, password);
-	                        successfullyDecryptedDb = true;
-	                    } catch (InvalidPasswordException invalidPassword) {
-	                        JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
-	                    }
-	                }
-	            } while (okClicked && !successfullyDecryptedDb);
-	        }
+            mainWindow.getContentPane().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            
+            // Get the remote database options
+            String remoteLocation = database.getDbOptions().getRemoteLocation();
+            String authDBEntry = database.getDbOptions().getAuthDBEntry();
+            byte[] httpUsername = null;
+            byte[] httpPassword = null;
+            if (!authDBEntry.equals("")) {
+                httpUsername = database.getAccount(authDBEntry).getUserId();
+                httpPassword = database.getAccount(authDBEntry).getPassword();
+            }
+    
+            // Download the database that's already at the remote location
+            Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
+            File remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
+            
+            // Attempt to decrypt the database using the password the user entered
+            PasswordDatabase remoteDatabase = null;
+            char[] password = null;
+            boolean successfullyDecryptedDb = false;
+            try {
+                remoteDatabase = dbPers.load(remoteDatabaseFile);
+                successfullyDecryptedDb = true;
+            } catch (InvalidPasswordException e) {
+                // The password for the downloaded database is different to that of the open database
+                // (most likely the user changed the local database's master password)
+                boolean okClicked = false;
+                do {
+                    password = askUserForPassword(Translator.translate("enterPaswordForRemoteDB"));
+                    if (password == null) {
+                        okClicked = false;
+                    } else {
+                        okClicked = true;
+                        try {
+                            remoteDatabase = dbPers.load(remoteDatabaseFile, password);
+                            successfullyDecryptedDb = true;
+                        } catch (InvalidPasswordException invalidPassword) {
+                            JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
+                        }
+                    }
+                } while (okClicked && !successfullyDecryptedDb);
+            }
 
-	        /* If the local database revision > remote database version => upload local database 
-	           If the local database revision < remote database version => replace local database with remote database
-	           If the local database revision = remote database version => do nothing */
-	        if (successfullyDecryptedDb) {
-	            if (database.getRevision() > remoteDatabase.getRevision()) {
-	                transport.delete(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
-	                transport.put(remoteLocation, database.getDatabaseFile(), httpUsername, httpPassword);
-	                syncSuccessful = true;
-	            } else if (database.getRevision() < remoteDatabase.getRevision()) {
-	                replaceDatabase(database, remoteDatabase);
-	                database = new PasswordDatabase(
-	                        remoteDatabase.getRevisionObj(),
-	                        remoteDatabase.getDbOptions(),
-	                        remoteDatabase.getAccountsHash(),
-	                        database.getDatabaseFile());
-	                doOpenDatabaseActions();
-	                syncSuccessful = true;
-	            } else {
-	                syncSuccessful = true;
-	            }
+            /* If the local database revision > remote database version => upload local database 
+               If the local database revision < remote database version => replace local database with remote database
+               If the local database revision = remote database version => do nothing */
+            if (successfullyDecryptedDb) {
+                if (database.getRevision() > remoteDatabase.getRevision()) {
+                    transport.delete(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
+                    transport.put(remoteLocation, database.getDatabaseFile(), httpUsername, httpPassword);
+                    syncSuccessful = true;
+                } else if (database.getRevision() < remoteDatabase.getRevision()) {
+                    replaceDatabase(database, remoteDatabase);
+                    database = new PasswordDatabase(
+                            remoteDatabase.getRevisionObj(),
+                            remoteDatabase.getDbOptions(),
+                            remoteDatabase.getAccountsHash(),
+                            database.getDatabaseFile());
+                    doOpenDatabaseActions();
+                    syncSuccessful = true;
+                } else {
+                    syncSuccessful = true;
+                }
 
-	            if (syncSuccessful) {
-	                setLocalDatabaseDirty(false);
-	            }
-	        }
+                if (syncSuccessful) {
+                    setLocalDatabaseDirty(false);
+                }
+            }
 
-    	} finally {
-    		mainWindow.getContentPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    	}
+        } finally {
+            mainWindow.getContentPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
 
         return syncSuccessful;
         

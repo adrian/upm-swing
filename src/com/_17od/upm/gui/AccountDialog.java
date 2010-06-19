@@ -80,18 +80,18 @@ public class AccountDialog extends EscapeDialog {
 
         // Set the title based on weather we've been opened in readonly mode and weather the
         // Account passed in is empty or not
-    	String title = null;
-    	if (readOnly) {
-    		title = Translator.translate("viewAccount");
-    	} else if (!readOnly && account.getAccountName().trim().equals("")) {
-    		title = Translator.translate("addAccount");
-    		addingAccount = true;
-    	} else {
-    		title = Translator.translate("editAccount");
-    	}
-    	setTitle(title);
-    	
-    		
+        String title = null;
+        if (readOnly) {
+            title = Translator.translate("viewAccount");
+        } else if (!readOnly && account.getAccountName().trim().equals("")) {
+            title = Translator.translate("addAccount");
+            addingAccount = true;
+        } else {
+            title = Translator.translate("editAccount");
+        }
+        setTitle(title);
+        
+            
         this.pAccount = account;
         this.existingAccounts = existingAccounts;
         this.parentWindow = parentWindow;
@@ -115,7 +115,7 @@ public class AccountDialog extends EscapeDialog {
 
         accountName = new JTextField(new String(pAccount.getAccountName()), 20);
         if (readOnly) {
-        	accountName.setEditable(false);
+            accountName.setEditable(false);
         }
         c.gridx = 1;
         c.gridy = 0;
@@ -127,9 +127,9 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(accountName, c);
         accountName.addFocusListener(new FocusAdapter() {
-        	public void focusGained(FocusEvent e) {
-        		accountName.selectAll();
-        	}
+            public void focusGained(FocusEvent e) {
+                accountName.selectAll();
+            }
         });
 
         //Userid Row
@@ -146,7 +146,7 @@ public class AccountDialog extends EscapeDialog {
 
         userId = new JTextField(new String(pAccount.getUserId()), 20);
         if (readOnly) {
-        	userId.setEditable(false);
+            userId.setEditable(false);
         }
         c.gridx = 1;
         c.gridy = 1;
@@ -158,9 +158,9 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(userId, c);
         userId.addFocusListener(new FocusAdapter() {
-        	public void focusGained(FocusEvent e) {
-        		userId.selectAll();
-        	}
+            public void focusGained(FocusEvent e) {
+                userId.selectAll();
+            }
         });
 
         //Password Row
@@ -267,7 +267,7 @@ public class AccountDialog extends EscapeDialog {
         
         url = new JTextField(new String(pAccount.getUrl()), 20);
         if (readOnly) {
-        	url.setEditable(false);
+            url.setEditable(false);
         }
         c.gridx = 1;
         c.gridy = 3;
@@ -279,9 +279,9 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(url, c);
         url.addFocusListener(new FocusAdapter() {
-        	public void focusGained(FocusEvent e) {
-        		url.selectAll();
-        	}
+            public void focusGained(FocusEvent e) {
+                url.selectAll();
+            }
         });
         
         
@@ -299,7 +299,7 @@ public class AccountDialog extends EscapeDialog {
         
         notes = new JTextArea(new String(pAccount.getNotes()), 10, 20);
         if (readOnly) {
-        	notes.setEditable(false);
+            notes.setEditable(false);
         }
         JScrollPane notesScrollPane = new JScrollPane(notes);
         c.gridx = 1;
@@ -312,9 +312,9 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.BOTH;
         container.add(notesScrollPane, c);
         notes.addFocusListener(new FocusAdapter() {
-        	public void focusGained(FocusEvent e) {
-        		notes.selectAll();
-        	}
+            public void focusGained(FocusEvent e) {
+                notes.selectAll();
+            }
         });
         
         
@@ -341,13 +341,13 @@ public class AccountDialog extends EscapeDialog {
         });
         buttonPanel.add(okButton);
         if (!readOnly) {
-	        JButton cancelButton = new JButton(Translator.translate("cancel"));
-	        cancelButton.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent e) {
-	                closeButtonAction();
-	            }
-	        });
-	        buttonPanel.add(cancelButton);
+            JButton cancelButton = new JButton(Translator.translate("cancel"));
+            cancelButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    closeButtonAction();
+                }
+            });
+            buttonPanel.add(cancelButton);
         }
         c.gridx = 0;
         c.gridy = 6;
@@ -374,7 +374,7 @@ public class AccountDialog extends EscapeDialog {
     
     private void okButtonAction() {
 
-    	// Check if the account name has changed.
+        // Check if the account name has changed.
         if (!pAccount.getAccountName().equals(accountName.getText().trim())) {
             accountChanged = true;
         }

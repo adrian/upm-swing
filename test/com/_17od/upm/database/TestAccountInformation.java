@@ -34,75 +34,75 @@ import com._17od.upm.database.ProblemReadingDatabaseFile;
 
 public class TestAccountInformation extends TestCase {
 
-	public void testFlatPack() throws IOException {
-		AccountInformation ai = new AccountInformation("Hotmail",
-				"this is the userid".getBytes(),
-				"this is the password".getBytes(),
-				"this is the url".getBytes(),
-				"this is the notes".getBytes());
-		
-		
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		ai.flatPack(os);
-		
-		String s = os.toString();
-		assertEquals("0007Hotmail" +
-					 "0018this is the userid" +
-					 "0020this is the password" +
-					 "0015this is the url" +
-					 "0017this is the notes", s); 
-	}
+    public void testFlatPack() throws IOException {
+        AccountInformation ai = new AccountInformation("Hotmail",
+                "this is the userid".getBytes(),
+                "this is the password".getBytes(),
+                "this is the url".getBytes(),
+                "this is the notes".getBytes());
+        
+        
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ai.flatPack(os);
+        
+        String s = os.toString();
+        assertEquals("0007Hotmail" +
+                     "0018this is the userid" +
+                     "0020this is the password" +
+                     "0015this is the url" +
+                     "0017this is the notes", s); 
+    }
 
 
-	public void testAssemble() throws IOException, ProblemReadingDatabaseFile {
+    public void testAssemble() throws IOException, ProblemReadingDatabaseFile {
 
-		String s = new String("0007Hotmail" +
-							  "0018this is the userid" +
-							  "0020this is the password" +
-							  "0015this is the url" +
-							  "0017this is the notes"); 
-		byte[] b = s.getBytes();
-		ByteArrayInputStream is = new ByteArrayInputStream(b);
-		AccountInformation ai = new AccountInformation(is);
-		
-		assertEquals("Hotmail", ai.getAccountName());
-		assertEquals("this is the userid", new String(ai.getUserId()));
-		assertEquals("this is the password", new String(ai.getPassword()));
-		assertEquals("this is the url", new String(ai.getUrl()));
-		assertEquals("this is the notes", new String(ai.getNotes()));
-	}
+        String s = new String("0007Hotmail" +
+                              "0018this is the userid" +
+                              "0020this is the password" +
+                              "0015this is the url" +
+                              "0017this is the notes"); 
+        byte[] b = s.getBytes();
+        ByteArrayInputStream is = new ByteArrayInputStream(b);
+        AccountInformation ai = new AccountInformation(is);
+        
+        assertEquals("Hotmail", ai.getAccountName());
+        assertEquals("this is the userid", new String(ai.getUserId()));
+        assertEquals("this is the password", new String(ai.getPassword()));
+        assertEquals("this is the url", new String(ai.getUrl()));
+        assertEquals("this is the notes", new String(ai.getNotes()));
+    }
 
-	
-	public void testAssembleCharsInFieldLength() throws IOException {
-		ByteArrayInputStream is = new ByteArrayInputStream("bad input".getBytes());
-		try {
-			AccountInformation ai = new AccountInformation(is);
-			fail("Should have got an ProblemReadingDatabaseFile exception now");
-		} catch (ProblemReadingDatabaseFile e ) {
-			//ok to get here
-		}
-	}
-	
+    
+    public void testAssembleCharsInFieldLength() throws IOException {
+        ByteArrayInputStream is = new ByteArrayInputStream("bad input".getBytes());
+        try {
+            AccountInformation ai = new AccountInformation(is);
+            fail("Should have got an ProblemReadingDatabaseFile exception now");
+        } catch (ProblemReadingDatabaseFile e ) {
+            //ok to get here
+        }
+    }
+    
 
-	public void testAssembleBadFieldLength() throws IOException, ProblemReadingDatabaseFile {
-		ByteArrayInputStream is = new ByteArrayInputStream("0".getBytes());
-		try {
-			AccountInformation ai = new AccountInformation(is);
-			fail("Should have got an EOFException exception now");
-		} catch (EOFException e ) {
-			//ok to get here
-		}
-	}
+    public void testAssembleBadFieldLength() throws IOException, ProblemReadingDatabaseFile {
+        ByteArrayInputStream is = new ByteArrayInputStream("0".getBytes());
+        try {
+            AccountInformation ai = new AccountInformation(is);
+            fail("Should have got an EOFException exception now");
+        } catch (EOFException e ) {
+            //ok to get here
+        }
+    }
 
-	
-	public void testAssembleBadFieldContents() throws IOException, ProblemReadingDatabaseFile {
-		ByteArrayInputStream is = new ByteArrayInputStream("0004".getBytes());
-		try {
-			AccountInformation ai = new AccountInformation(is);
-			fail("Should have got an EOFException exception now");
-		} catch (EOFException e ) {
-			//ok to get here
-		}
-	}
-	
+    
+    public void testAssembleBadFieldContents() throws IOException, ProblemReadingDatabaseFile {
+        ByteArrayInputStream is = new ByteArrayInputStream("0004".getBytes());
+        try {
+            AccountInformation ai = new AccountInformation(is);
+            fail("Should have got an EOFException exception now");
+        } catch (EOFException e ) {
+            //ok to get here
+        }
+    }
+    
 }

@@ -23,15 +23,15 @@ import javax.swing.border.Border;
  */
 public class ShowComponents {
 
-	public static void main(String[] args) {
-	    JOptionPane pane = new JOptionPane("Message", JOptionPane.ERROR_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-	    showComponents(pane, 0);
+    public static void main(String[] args) {
+        JOptionPane pane = new JOptionPane("Message", JOptionPane.ERROR_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        showComponents(pane, 0);
         drawBorder(pane);
         JDialog dialog = pane.createDialog(null, "abc");
         dialog.show();
-	}
-	
-	
+    }
+    
+    
     private static void drawBorder(Component c) {
         Border b = BorderFactory.createLineBorder(Color.BLACK);
         if (c instanceof Container) {
@@ -43,28 +43,28 @@ public class ShowComponents {
     }
     
     
-	private static void showComponents(Component c, int indent) {
-		System.out.print(space(indent) + c.getClass().getName() + " " + c.getName());
-		if (c instanceof Container) {
-			Container cont = (Container) c;
-			if (cont.getLayout() != null) {
-			    System.out.println(" (" + cont.getLayout().getClass().getName() + ")");
-			    for (int i=0; i<cont.getComponentCount(); i++) {
-			        showComponents(cont.getComponent(i), indent + 1);
-			    }
-			} else {
+    private static void showComponents(Component c, int indent) {
+        System.out.print(space(indent) + c.getClass().getName() + " " + c.getName());
+        if (c instanceof Container) {
+            Container cont = (Container) c;
+            if (cont.getLayout() != null) {
+                System.out.println(" (" + cont.getLayout().getClass().getName() + ")");
+                for (int i=0; i<cont.getComponentCount(); i++) {
+                    showComponents(cont.getComponent(i), indent + 1);
+                }
+            } else {
                 System.out.print('\n');
-			}
-		} else {
-			System.out.print('\n');
-		}
-	}
+            }
+        } else {
+            System.out.print('\n');
+        }
+    }
 
-	private static String space(int i) {
-		String s = new String("");
-		while (s.length() < i) {
-			s = s + '\t';
-		}
-		return s;
-	}
+    private static String space(int i) {
+        String s = new String("");
+        while (s.length() < i) {
+            s = s + '\t';
+        }
+        return s;
+    }
 }

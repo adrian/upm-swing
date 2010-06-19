@@ -71,7 +71,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 public class MultipartFileUploadApp {
 
     public static void main(String[] args) {
-    	
+        
         MultipartFileUploadFrame f = new MultipartFileUploadFrame();
         f.setTitle("HTTP multipart file upload application");
         f.pack();
@@ -83,7 +83,7 @@ public class MultipartFileUploadApp {
             }
         );
         f.setVisible(true);
-	}
+    }
 
     public static class MultipartFileUploadFrame extends JFrame {
 
@@ -108,8 +108,8 @@ public class MultipartFileUploadApp {
             final JTextField tfdTargetFile = new JTextField(30);
             tfdTargetFile.setEditable(false);
 
-			final JCheckBox cbxExpectHeader = new JCheckBox("Use Expect header");
-			cbxExpectHeader.setSelected(false);
+            final JCheckBox cbxExpectHeader = new JCheckBox("Use Expect header");
+            cbxExpectHeader.setSelected(false);
 
             
             final JButton btnDoUpload = new JButton("Upload");
@@ -136,7 +136,7 @@ public class MultipartFileUploadApp {
                     }
                 }
             );
-			
+            
             taTextResponse = new JTextArea(10, 40);
             taTextResponse.setEditable(false);
 
@@ -232,13 +232,13 @@ public class MultipartFileUploadApp {
             c.gridx = 2;
             getContentPane().add(btnSelectFile, c);
 
-			c.anchor = GridBagConstraints.CENTER;
-			c.fill = GridBagConstraints.NONE;
-			c.insets = new Insets(10, 10, 10, 10);
-			c.gridwidth = 3;
-			c.gridx = 0;
-			c.gridy = 2;
-			getContentPane().add(cbxExpectHeader, c);
+            c.anchor = GridBagConstraints.CENTER;
+            c.fill = GridBagConstraints.NONE;
+            c.insets = new Insets(10, 10, 10, 10);
+            c.gridwidth = 3;
+            c.gridx = 0;
+            c.gridy = 2;
+            getContentPane().add(cbxExpectHeader, c);
 
 
             c.anchor = GridBagConstraints.CENTER;
@@ -258,10 +258,10 @@ public class MultipartFileUploadApp {
             c.gridx = 0;
             c.gridy = 4;
             getContentPane().add(new JScrollPane(taTextResponse), c);
-		}
+        }
         
         private void appendMessage(String m) {
             taTextResponse.append(m + "\n");
         }
-	}
+    }
 }

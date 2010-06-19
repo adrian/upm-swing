@@ -35,21 +35,21 @@ import javax.swing.ImageIcon;
 
 public class Util {
 
-	/**
-	 * Left pad an integer to a given length with the given
-	 * character 
-	 * @param i The integer to pad
-	 * @param length The length to pad it to
-	 * @param c The character to do the padding with
-	 * @return A padded version of the integer
-	 */
-	public static String lpad(int i, int length, char c) {
-		StringBuffer buf = new StringBuffer(String.valueOf(i));
-		while (buf.length() < length) {
-			buf.insert(0, c);
-		}
-		return buf.toString();
-	}
+    /**
+     * Left pad an integer to a given length with the given
+     * character 
+     * @param i The integer to pad
+     * @param length The length to pad it to
+     * @param c The character to do the padding with
+     * @return A padded version of the integer
+     */
+    public static String lpad(int i, int length, char c) {
+        StringBuffer buf = new StringBuffer(String.valueOf(i));
+        while (buf.length() < length) {
+            buf.insert(0, c);
+        }
+        return buf.toString();
+    }
 
     
     public static ImageIcon loadImage(String name) {

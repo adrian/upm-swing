@@ -23,38 +23,38 @@ import javax.swing.JOptionPane;
  */
 public class TestDialog implements ActionListener {
 
-	private JFrame frame;
+    private JFrame frame;
 
-	
-	public TestDialog() {
-		frame = new JFrame("Hello World Frame");
+    
+    public TestDialog() {
+        frame = new JFrame("Hello World Frame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JButton button = new JButton("A Button");
-		button.addActionListener(this);
-		
+        button.addActionListener(this);
+        
         frame.getContentPane().add(button);
-		
-		frame.pack();
-		frame.show();
-	}
-	
+        
+        frame.pack();
+        frame.show();
+    }
+    
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-            	new TestDialog();
+                new TestDialog();
             }
         });
-	}
+    }
 
 
-	public void actionPerformed(ActionEvent arg0) {
-		JOptionPane pane = new JOptionPane();
-		pane.setMessageType(JOptionPane.ERROR_MESSAGE);
-		JDialog dialog = pane.createDialog(frame, "Test Dialog");
-		dialog.show();
-	}
+    public void actionPerformed(ActionEvent arg0) {
+        JOptionPane pane = new JOptionPane();
+        pane.setMessageType(JOptionPane.ERROR_MESSAGE);
+        JDialog dialog = pane.createDialog(frame, "Test Dialog");
+        dialog.show();
+    }
 
 
 }

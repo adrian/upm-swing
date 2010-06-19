@@ -39,7 +39,7 @@ public abstract class PlatformSpecificCode {
             Class clazz = Class.forName("com._17od.upm.platformspecific.mac.MACOSXSpecificCode");
             retVal = (PlatformSpecificCode) clazz.newInstance();
         } else {
-        	retVal = new NonPlatformSpecificCode();
+            retVal = new NonPlatformSpecificCode();
         }
         
         return retVal;

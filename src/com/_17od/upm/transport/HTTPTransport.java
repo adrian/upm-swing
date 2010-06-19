@@ -56,23 +56,23 @@ public class HTTPTransport extends Transport {
         //Get the proxy settings
         Boolean proxyEnabled = new Boolean(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_ENABLED));
         if (proxyEnabled.booleanValue()) {
-	        String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
-	        String proxyPortStr = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
-	        String proxyUserName = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME);
-	        String proxyPassword = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PASSWORD);
-	        String decodedPassword = new String(Base64.decodeBase64(proxyPassword.getBytes()));
-	        
-	        if (isNotEmpty(proxyHost)) {
-	            int proxyPort = 0;
-	            if (isNotEmpty(proxyPortStr)) {
-	                proxyPort = Integer.parseInt(proxyPortStr);
-	                client.getHostConfiguration().setProxy(proxyHost, proxyPort);
-	                if (isNotEmpty(proxyUserName) && isNotEmpty(proxyPassword)) {
-	                	client.getState().setProxyCredentials(AuthScope.ANY, 
-	                			new UsernamePasswordCredentials(proxyUserName, decodedPassword));
-	                }
-	            }
-	        }
+            String proxyHost = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_HOST);
+            String proxyPortStr = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PORT);
+            String proxyUserName = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME);
+            String proxyPassword = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PASSWORD);
+            String decodedPassword = new String(Base64.decodeBase64(proxyPassword.getBytes()));
+            
+            if (isNotEmpty(proxyHost)) {
+                int proxyPort = 0;
+                if (isNotEmpty(proxyPortStr)) {
+                    proxyPort = Integer.parseInt(proxyPortStr);
+                    client.getHostConfiguration().setProxy(proxyHost, proxyPort);
+                    if (isNotEmpty(proxyUserName) && isNotEmpty(proxyPassword)) {
+                        client.getState().setProxyCredentials(AuthScope.ANY, 
+                                new UsernamePasswordCredentials(proxyUserName, decodedPassword));
+                    }
+                }
+            }
         }
 
     }
@@ -115,7 +115,7 @@ public class HTTPTransport extends Transport {
             // I've noticed on Windows (at least) that PHP seems to fail when moving files on the first attempt
             // The second attempt works so lets just do that
             if (status == HttpStatus.SC_OK && post.getResponseBodyAsString().equals("FILE_WASNT_MOVED")) {
-            	status = client.executeMethod(post);            	
+                status = client.executeMethod(post);                
             }
 
             if (status != HttpStatus.SC_OK) {
@@ -123,7 +123,7 @@ public class HTTPTransport extends Transport {
             }
             
             if (!post.getResponseBodyAsString().equals("OK") ) {
-            	throw new TransportException("There's been some kind of problem uploading a file to the HTTP server.\n\nThe error message is [" + post.getResponseBodyAsString() + "]");
+                throw new TransportException("There's been some kind of problem uploading a file to the HTTP server.\n\nThe error message is [" + post.getResponseBodyAsString() + "]");
             }
             
         } catch (FileNotFoundException e) {
@@ -250,7 +250,7 @@ public class HTTPTransport extends Transport {
             }
             
             if (!post.getResponseBodyAsString().equals("OK") ) {
-            	throw new TransportException("There's been some kind of problem deleting a file to the HTTP server.\n\nThe error message is [" + post.getResponseBodyAsString() + "]");
+                throw new TransportException("There's been some kind of problem deleting a file to the HTTP server.\n\nThe error message is [" + post.getResponseBodyAsString() + "]");
             }
 
         } catch (MalformedURLException e) {
@@ -280,11 +280,11 @@ public class HTTPTransport extends Transport {
 
     
     private boolean isNotEmpty(String stringToCheck) {
-    	boolean retVal = false;
-    	if (stringToCheck != null && !stringToCheck.trim().equals("")) {
-    		retVal = true;
-    	}
-    	return retVal;
+        boolean retVal = false;
+        if (stringToCheck != null && !stringToCheck.trim().equals("")) {
+            retVal = true;
+        }
+        return retVal;
     }
 
 }

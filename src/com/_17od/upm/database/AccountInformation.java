@@ -29,11 +29,11 @@ import java.io.OutputStream;
 
 public class AccountInformation extends FlatPackObject {
 
-	private String accountName;
-	private byte[] userId;
-	private byte[] password;
-	private byte[] url;
-	private byte[] notes;
+    private String accountName;
+    private byte[] userId;
+    private byte[] password;
+    private byte[] url;
+    private byte[] notes;
 
 
     public AccountInformation() {
@@ -45,75 +45,75 @@ public class AccountInformation extends FlatPackObject {
     }
     
     
-	public AccountInformation(String accountName, byte[] userId, byte[] password,
-			byte[] url, byte[] notes) {
-		this.accountName = accountName;
-		this.userId = userId;
-		this.password = password;
-		this.url = url;
-		this.notes = notes;
-	}
-	
-	
-	public AccountInformation(InputStream is) throws IOException, ProblemReadingDatabaseFile {
-		assemble(is);
-	}
-	
-	
-	public void flatPack(OutputStream os) throws IOException {
-		os.write(flatPack(accountName));
-		os.write(flatPack(userId));
-		os.write(flatPack(password));
-		os.write(flatPack(url));
-		os.write(flatPack(notes));
-	}
+    public AccountInformation(String accountName, byte[] userId, byte[] password,
+            byte[] url, byte[] notes) {
+        this.accountName = accountName;
+        this.userId = userId;
+        this.password = password;
+        this.url = url;
+        this.notes = notes;
+    }
+    
+    
+    public AccountInformation(InputStream is) throws IOException, ProblemReadingDatabaseFile {
+        assemble(is);
+    }
+    
+    
+    public void flatPack(OutputStream os) throws IOException {
+        os.write(flatPack(accountName));
+        os.write(flatPack(userId));
+        os.write(flatPack(password));
+        os.write(flatPack(url));
+        os.write(flatPack(notes));
+    }
 
-	private void assemble(InputStream is) throws IOException, ProblemReadingDatabaseFile {
-		accountName = getString(is);
-		userId = getBytes(is);
-		password = getBytes(is);
-		url = getBytes(is);
-		notes = getBytes(is);
-	}
-	
-	public String getAccountName() {
-		return accountName;
-	}
+    private void assemble(InputStream is) throws IOException, ProblemReadingDatabaseFile {
+        accountName = getString(is);
+        userId = getBytes(is);
+        password = getBytes(is);
+        url = getBytes(is);
+        notes = getBytes(is);
+    }
+    
+    public String getAccountName() {
+        return accountName;
+    }
 
-	public void setAccountName(String accountName) {
-		this.accountName = accountName;
-	}
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
 
-	public byte[] getNotes() {
-		return notes;
-	}
+    public byte[] getNotes() {
+        return notes;
+    }
 
-	public void setNotes(byte[] notes) {
-		this.notes = notes;
-	}
+    public void setNotes(byte[] notes) {
+        this.notes = notes;
+    }
 
-	public byte[] getPassword() {
-		return password;
-	}
+    public byte[] getPassword() {
+        return password;
+    }
 
-	public void setPassword(byte[] password) {
-		this.password = password;
-	}
+    public void setPassword(byte[] password) {
+        this.password = password;
+    }
 
-	public byte[] getUrl() {
-		return url;
-	}
+    public byte[] getUrl() {
+        return url;
+    }
 
-	public void setUrl(byte[] url) {
-		this.url = url;
-	}
+    public void setUrl(byte[] url) {
+        this.url = url;
+    }
 
-	public byte[] getUserId() {
-		return userId;
-	}
+    public byte[] getUserId() {
+        return userId;
+    }
 
-	public void setUserId(byte[] userId) {
-		this.userId = userId;
-	}
+    public void setUserId(byte[] userId) {
+        this.userId = userId;
+    }
 
 }

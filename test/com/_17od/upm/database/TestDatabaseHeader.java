@@ -33,35 +33,35 @@ import junit.framework.TestCase;
 
 public class TestDatabaseHeader extends TestCase {
 
-	public void testFlatPack() throws IOException {
-		
-		//Create a new DatabaseHeader
-		DatabaseHeader dh = new DatabaseHeader(0, 1, 3);
-		
-		//Flat pack it
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		dh.flatPack(os);
+    public void testFlatPack() throws IOException {
+        
+        //Create a new DatabaseHeader
+        DatabaseHeader dh = new DatabaseHeader(0, 1, 3);
+        
+        //Flat pack it
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        dh.flatPack(os);
 
-		//Now make sure the bytes that were flat packed are correct
-		String s = os.toString();
-		assertEquals("00010" +
-					 "00011" +
-					 "00013", s); 
-	}
-	
+        //Now make sure the bytes that were flat packed are correct
+        String s = os.toString();
+        assertEquals("00010" +
+                     "00011" +
+                     "00013", s); 
+    }
+    
 
-	public void testAssemble() throws IOException, ProblemReadingDatabaseFile {
+    public void testAssemble() throws IOException, ProblemReadingDatabaseFile {
 
-		String s = new String("00010" +
-							  "00011" +
-							  "00013"); 
-		byte[] b = s.getBytes();
-		ByteArrayInputStream is = new ByteArrayInputStream(b);
-		DatabaseHeader dh = new DatabaseHeader(is);
-		
-		assertEquals(0, dh.getMajorVersion());
-		assertEquals(1, dh.getMinorVersion());
-		assertEquals(3, dh.getPatchVersion());
-	}
-	
+        String s = new String("00010" +
+                              "00011" +
+                              "00013"); 
+        byte[] b = s.getBytes();
+        ByteArrayInputStream is = new ByteArrayInputStream(b);
+        DatabaseHeader dh = new DatabaseHeader(is);
+        
+        assertEquals(0, dh.getMajorVersion());
+        assertEquals(1, dh.getMinorVersion());
+        assertEquals(3, dh.getPatchVersion());
+    }
+    
 }

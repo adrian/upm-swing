@@ -18,12 +18,12 @@ import java.io.RandomAccessFile;
  */
 public class TestRandomAccessFile {
 
-	public static void main(String[] args) throws IOException {
-		File databaseFile = new File(System.getProperty("user.dir") + "/pd");
-		byte[] salt = "abc".getBytes();
-		RandomAccessFile raf = new RandomAccessFile(databaseFile, "rw");
-		raf.write(salt);
-		raf.close();
-	}
-	
+    public static void main(String[] args) throws IOException {
+        File databaseFile = new File(System.getProperty("user.dir") + "/pd");
+        byte[] salt = "abc".getBytes();
+        RandomAccessFile raf = new RandomAccessFile(databaseFile, "rw");
+        raf.write(salt);
+        raf.close();
+    }
+    
 }

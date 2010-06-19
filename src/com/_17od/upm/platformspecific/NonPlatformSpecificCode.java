@@ -28,7 +28,7 @@ import com._17od.upm.gui.MainWindow;
 public class NonPlatformSpecificCode extends PlatformSpecificCode {
 
     public void initialiseApplication(final MainWindow mainWindow) {
-    	//Do nothing
+        //Do nothing
     }
 
 }

@@ -155,18 +155,18 @@ public class OptionsDialog extends EscapeDialog {
         // The "Locale" field row
         localeComboBox = new JComboBox(getSupportedLocaleNames());
         for (int i=0; i<localeComboBox.getItemCount(); i++) {
-        	// If the locale language is blank then set it to the English language
-        	// I'm not sure why this happens. Maybe it's because the default locale
-        	// is English???
-        	String currentLanguage = Translator.getCurrentLocale().getLanguage();
-        	if (currentLanguage.equals("")) {
-        		currentLanguage = "en";
-        	}
-        	
-        	if (currentLanguage.equals(Translator.SUPPORTED_LOCALES[i].getLanguage())) {
+            // If the locale language is blank then set it to the English language
+            // I'm not sure why this happens. Maybe it's because the default locale
+            // is English???
+            String currentLanguage = Translator.getCurrentLocale().getLanguage();
+            if (currentLanguage.equals("")) {
+                currentLanguage = "en";
+            }
+            
+            if (currentLanguage.equals(Translator.SUPPORTED_LOCALES[i].getLanguage())) {
                 localeComboBox.setSelectedIndex(i);
                 break;
-        	}
+            }
         }
         c.gridx = 0;
         c.gridy = 3;
@@ -195,11 +195,11 @@ public class OptionsDialog extends EscapeDialog {
         enableProxyCheckbox = new JCheckBox(Translator.translate("enableProxy"), proxyEnabled.booleanValue());
         enableProxyCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-            	if (e.getStateChange() == ItemEvent.SELECTED) {
-            		enableProxyComponents(true);
-            	} else {
-            		enableProxyComponents(false);
-            	}
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    enableProxyComponents(true);
+                } else {
+                    enableProxyComponents(false);
+                }
             }
         });
         c.gridx = 0;
@@ -299,7 +299,7 @@ public class OptionsDialog extends EscapeDialog {
         String encodedPassword = Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_PASSWORD);
         String decodedPassword = null;
         if (encodedPassword != null) {
-        	decodedPassword = new String(Base64.decodeBase64(encodedPassword.getBytes()));
+            decodedPassword = new String(Base64.decodeBase64(encodedPassword.getBytes()));
         }
         httpProxyPassword = new JPasswordField(decodedPassword, 20);
         c.gridx = 0;
@@ -316,11 +316,11 @@ public class OptionsDialog extends EscapeDialog {
         defaultEchoChar = httpProxyPassword.getEchoChar();
         hidePasswordCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-            	if (e.getStateChange() == ItemEvent.SELECTED) {
-            		httpProxyPassword.setEchoChar(defaultEchoChar);
-            	} else {
-            		httpProxyPassword.setEchoChar((char) 0);
-            	}
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    httpProxyPassword.setEchoChar(defaultEchoChar);
+                } else {
+                    httpProxyPassword.setEchoChar((char) 0);
+                }
             }
         });
         c.gridx = 1;
@@ -398,7 +398,7 @@ public class OptionsDialog extends EscapeDialog {
                 languageChanged = true;
             }
 
-        	Preferences.save();
+            Preferences.save();
             setVisible(false);
             dispose();
             okClicked = true;
@@ -421,20 +421,20 @@ public class OptionsDialog extends EscapeDialog {
 
     
     private Object[] getSupportedLocaleNames() {
-    	Object[] names = new Object[Translator.SUPPORTED_LOCALES.length]; 
+        Object[] names = new Object[Translator.SUPPORTED_LOCALES.length]; 
 
-    	for (int i=0; i<Translator.SUPPORTED_LOCALES.length; i++) {
-	    	names[i] = Translator.SUPPORTED_LOCALES[i].getDisplayName() +
-	    		" (" + Translator.SUPPORTED_LOCALES[i].getDisplayName(Translator.getCurrentLocale())
-	    		+ ')';
-    	}
+        for (int i=0; i<Translator.SUPPORTED_LOCALES.length; i++) {
+            names[i] = Translator.SUPPORTED_LOCALES[i].getDisplayName() +
+                " (" + Translator.SUPPORTED_LOCALES[i].getDisplayName(Translator.getCurrentLocale())
+                + ')';
+        }
 
-    	return names;
+        return names;
     }
 
     
     public boolean hasLanguageChanged() {
-    	return languageChanged;
+        return languageChanged;
     }
 
 }

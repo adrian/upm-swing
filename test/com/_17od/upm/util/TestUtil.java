@@ -27,20 +27,20 @@ import junit.framework.TestCase;
 
 public class TestUtil extends TestCase {
 
-	public void testLpad1() {
-		assertEquals(Util.lpad(1, 1, '0'), "1");
-	}
+    public void testLpad1() {
+        assertEquals(Util.lpad(1, 1, '0'), "1");
+    }
 
-	public void testLpad2() {
-		assertEquals(Util.lpad(1, 2, '0'), "01");
-	}
+    public void testLpad2() {
+        assertEquals(Util.lpad(1, 2, '0'), "01");
+    }
 
-	public void testLpad3() {
-		assertEquals(Util.lpad(34, 2, '0'), "34");
-	}
+    public void testLpad3() {
+        assertEquals(Util.lpad(34, 2, '0'), "34");
+    }
 
-	public void testLpad4() {
-		assertEquals(Util.lpad(34, 6, 'd'), "dddd34");
-	}
+    public void testLpad4() {
+        assertEquals(Util.lpad(34, 6, 'd'), "dddd34");
+    }
 
 }

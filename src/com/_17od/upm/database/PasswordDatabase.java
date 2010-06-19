@@ -40,104 +40,104 @@ import com._17od.upm.crypto.EncryptionService;
  */
 public class PasswordDatabase {
 
-	private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 2;
     private static final String FILE_HEADER = "UPM";
 
-	private File databaseFile;
-	private Revision revision;
-	private DatabaseOptions dbOptions;
-	private HashMap accounts;
+    private File databaseFile;
+    private Revision revision;
+    private DatabaseOptions dbOptions;
+    private HashMap accounts;
 
-	
-	public PasswordDatabase(Revision revision, DatabaseOptions dbOptions, HashMap accounts, File databaseFile) {
+    
+    public PasswordDatabase(Revision revision, DatabaseOptions dbOptions, HashMap accounts, File databaseFile) {
         this.revision = revision;
         this.dbOptions = dbOptions;
         this.accounts = accounts;
         this.databaseFile = databaseFile;
-	}
+    }
 
 
-	public PasswordDatabase(File dbFile) {
-	    this.revision = new Revision();
-	    this.dbOptions = new DatabaseOptions();
-	    this.accounts = new HashMap();
+    public PasswordDatabase(File dbFile) {
+        this.revision = new Revision();
+        this.dbOptions = new DatabaseOptions();
+        this.accounts = new HashMap();
         this.databaseFile = dbFile;
-	}
-	
+    }
+    
 
-	public void addAccount(AccountInformation ai) {
-		accounts.put(ai.getAccountName(), ai);
-	}
-	
+    public void addAccount(AccountInformation ai) {
+        accounts.put(ai.getAccountName(), ai);
+    }
+    
 
-	public void deleteAccount(String accountName) {
-		accounts.remove(accountName);
-	}
+    public void deleteAccount(String accountName) {
+        accounts.remove(accountName);
+    }
 
-	
-	public AccountInformation getAccount(String name) {
-		return (AccountInformation) accounts.get(name);
-	}
-	
-	
-	public void save(EncryptionService encryptionService) throws IOException, CryptoException {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		
+    
+    public AccountInformation getAccount(String name) {
+        return (AccountInformation) accounts.get(name);
+    }
+    
+    
+    public void save(EncryptionService encryptionService) throws IOException, CryptoException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        
         // Flatpack the database revision and options
         revision.increment();
         revision.flatPack(os);
         dbOptions.flatPack(os);
 
-		// Flatpack the accounts
-		Iterator it = accounts.values().iterator();
-		while (it.hasNext()) {
-			AccountInformation ai = (AccountInformation) it.next();
-			ai.flatPack(os);
-		}
-		os.close();
-		byte[] dataToEncrypt = os.toByteArray();
+        // Flatpack the accounts
+        Iterator it = accounts.values().iterator();
+        while (it.hasNext()) {
+            AccountInformation ai = (AccountInformation) it.next();
+            ai.flatPack(os);
+        }
+        os.close();
+        byte[] dataToEncrypt = os.toByteArray();
 
-		//Now encrypt the database data
-		byte[] encryptedData = encryptionService.encrypt(dataToEncrypt);
-		
-		//Write the salt and the encrypted data out to the database file
-		FileOutputStream fos = new FileOutputStream(databaseFile);
+        //Now encrypt the database data
+        byte[] encryptedData = encryptionService.encrypt(dataToEncrypt);
+        
+        //Write the salt and the encrypted data out to the database file
+        FileOutputStream fos = new FileOutputStream(databaseFile);
         fos.write(FILE_HEADER.getBytes());
         fos.write(DB_VERSION);
-		fos.write(encryptionService.getSalt());
-		fos.write(encryptedData);
-		fos.close();
+        fos.write(encryptionService.getSalt());
+        fos.write(encryptedData);
+        fos.close();
 
-	}
-
-
-	public ArrayList getAccounts() {
-	    return new ArrayList(accounts.values());
-	}
+    }
 
 
-	public HashMap getAccountsHash() {
-	    return accounts;
-	}
-	
-	
-	public File getDatabaseFile() {
-		return databaseFile;
-	}
+    public ArrayList getAccounts() {
+        return new ArrayList(accounts.values());
+    }
 
 
-	public DatabaseOptions getDbOptions() {
-		return dbOptions;
-	}
+    public HashMap getAccountsHash() {
+        return accounts;
+    }
+    
+    
+    public File getDatabaseFile() {
+        return databaseFile;
+    }
 
 
-	public Revision getRevisionObj() {
-	    return revision;
-	}
+    public DatabaseOptions getDbOptions() {
+        return dbOptions;
+    }
 
-	   
-	public int getRevision() {
-		return revision.getRevision();
-	}
+
+    public Revision getRevisionObj() {
+        return revision;
+    }
+
+       
+    public int getRevision() {
+        return revision.getRevision();
+    }
 
 }

@@ -24,8 +24,8 @@ package com._17od.upm.gui;
 
 public class PasswordDatabaseException extends Exception {
 
-	public PasswordDatabaseException(String message) {
-		super(message);
-	}
-	
+    public PasswordDatabaseException(String message) {
+        super(message);
+    }
+    
 }

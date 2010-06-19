@@ -162,12 +162,12 @@ public class MainWindow extends JFrame implements ActionListener {
             //Load the startup database if it's configured
             String db = Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP);
             if (db != null && !db.equals("")) {
-	            File dbFile = new File(db);
-	            if (!dbFile.exists()) {
-	            	dbActions.errorHandler(new Exception(Translator.translate("dbDoesNotExist", db)));
-	            } else {
-	            	dbActions.openDatabase(db);
-	            }
+                File dbFile = new File(db);
+                if (!dbFile.exists()) {
+                    dbActions.errorHandler(new Exception(Translator.translate("dbDoesNotExist", db)));
+                } else {
+                    dbActions.openDatabase(db);
+                }
             }
         } catch (Exception e) {
             dbActions.errorHandler(e);
@@ -207,7 +207,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         //Ensure the layout manager is a BorderLayout
         if (!(getContentPane().getLayout() instanceof GridBagLayout)) {
-        		getContentPane().setLayout(new GridBagLayout());
+                getContentPane().setLayout(new GridBagLayout());
         }
 
         //Create the menubar
@@ -229,7 +229,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         //Keep the frame background color consistent
         getContentPane().setBackground(toolbar.getBackground());
-		
+        
         //The seperator Row
         c.gridx = 0;
         c.gridy = 1;
@@ -270,20 +270,20 @@ public class MainWindow extends JFrame implements ActionListener {
             }
         });
         searchField.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					dbActions.resetSearch();
-				} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				    //If the user hits the enter key in the search field and there's only one item 
-				    //in the listview then open that item (this code assumes that the one item in 
-					//the listview has already been selected. this is done automatically in the 
-					//DatabaseActions.filter() method)
-				    if (accountsListview.getModel().getSize() == 1) {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    dbActions.resetSearch();
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    //If the user hits the enter key in the search field and there's only one item 
+                    //in the listview then open that item (this code assumes that the one item in 
+                    //the listview has already been selected. this is done automatically in the 
+                    //DatabaseActions.filter() method)
+                    if (accountsListview.getModel().getSize() == 1) {
                         viewAccountMenuItem.doClick();
-				    }
-				}
-			}
-		});
+                    }
+                }
+            }
+        });
         c.gridx = 1;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_START;
@@ -320,32 +320,32 @@ public class MainWindow extends JFrame implements ActionListener {
         accountsListview.setModel(new SortedListModel());
         JScrollPane accountsScrollList = new JScrollPane(accountsListview, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         accountsListview.addFocusListener(new FocusAdapter() {
-        	public void focusGained(FocusEvent e) {
+            public void focusGained(FocusEvent e) {
              //If the listview gets focus, there is one ore more items in the listview and there is nothing
              //already selected, then select the first item in the list
-        		if (accountsListview.getModel().getSize() > 0 && accountsListview.getSelectedIndex() == -1) {
-        			accountsListview.setSelectionInterval(0, 0);
-        		}
-        	}
+                if (accountsListview.getModel().getSize() > 0 && accountsListview.getSelectedIndex() == -1) {
+                    accountsListview.setSelectionInterval(0, 0);
+                }
+            }
         });
         accountsListview.addListSelectionListener(new ListSelectionListener() {
-        	public void valueChanged(ListSelectionEvent e) {
+            public void valueChanged(ListSelectionEvent e) {
                 dbActions.setButtonState();
-        	}
+            }
         });
         accountsListview.addMouseListener(new MouseAdapter() {
            public void mouseClicked(MouseEvent e) {
                if (e.getClickCount() == 2) {
-            	   viewAccountMenuItem.doClick();
+                   viewAccountMenuItem.doClick();
                }
            }
         });
         accountsListview.addKeyListener(new KeyAdapter() {
-        	public void keyReleased(KeyEvent e) {
-        		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-        			viewAccountMenuItem.doClick();
-        		}
-        	}
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    viewAccountMenuItem.doClick();
+                }
+            }
         });
         c.gridx = 0;
         c.gridy = 3;
@@ -621,7 +621,7 @@ public class MainWindow extends JFrame implements ActionListener {
     
     
     public JList getAccountsListview() {
-    	return accountsListview;
+        return accountsListview;
     }
 
 
@@ -644,29 +644,29 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
 
-	public JButton getCopyPasswordButton() {
-		return copyPasswordButton;
-	}
+    public JButton getCopyPasswordButton() {
+        return copyPasswordButton;
+    }
 
 
-	public JButton getCopyUsernameButton() {
-		return copyUsernameButton;
-	}
+    public JButton getCopyUsernameButton() {
+        return copyUsernameButton;
+    }
 
 
-	public JButton getEditAccountButton() {
-		return editAccountButton;
-	}
+    public JButton getEditAccountButton() {
+        return editAccountButton;
+    }
 
 
-	public JButton getAddAccountButton() {
-		return addAccountButton;
-	}
+    public JButton getAddAccountButton() {
+        return addAccountButton;
+    }
 
 
-	public JButton getOptionsButton() {
-		return optionsButton;
-	}
+    public JButton getOptionsButton() {
+        return optionsButton;
+    }
 
 
     public JButton getDeleteAccountButton() {
