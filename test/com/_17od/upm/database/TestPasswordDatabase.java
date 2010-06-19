@@ -28,7 +28,6 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import com._17od.upm.crypto.CryptoException;
-import com._17od.upm.crypto.EncryptionService;
 import com._17od.upm.crypto.InvalidPasswordException;
 
 
@@ -48,9 +47,9 @@ public class TestPasswordDatabase extends TestCase {
         //Make sure the file doesn't exist
         deleteFile(databaseFileName);
 
-        EncryptionService encryptionService = new EncryptionService(password); 
         PasswordDatabase db = new PasswordDatabase(new File(databaseFileName));
-        db.save(encryptionService);
+        PasswordDatabasePersistence pers = new PasswordDatabasePersistence(password);
+        pers.save(db);
 
         File f = new File(databaseFileName);
         if (f.exists() == false) {
@@ -65,9 +64,9 @@ public class TestPasswordDatabase extends TestCase {
         deleteFile(databaseFileName);
         
         //Create the db on this line
-        EncryptionService encryptionService = new EncryptionService(password); 
         PasswordDatabase db = new PasswordDatabase(new File(databaseFileName));
-        db.save(encryptionService);
+        PasswordDatabasePersistence pers = new PasswordDatabasePersistence(password);
+        pers.save(db);
         
         //Now try to open the db again
         PasswordDatabasePersistence dbPers = new PasswordDatabasePersistence();
@@ -89,8 +88,8 @@ public class TestPasswordDatabase extends TestCase {
                 "this is the url".getBytes(),
                 "this is the notes".getBytes());
         db.addAccount(ai);
-        EncryptionService encryptionService = new EncryptionService(password);
-        db.save(encryptionService);
+        PasswordDatabasePersistence pers = new PasswordDatabasePersistence(password);
+        pers.save(db);
 
         //Load the db
         PasswordDatabasePersistence dbPers = new PasswordDatabasePersistence();
@@ -126,20 +125,19 @@ public class TestPasswordDatabase extends TestCase {
                 "this is the notes2".getBytes());
         db.addAccount(ai);
         db.addAccount(ai2);
-        EncryptionService encryptionService = new EncryptionService(password);
-        db.save(encryptionService);
+        PasswordDatabasePersistence dbPers = new PasswordDatabasePersistence(password);
+        dbPers.save(db);
         
         //Load the db 
-        PasswordDatabasePersistence dbPers = new PasswordDatabasePersistence();
-        db = dbPers.load(new File(databaseFileName), password);
+        db = dbPers.load(new File(databaseFileName));
         
         //Delete an account
         db.deleteAccount("Yahoo Mail");
-        db.save(encryptionService);
+        dbPers.save(db);
 
         //Load the db again 
-        db = dbPers.load(new File(databaseFileName), password);
-        
+        db = dbPers.load(new File(databaseFileName));
+
         //Check to ensure the Hotmail account still exists
         AccountInformation hotmailAccount = db.getAccount("Hotmail");
         assertEquals("this is the userid", new String(hotmailAccount.getUserId()));

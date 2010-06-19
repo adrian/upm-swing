@@ -816,7 +816,7 @@ public class DatabaseActions {
 
 
     private void saveDatabase() throws IOException, CryptoException {
-        database.save(dbPers.getEncryptionService());
+        dbPers.save(database);
         if (databaseHasRemoteInstance()) {
             setLocalDatabaseDirty(true);
         } else {

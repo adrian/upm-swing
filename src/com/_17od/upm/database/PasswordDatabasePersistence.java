@@ -1,13 +1,16 @@
 package com._17od.upm.database;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com._17od.upm.crypto.CryptoException;
 import com._17od.upm.crypto.DESDecryptionService;
@@ -37,6 +40,7 @@ import com._17od.upm.crypto.InvalidPasswordException;
 public class PasswordDatabasePersistence {
 
     private static final String FILE_HEADER = "UPM";
+    private static final int DB_VERSION = 2;
 
     private EncryptionService encryptionService;
 
@@ -254,6 +258,35 @@ public class PasswordDatabasePersistence {
         
         return passwordDatabase;
 
+    }
+
+    public void save(PasswordDatabase database) throws IOException, CryptoException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        
+        // Flatpack the database revision and options
+        database.getRevisionObj().increment();
+        database.getRevisionObj().flatPack(os);
+        database.getDbOptions().flatPack(os);
+
+        // Flatpack the accounts
+        Iterator it = database.getAccountsHash().values().iterator();
+        while (it.hasNext()) {
+            AccountInformation ai = (AccountInformation) it.next();
+            ai.flatPack(os);
+        }
+        os.close();
+        byte[] dataToEncrypt = os.toByteArray();
+
+        //Now encrypt the database data
+        byte[] encryptedData = encryptionService.encrypt(dataToEncrypt);
+        
+        //Write the salt and the encrypted data out to the database file
+        FileOutputStream fos = new FileOutputStream(database.getDatabaseFile());
+        fos.write(FILE_HEADER.getBytes());
+        fos.write(DB_VERSION);
+        fos.write(encryptionService.getSalt());
+        fos.write(encryptedData);
+        fos.close();
     }
 
     public EncryptionService getEncryptionService() {

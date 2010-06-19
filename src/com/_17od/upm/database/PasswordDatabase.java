@@ -22,16 +22,9 @@
  */
 package com._17od.upm.database;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-
-import com._17od.upm.crypto.CryptoException;
-import com._17od.upm.crypto.EncryptionService;
 
 
 /**
@@ -39,9 +32,6 @@ import com._17od.upm.crypto.EncryptionService;
  * All interaction with the database file is done using this class.
  */
 public class PasswordDatabase {
-
-    private static final int DB_VERSION = 2;
-    private static final String FILE_HEADER = "UPM";
 
     private File databaseFile;
     private Revision revision;
@@ -77,37 +67,6 @@ public class PasswordDatabase {
     
     public AccountInformation getAccount(String name) {
         return (AccountInformation) accounts.get(name);
-    }
-    
-    
-    public void save(EncryptionService encryptionService) throws IOException, CryptoException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        
-        // Flatpack the database revision and options
-        revision.increment();
-        revision.flatPack(os);
-        dbOptions.flatPack(os);
-
-        // Flatpack the accounts
-        Iterator it = accounts.values().iterator();
-        while (it.hasNext()) {
-            AccountInformation ai = (AccountInformation) it.next();
-            ai.flatPack(os);
-        }
-        os.close();
-        byte[] dataToEncrypt = os.toByteArray();
-
-        //Now encrypt the database data
-        byte[] encryptedData = encryptionService.encrypt(dataToEncrypt);
-        
-        //Write the salt and the encrypted data out to the database file
-        FileOutputStream fos = new FileOutputStream(databaseFile);
-        fos.write(FILE_HEADER.getBytes());
-        fos.write(DB_VERSION);
-        fos.write(encryptionService.getSalt());
-        fos.write(encryptedData);
-        fos.close();
-
     }
 
 
