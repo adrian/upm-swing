@@ -166,13 +166,6 @@ public class MainWindow extends JFrame implements ActionListener {
 	            	dbActions.openDatabase(db);
 	            }
             }
-        } catch (CryptoException e) {
-            JOptionPane.showMessageDialog(this,
-            		Translator.translate("needJCE1") + '\n' +
-            		Translator.translate("needJCE2") + "\n\n" +
-            		Translator.translate("needJCE3") + "\n\n" +
-            		Translator.translate("needJCE4") + '\n' +
-            		Translator.translate("needJCE5"), Translator.translate("jceException"), JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             dbActions.errorHandler(e);
         }
@@ -766,13 +759,6 @@ public class MainWindow extends JFrame implements ActionListener {
             } else if (event.getActionCommand() == MainWindow.EXIT_TXT) {
                 dbActions.exitApplication();
             }
-        } catch (CryptoException e) {
-            JOptionPane.showMessageDialog(this,
-            		Translator.translate("needJCE1") + '\n' +
-            		Translator.translate("needJCE2") + "\n\n" +
-            		Translator.translate("needJCE3") + "\n\n" +
-            		Translator.translate("needJCE4") + '\n' +
-            		Translator.translate("needJCE5"), Translator.translate("jceException"), JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             dbActions.errorHandler(e);
         }
