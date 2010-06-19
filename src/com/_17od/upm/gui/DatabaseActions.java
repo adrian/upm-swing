@@ -80,16 +80,19 @@ public class DatabaseActions {
             return;
         }
         
-        JPasswordField masterPassword;
+        final JPasswordField masterPassword = new JPasswordField("");
         boolean passwordsMatch = false;
         do {
         
             //Get a new master password for this database from the user
-            
-            masterPassword = new JPasswordField("");
             JPasswordField confirmedMasterPassword = new JPasswordField("");
             JOptionPane pane = new JOptionPane(new Object[] {Translator.translate("enterMasterPassword"), masterPassword, Translator.translate("confirmation"), confirmedMasterPassword}, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
             JDialog dialog = pane.createDialog(mainWindow, Translator.translate("masterPassword"));
+            dialog.addComponentListener(new ComponentAdapter(){
+                public void componentShown(ComponentEvent e){
+                    masterPassword.requestFocusInWindow();
+                }
+            });
             dialog.show();
             
             if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
@@ -140,7 +143,7 @@ public class DatabaseActions {
             //If the master password was entered correctly then the next step is to get the new master password
             if (passwordCorrect == true) {
     
-        	        JPasswordField masterPassword;
+        	        final JPasswordField masterPassword = new JPasswordField("");
         	        boolean passwordsMatch = false;
         	        Object buttonClicked;
         	        
@@ -148,10 +151,15 @@ public class DatabaseActions {
         	        //This loop will continue until the two passwords entered match or until the user hits the cancel button
         	        do {
         	
-        	            masterPassword = new JPasswordField("");
+        	            
         	            JPasswordField confirmedMasterPassword = new JPasswordField("");
         	            JOptionPane pane = new JOptionPane(new Object[] {Translator.translate("enterNewMasterPassword"), masterPassword, Translator.translate("confirmation"), confirmedMasterPassword}, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
         	            JDialog dialog = pane.createDialog(mainWindow, Translator.translate("changeMasterPassword"));
+        	            dialog.addComponentListener(new ComponentAdapter(){
+        	                public void componentShown(ComponentEvent e){
+        	                    masterPassword.requestFocusInWindow();
+        	                }
+        	            });
         	            dialog.show();
         	            
         	            buttonClicked = pane.getValue();
