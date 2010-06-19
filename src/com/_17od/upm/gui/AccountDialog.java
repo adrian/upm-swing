@@ -32,8 +32,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -45,12 +47,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.util.Translator;
 
 
 public class AccountDialog extends EscapeDialog {
 
+    private static final char[] ALLOWED_CHARS = {
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+    };
+   
     private AccountInformation pAccount;
     private JTextField userId;
     private JPasswordField password;
@@ -67,6 +76,8 @@ public class AccountDialog extends EscapeDialog {
     public AccountDialog(AccountInformation account, JFrame parentWindow, boolean readOnly, ArrayList existingAccounts) {
         super(parentWindow, true);
 
+        boolean addingAccount = false;
+
         // Set the title based on weather we've been opened in readonly mode and weather the
         // Account passed in is empty or not
     	String title = null;
@@ -74,6 +85,7 @@ public class AccountDialog extends EscapeDialog {
     		title = Translator.translate("viewAccount");
     	} else if (!readOnly && account.getAccountName().trim().equals("")) {
     		title = Translator.translate("addAccount");
+    		addingAccount = true;
     	} else {
     		title = Translator.translate("editAccount");
     	}
@@ -120,7 +132,6 @@ public class AccountDialog extends EscapeDialog {
         	}
         });
 
-
         //Userid Row
         JLabel useridLabel = new JLabel(Translator.translate("userid"));
         c.gridx = 0;
@@ -132,7 +143,7 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(useridLabel, c);
-        
+
         userId = new JTextField(new String(pAccount.getUserId()), 20);
         if (readOnly) {
         	userId.setEditable(false);
@@ -151,8 +162,7 @@ public class AccountDialog extends EscapeDialog {
         		userId.selectAll();
         	}
         });
-        
-        
+
         //Password Row
         JLabel passwordLabel = new JLabel(Translator.translate("password"));
         c.gridx = 0;
@@ -164,46 +174,84 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(passwordLabel, c);
-        
+
+        // This panel will hold the password, generate password button and hide password checkbox
+        JPanel passwordPanel = new JPanel(new GridBagLayout());
+
         password = new JPasswordField(new String(pAccount.getPassword()), 20);
-        if (readOnly) {
-        	password.setEditable(false);
-        }
-        c.gridx = 1;
-        c.gridy = 2;
+        password.setEditable(!readOnly);
+        password.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent e) {
+                password.selectAll();
+            }
+        });
+        c.gridx = 0;
+        c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 5);
+        c.insets = new Insets(0, 0, 0, 5);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(password, c);
-        password.addFocusListener(new FocusAdapter() {
-        	public void focusGained(FocusEvent e) {
-        		password.selectAll();
-        	}
+        passwordPanel.add(password, c);
+
+        JButton generateRandomPasswordButton = new JButton(Translator.translate("generate"));
+        if (readOnly) {
+            generateRandomPasswordButton.setEnabled(false);
+        }
+        generateRandomPasswordButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionevent) {
+                SecureRandom random = new SecureRandom();
+                StringBuffer passwordBuffer = new StringBuffer();
+                for(int i=0; i<8; i++) {
+                    passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
+                }
+                password.setText(passwordBuffer.toString());
+            }
         });
+        if (addingAccount) {
+            generateRandomPasswordButton.doClick();
+        }
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        passwordPanel.add(generateRandomPasswordButton, c);
 
         JCheckBox hidePasswordCheckbox = new JCheckBox(Translator.translate("hide"), true);
         defaultEchoChar = password.getEchoChar();
         hidePasswordCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-            	if (e.getStateChange() == ItemEvent.SELECTED) {
-            		password.setEchoChar(defaultEchoChar);
-            	} else {
-            		password.setEchoChar((char) 0);
-            	}
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                        password.setEchoChar(defaultEchoChar);
+                } else {
+                        password.setEchoChar((char) 0);
+                }
             }
         });
         c.gridx = 2;
-        c.gridy = 2;
+        c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 0, 10, 10);
+        c.insets = new Insets(0, 0, 0, 0);
         c.weightx = 0;
         c.weighty = 0;
         c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        container.add(hidePasswordCheckbox, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        passwordPanel.add(hidePasswordCheckbox, c);
+
+        c.gridx = 1;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(10, 10, 10, 10);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        container.add(passwordPanel, c);
 
         //URL Row
         JLabel urlLabel = new JLabel(Translator.translate("url"));
