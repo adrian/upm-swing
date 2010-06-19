@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com._17od.upm.util.Translator;
+
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -50,6 +52,8 @@ public class AccountsCSVMarshaller {
                         nextLine[3].getBytes(),
                         nextLine[4].getBytes()));
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new ImportException(Translator.translate("notCSVFileError", file.getAbsoluteFile()), e);
         } catch (FileNotFoundException e) {
             throw new ImportException(e);
         } catch (IOException e) {

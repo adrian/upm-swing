@@ -10,4 +10,8 @@ public class ImportException extends Exception {
         super(e);
     }
 
+    public ImportException(String message, Exception e) {
+        super(message, e);
+    }
+
 }

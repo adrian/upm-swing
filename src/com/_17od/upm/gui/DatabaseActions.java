@@ -708,62 +708,58 @@ public class DatabaseActions {
     
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File csvFile = fc.getSelectedFile();
-                if (csvFile.exists()) {
     
-                    // Unmarshall the accounts from the CSV file
-                    try {
-                        AccountsCSVMarshaller marshaller = new AccountsCSVMarshaller();
-                        ArrayList accountsInCSVFile = marshaller.unmarshal(csvFile);
-                        ArrayList accountsToImport = new ArrayList();
-    
-                        boolean importCancelled = false;
-                        // Add each account to the open database. If the account
-                        // already exits the prompt to overwrite
-                        for (int i=0; i<accountsInCSVFile.size(); i++) {
-                            AccountInformation importedAccount = (AccountInformation) accountsInCSVFile.get(i);
-                            if (database.getAccount(importedAccount.getAccountName()) != null) {
-                                Object[] options = {"Overwrite Existing", "Keep Existing", "Cancel"};
-                                int answer = JOptionPane.showOptionDialog(
-                                        mainWindow, 
-                                        Translator.translate("importExistingQuestion", importedAccount.getAccountName()),
-                                        Translator.translate("importExistingTitle"),
-                                        JOptionPane.YES_NO_CANCEL_OPTION,
-                                        JOptionPane.QUESTION_MESSAGE,
-                                        null,
-                                        options,
-                                        options[1]);
-    
-                                if (answer == 1) {
-                                    continue; // If keep existing then continue to the next iteration
-                                } else if (answer == 2) {
-                                    importCancelled = true;
-                                    break; // Cancel the import
-                                }
+                // Unmarshall the accounts from the CSV file
+                try {
+                    AccountsCSVMarshaller marshaller = new AccountsCSVMarshaller();
+                    ArrayList accountsInCSVFile = marshaller.unmarshal(csvFile);
+                    ArrayList accountsToImport = new ArrayList();
+
+                    boolean importCancelled = false;
+                    // Add each account to the open database. If the account
+                    // already exits the prompt to overwrite
+                    for (int i=0; i<accountsInCSVFile.size(); i++) {
+                        AccountInformation importedAccount = (AccountInformation) accountsInCSVFile.get(i);
+                        if (database.getAccount(importedAccount.getAccountName()) != null) {
+                            Object[] options = {"Overwrite Existing", "Keep Existing", "Cancel"};
+                            int answer = JOptionPane.showOptionDialog(
+                                    mainWindow, 
+                                    Translator.translate("importExistingQuestion", importedAccount.getAccountName()),
+                                    Translator.translate("importExistingTitle"),
+                                    JOptionPane.YES_NO_CANCEL_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE,
+                                    null,
+                                    options,
+                                    options[1]);
+
+                            if (answer == 1) {
+                                continue; // If keep existing then continue to the next iteration
+                            } else if (answer == 2) {
+                                importCancelled = true;
+                                break; // Cancel the import
                             }
-    
-                            accountsToImport.add(importedAccount);
                         }
-    
-                        if (!importCancelled && accountsToImport.size() > 0) {
-                            for (int i=0; i<accountsToImport.size(); i++) {
-                                AccountInformation accountToImport = (AccountInformation) accountsToImport.get(i);
-                                database.deleteAccount(accountToImport.getAccountName());
-                                database.addAccount(accountToImport);
-                            }
-                            saveDatabase();
-                            accountNames = getAccountNames();
-                            filter();
-                        }
-    
-                    } catch (ImportException e) {
-                        JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemImporting"), e.getMessage(), JOptionPane.OK_OPTION);
-                    } catch (IOException e) {
-                        JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemImporting"), e.getMessage(), JOptionPane.OK_OPTION);
-                    } catch (CryptoException e) {
-                        JOptionPane.showConfirmDialog(mainWindow, Translator.translate("problemImporting"), e.getMessage(), JOptionPane.OK_OPTION);
+
+                        accountsToImport.add(importedAccount);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(mainWindow, Translator.translate("fileDoesntExistWithName", csvFile.getAbsolutePath()), Translator.translate("fileDoesntExist"), JOptionPane.ERROR_MESSAGE);
+
+                    if (!importCancelled && accountsToImport.size() > 0) {
+                        for (int i=0; i<accountsToImport.size(); i++) {
+                            AccountInformation accountToImport = (AccountInformation) accountsToImport.get(i);
+                            database.deleteAccount(accountToImport.getAccountName());
+                            database.addAccount(accountToImport);
+                        }
+                        saveDatabase();
+                        accountNames = getAccountNames();
+                        filter();
+                    }
+
+                } catch (ImportException e) {
+                    JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Translator.translate("problemImporting"), JOptionPane.ERROR_MESSAGE);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Translator.translate("problemImporting"), JOptionPane.ERROR_MESSAGE);
+                } catch (CryptoException e) {
+                    JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Translator.translate("problemImporting"), JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
