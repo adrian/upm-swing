@@ -160,7 +160,7 @@ public class InstallCert {
     private static final char[] HEXDIGITS = "0123456789abcdef".toCharArray();
 
     private static String toHexString(byte[] bytes) {
-    StringBuilder sb = new StringBuilder(bytes.length * 3);
+    StringBuffer sb = new StringBuffer(bytes.length * 3);
     byte b = 0;
     for (int i=0; i<bytes.length; i++) {
         b &= 0xff;
