@@ -27,17 +27,11 @@
 
                     <h1>Contents</h1>
                     <ul>
-                        <li><a href="#installing-jce">Installing the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a></li>
                         <li><a href="#database-sharing">Database Sharing</a></li>
                         <li><a href="#how-to-install-and-run-upm-on-linux">How to Install and Run UPM on Linux</a></li>
                         <li><a href="#howto-add-a-trusted-https-certificate">How to Add a Trusted HTTPS Certificate</a></li>
+                        <li><a href="#installing-jce">Installing the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a></li>
                     </ul>
-
-                    <a name="installing-jce"></a>
-                    <h1>Installing the Java Cryptography Extension Unlimited Strength Jurisdiction Policy Files</h1>
-                    <p>
-                       The SUN JRE ships with a weak set of cryptographic algorithims. This is due to US export/import restrictions. To install the max strength algorithims you'll need to install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These can be downloaded from <a href="http://java.sun.com/javase/downloads/index.jsp">this page</a>, (the last download link near the bottom of the page). The downloaded zip will contain a few files, the most important being local_policy.jar and US_export_policy.jar. These two files need to replace two with the same name located in your JRE's installation directory. This directory can be a bit tricky to locate. On Windows it will be C:\Program Files\Java\jre6. On Ubuntu it will be something like /usr/lib/jvm/java-6-sun/jre. The files you want to replace are in the directory &lt;JRE install dir&gt;\lib\security.
-                    </p>
 
                     <a name="database-sharing"></a>
                     <h1>Database Sharing</h1>
@@ -82,10 +76,6 @@
                     </p>
                     
                     <p>
-                       Next you'll need to <a href="#installing-jce">install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a>.
-                    </p>
-
-                    <p>
                        You're now ready to run UPM. You can do this one of two ways. You can right click the file upm.jar and select "Open with Sun Java6 Runtime" or you can start a command shell, go to the directory containing upm.jar and enter 'java -jar upm.jar'.
                     </p>
 
@@ -102,6 +92,15 @@
                          <li>When prompted hit enter (to accept the default option)</li>
                          <li>There should now be a file called jssecacerts in the current directory. Copy this file into the ".\lib\security" directory where your Java runtime is installed.</li>
                        </ul>
+                    </p>
+
+                    <a name="installing-jce"></a>
+                    <h1>Installing the Java Cryptography Extension Unlimited Strength Jurisdiction Policy Files</h1>
+                    <p>
+                      <b>Note:</b> Installing the JCE Unlimited Strength Jurisdiction Policy Files is not necessary since UPM 1.6.
+                    </p>
+                    <p>
+                       The SUN JRE ships with a weak set of cryptographic algorithims. This is due to US export/import restrictions. To install the max strength algorithims you'll need to install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These can be downloaded from <a href="http://java.sun.com/javase/downloads/index.jsp">this page</a>, (the last download link near the bottom of the page). The downloaded zip will contain a few files, the most important being local_policy.jar and US_export_policy.jar. These two files need to replace two with the same name located in your JRE's installation directory. This directory can be a bit tricky to locate. On Windows it will be C:\Program Files\Java\jre6. On Ubuntu it will be something like /usr/lib/jvm/java-6-sun/jre. The files you want to replace are in the directory &lt;JRE install dir&gt;\lib\security.
                     </p>
 
                 </div>
