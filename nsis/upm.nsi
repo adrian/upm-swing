@@ -2,7 +2,7 @@
  * $Id$
  * 
  * Universal Password Manager
- * Copyright (C) 2005 Adrian Smith
+ * Copyright (C) 2005-2010 Adrian Smith
  *
  * This file is part of Universal Password Manager.
  *   
@@ -24,7 +24,7 @@
 ;--------------------------------
 ;General
 
-  !define UPM_VERSION "1.5"
+  !define UPM_VERSION "1.6"
 
   ;Name and file
   Name "Universal Password Manager"
@@ -42,6 +42,15 @@
   InstallDirRegKey HKLM "Software\UPM" "Install_Dir"
 
   LicenseData "..\dist\build\COPYING.txt"
+
+  VIAddVersionKey "ProductName" "Universal Password Manager"
+  VIAddVersionKey "CompanyName" "Adrian Smith"
+  VIAddVersionKey "ProductVersion" ${UPM_VERSION}
+  VIAddVersionKey "LegalCopyright" "Copyright © 2005-2010 Adrian Smith"
+  VIAddVersionKey "FileDescription" "Universal Password Manager"
+  VIAddVersionKey "FileVersion" "${UPM_VERSION}"
+  
+  VIProductVersion ${UPM_VERSION}.0.0
 
 ;--------------------------------
 ;Installer Pages
@@ -82,9 +91,12 @@ Section "Universal Password Manager"
 
   ;Write the uninstall keys for Windows
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "DisplayName" "Universal Password Manager"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "UninstallString" "$INSTDIR\uninstall.exe"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "DisplayVersion" "${UPM_VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "Publisher" "Adrian Smith"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "NoRepair" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\UPM" "EstimatedSize" 2252
   WriteUninstaller "uninstall.exe"
  
 SectionEnd
