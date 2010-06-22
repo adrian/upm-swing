@@ -1,8 +1,8 @@
 Universal Password Manager
 --------------------------
-http://www.17od.com/upm
+http://upm.sourceforge.net
 
-Copyright (C) 2005-2006 Adrian Smith
+Copyright (C) 2005-2010 Adrian Smith
 
 Universal Password Manager is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,25 +36,20 @@ Contents
    different? It's three strongest features are...
 
     * it's simplicity - it provides a small number of very strong features with no
-      clutter
+      clutter.
 
-    * cross platform - UPM is written in Java so it can run on Windows, Mac OS X &
-      Linux (among others). Both Windows and Mac OS X native feeling version are
-      available.
+    * cross platform - UPM runs on Android, Windows, Mac OS X and Linux.
 
-    * database sharing - This feature is particularly useful. Rather than having
-      lots of seperate databases (at home and at work for example) this feature
-      allows you store your database at a remote location (password protected HTTP
-      URL for example) and then have UPM automatically keep your local database in
-      sync with the remote database.
+    * database sharing - This feature allows your to keep you database in sync
+      across several locations by maintaining a shared copy in a remote HTTP location.
 
 2. Features
    --------
    .Small, fast and lean
-   .Uses AES for database encryption (PBEWithSHA256And256BitAES-CBC-BC)
+   .Uses AES for database encryption
    .Shared password database
    .Written in Java/SWING
-   .Windows and Mac OS X native feeling versions available
+   .Android, Windows and Mac OS X native feeling versions available
    .Fast account searching
    .Streamlined for those who are more comfortable using the keyboard only
 
@@ -70,8 +65,8 @@ Contents
       Server Side Steps
       ~~~~~~~~~~~~~~~~~
       To use database sharing you need to specify where you want your remote database
-      stored. At present UPM only supports HTTP locations (both password protected by
-      basic authentication and non password protected).
+      stored. At present UPM supports HTTP and HTTPS locations (both password
+      protected by basic authentication and non password protected).
 
       To upload your database UPM comes with a PHP script (upload.php) that needs to
       be placed in the directory where you want to store the database. You'll find
@@ -99,33 +94,40 @@ Contents
    Once you've configured your database to use a remote copy UPM will download the
    remote database before you make any changes to your local copy. This ensures
    that any changes you made on another machine will be downloaded to your current
-   machine so that they're not lost. When you exit UPM (via the 
-   Database -> Exit menu item) UPM will upload your database if you've made any 
-   local changes. Be aware that UPM will not upload your database if you exit the
-   application any other way.
+   machine so that they're not lost.
 
 
 4. Internationalization
    --------------------
-   As of version 1.4 UPM supports multiple languages. For each language a seperate
-   resource bundle file is included. UPM 1.4 includes resource bundles for both 
-   English and French. My apologies to all French speakers but you might find that
-   the French messages are a bit weird. I used Google's translator tool and I have
-   a feeling it didn't really work out too well. I'd really appreciate help from
-   anyone willing to provide translations for UPM's messages. You can find the
-   English resource bundle (upm.properties) in the upm.jar file that ships with
-   UPM (Winzip, 7-Zip, or some other zip tool can be used to uncompress the JAR file).
+   UPM supports multiple languages. For each language a separate resource bundle
+   file is included. UPM includes resource bundles for
+     * English
+     * Czech
+     * German
+     * Italian
+     * Spanish
+   I'd really appreciate help from anyone willing to provide translations for
+   UPM's messages. You can find the English resource bundle (upm.properties) in
+   the upm.jar file that ships with UPM (Winzip, 7-Zip, or some other zip tool
+   can be used to uncompress the JAR file).
 
 5. Roadmap
    -------
-   .Allow multipe edits on the local database between synchronizations
+   .Allow multiple edits on the local database between synchronizations
    .Native Linux distributions (RPM, DEB)
-   .Password generator
-   .Commandline interface
 
 
 6. History
    -------
+   22-Jun-2010 : Version 1.6
+      - Added the ability to export/import from/to a CSV file 
+      - Added a random password generator
+      - Removed the dependency on JCE Unlimited Strength Jurisdiction Policy Files
+      - Added support for using HTTPS URLs with database sharing 
+      - Set focus on the password field on all enter master password dialogs
+      - Added Spanish translation (courtesy of Victor Alfonso Pineda)
+      - Resize the "Notes" text area when the Account Details dialog is resized
+
    31-Dec-2006 : Version 1.5
       - Added Czech and German translations (courtesy of Petr Ustohal)
       - Added username and password fields to the HTTP proxy options
