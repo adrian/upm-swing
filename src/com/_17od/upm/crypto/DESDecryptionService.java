@@ -1,8 +1,8 @@
 /*
- * $Id: EncryptionService.java 15 2005-10-15 12:43:13Z adrian $
+ * $Id$
  * 
  * Universal Password Manager
- * Copyright (C) 2005 Adrian Smith
+ * Copyright (C) 2005-2010 Adrian Smith
  *
  * This file is part of Universal Password Manager.
  *   

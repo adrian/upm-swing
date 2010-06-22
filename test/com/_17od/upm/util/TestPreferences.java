@@ -1,8 +1,8 @@
 /*
- * $Id: Preferences.java 130 2006-08-31 13:26:25Z adrianshome $
+ * $Id$
  * 
  * Universal Password Manager
- * Copyright (C) 2005 Adrian Smith
+ * Copyright (C) 2005-2010 Adrian Smith
  *
  * This file is part of Universal Password Manager.
  *   

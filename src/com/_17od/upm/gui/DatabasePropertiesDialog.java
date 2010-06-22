@@ -1,8 +1,8 @@
 /*
- * $Id: OptionsDialog.java 97 2006-01-03 17:24:33Z adrian $
+ * $Id$
  * 
  * Universal Password Manager
- * Copyright (C) 2005 Adrian Smith
+ * Copyright (C) 2005-2010 Adrian Smith
  *
  * This file is part of Universal Password Manager.
  *   
