@@ -69,7 +69,7 @@
         </classpath>
     </taskdef>
 
-    <taskdef name="jarbundler" classpath="${lib}\jarbundler-1.8.1.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
+    <taskdef name="jarbundler" classpath="${lib}\jarbundler-2.1.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
 
 
     <target name="init">
