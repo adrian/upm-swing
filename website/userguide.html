@@ -29,7 +29,8 @@
                     <ul>
                         <li><a href="#database-sharing">Database Sharing</a></li>
                         <li><a href="#how-to-install-and-run-upm-on-linux">How to Install and Run UPM on Linux</a></li>
-                        <li><a href="#howto-add-a-trusted-https-certificate">How to Add a Trusted HTTPS Certificate</a></li>
+                        <li><a href="#howto-add-a-trusted-https-certificate-android">How to Add a Trusted HTTPS Certificate (Android Edition)</a></li>
+                        <li><a href="#howto-add-a-trusted-https-certificate-swing">How to Add a Trusted HTTPS Certificate (SWING Edition)</a></li>
                         <li><a href="#installing-jce">Installing the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a></li>
                     </ul>
 
@@ -79,8 +80,33 @@
                        You're now ready to run UPM. You can do this one of two ways. You can right click the file upm.jar and select "Open with Sun Java6 Runtime" or you can start a command shell, go to the directory containing upm.jar and enter 'java -jar upm.jar'.
                     </p>
 
-                    <a name="howto-add-a-trusted-https-certificate"></a>
-                    <h1>How to Add a Trusted HTTPS Certificate</h1>
+                    <a name="howto-add-a-trusted-https-certificate-android"></a>
+                    <h1>How to Add a Trusted HTTPS Certificate (Android Edition)</h1>
+                    <p>
+                       If you use a HTTPS URL for your remote database and the server is using a self signed certificate you'll get this error when you attempt to sync, <i>javax.net.ssl.SSLException: Not trusted server certificate</i>. What you need to do is import the server's certificate into UPM so that it knows it can be trusted. Here's how.
+                    </p>
+
+                    <p>
+                       <ul>
+                         <li>The certificate can be easily retrieved using your browser. These steps will work for Firefox. It should be similarly easy using any other browser.
+                           <ul>
+                             <li>Vist the URL in your browser. Be sure to use HTTPS, e.g. https://www.17od.com</li>
+                             <li>Select Tools -> Page Info -> Security</li>
+                             <li>Click "View Certificate"</li>
+                             <li>Go to the Details tab</li>
+                             <li>Click Export - save the file with the name upm.cer</li>
+                           </ul>
+                         </li>
+                         <li>Connect your handset to your computer and mount the SD card</li>
+                         <li>Copy the file "upm.cer" to the root directory of your SD card. UPM will look in the root of your SD card for a file with this name.</li>
+                         <li>Start UPM</li>
+                         <li>Select Menu -> More -> Import Certificate. You should see the message "Certificate Imported"</li>
+                         <li>If the certificate was automatically generated for you by your hosting provider then it's likely that it won't have your website URL as the Common Name (it'll probably be some generic name shared by all domains hosted on that server). Android will reject the certificate on that basis. To get around this select Menu -> Preferences -> Trusted Hostname and enter your webserver hostname, e.g. www.17od.com. This tells UPM to trust that hostname.</li>
+                       </ul>
+                    </p>
+
+                    <a name="howto-add-a-trusted-https-certificate-swing"></a>
+                    <h1>How to Add a Trusted HTTPS Certificate (SWING Edition)</h1>
                     <p>
                        If you use a HTTPS URL for your remote database and the server is using a self signed certificate you'll get this error, <i>javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target</i>. What you need to do is add the server's certificate to your trusted certificate keystore. Here's how,
                     </p>
