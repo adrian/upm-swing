@@ -66,7 +66,10 @@ public class AccountsCSVMarshaller {
             CsvReader csvReader = new CsvReader(new FileReader(file));
             while (csvReader.readRecord()) {
                 if (csvReader.getColumnCount() != 5) {
-                    throw new ImportException(Translator.translate("notCSVFileError", file.getAbsoluteFile())); 
+                    throw new ImportException(
+                            Translator.translate("notCSVFileError", 
+                                    new Object[] {file.getAbsoluteFile(), 
+                                    new Long(csvReader.getCurrentRecord() + 1)})); 
                 }
                 accounts.add(new AccountInformation(
                         csvReader.get(0),
