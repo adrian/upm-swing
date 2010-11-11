@@ -1,0 +1,23 @@
+* Focus problem on Linux
+* Update website to put / at end of URL if not provided - update code as well maybe (tested and I don't think this is a problem at all)
+* Include upm.sh in the UNIX version
+* Include Perl scripts from Val (in mail)
+* Include an icon in the UNIX version
+* Create a DEB (https://wiki.ubuntu.com/PackagingGuide)
+* Once sync'd, don't require another sync for the remainder of the session (or maybe x minutes?)
+* If dirty when exiting request sync
+* Read proxy username and password from database
+* Look into upgrading third party libs 
+* Use native BouncyCastle (like on Android)
+* Look into file renames across unix partitions (patch provided on Sourceforge)
+* Make available for Ubuntu (either in their universe of my own repository)
+* Create an RPM
+* Use Maven to build. Put common classes into base project that the swing and android projects use.
+
+DONE
+* Resize control when the account details dialog is resized
+* Use the Bouncy Castle libs directly rather than via JCE
+  - Get rid of the code that shows a message if the JCE policy files aren't installed
+* Implement import (patch on mail?)
+* Implement export (patch on mail?)
+* Replace all tabs with spaces
