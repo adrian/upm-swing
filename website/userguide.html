@@ -38,6 +38,7 @@
 
                     <h1>Contents</h1>
                     <ul>
+                        <li><a href="#android-extract-db">Extract a copy of your password database from an Android device</a></li>
                         <li><a href="#database-sharing">Database Sharing</a></li>
                         <li><a href="#how-to-install-and-run-upm-on-linux">How to Install and Run UPM on Linux</a></li>
                         <li><a href="#howto-add-a-trusted-https-certificate-android">How to Add a Trusted HTTPS Certificate (Android Edition)</a></li>
@@ -45,6 +46,25 @@
                         <li><a href="#installing-jce">Installing the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a></li>
                     </ul>
 
+                    <a name="android-extract-db"></a>
+                    <h1>Extract a copy of your password database from an Android device</h1>
+                    <p>
+                        UPM on Android stores your password database in an area that's only accessible to UPM. It's referred to as <a href="http://developer.android.com/intl/fr/guide/topics/data/data-storage.html#filesInternal">Internal Storage</a>. One of the consequences of this is that database is deleted when UPM is uninstalled.
+                    </p>
+                    <p>
+                        Within the UPM application the Backup menu option will copy the database from the private area to your SD card. You should do this on a regular basis in case your phone becomes inoperable.
+                    </p>
+                    <p>
+                        If it happens that you can't access UPM for some reason and you don't have a backup of your database all is not lost. It's still possible to extract the database using <a href="http://developer.android.com/intl/fr/guide/developing/tools/adb.html">adb</a>, one of the Android developer tools.
+                        <ol>
+                          <li>Install adb. Try <a href="http://www.addictivetips.com/mobile/what-is-adb-and-how-to-install-it-android/">this guide.</a></li>
+                          <li>If you haven't already done so connect your phone to your PC using your USB cable</li>
+                          <li>Open a command line and execute 'adb pull /data/data/com.u17od.upm/files/upm.db'</li>
+                        </ol>
+                        You should now have the file upm.db on your PC. This is the encrypted UPM database containing all your usernames and passwords. You can open it using the <a href="http://sourceforge.net/projects/upm/files/">desktop version of UPM</a> and/or use the "Restore" menu option using UPM for Android.
+                    </p>
+                    
+                    
                     <a name="database-sharing"></a>
                     <h1>Database Sharing</h1>
                     <p>
