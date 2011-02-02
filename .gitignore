@@ -1,3 +1,9 @@
 *~
 build/
 testbuild/
+TEST-*.txt
+build.instrumented/
+cobertura.ser
+coveragereport.dir/
+dist/
+nsis/upm-*.exe
