@@ -119,6 +119,9 @@ Contents
 
 6. History
    -------
+   01-Feb-2011 : Version 1.6.1
+      - Enable CTRL-C on the account details password field
+
    22-Jun-2010 : Version 1.6
       - Added the ability to export/import from/to a CSV file 
       - Added a random password generator
