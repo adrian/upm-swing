@@ -179,6 +179,8 @@ public class AccountDialog extends EscapeDialog {
         JPanel passwordPanel = new JPanel(new GridBagLayout());
 
         password = new JPasswordField(new String(pAccount.getPassword()), 20);
+        // allow CTRL-C on the password field
+        password.putClientProperty("JPasswordField.cutCopyAllowed", Boolean.TRUE);
         password.setEditable(!readOnly);
         password.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
