@@ -1,0 +1,79 @@
+---
+layout: default
+title: UPM Windows/Mac/Linux User Guide
+---
+<h2>Contents</h2>
+<ul>
+    <li><a href="#database_sharing">Database Sharing</a></li>
+    <li><a href="#export_to_csv">Export to CSV</a></li>
+    <li><a href="#import_from_csv">Import from CSV</a></li>
+    <li><a href="#add_trusted_https_cert">How to Add a Trusted HTTPS Certificate</a></li>
+</ul>
+
+<div style="height: 2em"></div>
+
+<h2>Database Sharing<a name="database_sharing"></a></h2>
+<p>
+    See <a href="database_sharing.html">Database Sharing</a> for an overview of this feature and instructions on how to setup your server.
+</p>
+<p>
+    There are generally two scenarios you can find yourself in terms of syncing. The first is where you have a password database on your PC that you'd like to upload to your server and make available for syncing to other devices. The second is where there's a password database already on your server and you'd like to sync it to your PC.
+</p>
+<b>1. Uploading a database</b>
+<ol>
+    <li>Open your database, <i>Database -> Open Database</i></li>
+    <li>Select <i>Database -> Database Properties</i></li>
+    <li>In the URL field enter the URL of your remote location. If you put the upload.php file at http://www.mydomain.com/upm/upload.php then enter http://www.mydomain.com/upm in the URL field. If this URL is password protected with basic authentication then select the account in your database that has the relevant username and password.</li>
+</ol>
+<b>2. Downloading a database</b>
+<ol>
+    <li>Select <i>Database -> Open Database from URL</i></li>
+    <li>Enter the URL of your database, e.g. http://www.mydomain.com/upm/upm.db. If the URL is protected with basic authentication enter the username and password. When all relevant fields are populated click <i>OK</i></li>
+    <li>The next dialog is titled <i>Save Database As...</i> and is asking where you'd like to save the downloaded database to. Select a dir, enter a file name and click <i>Save</i>.</li>
+    <li>Finally, to open the downloaded database you'll be prompted to enter it's master password.</li>
+</ol>
+<p>
+    When the text "Revision x - Unsynchronised" appears in red in the status bar this means that your local and remote databases may by out of sync. To synchronise them press the <i>Synchronise</i> button or the select the menu item <i>Database -> Sync with Remote Database</i>. When the databases are in sync the status bar will read "Revision x - Synchronised".
+</>
+
+
+<h2>Export to CSV<a name="export_to_csv"></a></h2>
+WARNING: Be extremely careful with your exported CSV file. It contains the entire contents of encrypted database in plain text.
+<ul>
+    <li>Select <i>Database -> Export</i></li>
+    <li>Enter the name of the file you want to</li> 
+</ul>
+
+
+<h2>Import from CSV<a name="import_from_csv"></a></h2>
+<p>
+The UPM import CSV should be structured as follows,
+<pre>account name,user id,password,url,notes</pre>
+Example: <pre>flickr,testuser,testpassword,http://www.flickr.com,some test notes</pre>
+</p>
+<ul>
+    <li>Open the database you'd like to import the CSV file into</li>   
+    <li>Select <i>Database -> Import</i></li>
+    <li>Select the CSV file to import and click <i>Open</i></li>
+</ul>
+If an account in the CSV file exists in the database you'll be prompted for the action to take.
+
+
+<h2>How to Add a Trusted HTTPS Certificate<a name="add_trusted_https_cert"></a></h2>
+<p>
+    If you use a HTTPS URL for your remote database and the server is using a self signed certificate you may get this error when you try and sync,
+</p>
+<p>
+    <i>javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target.</i>
+</p>
+<p>
+    What you need to do is add the server's certificate to your trusted certificate keystore. Here's how,
+</p>
+
+<ul>
+    <li>Open a command prompt and cd to the directory where UPM is installed</li>
+    <li>Execute "java -classpath upm.jar InstallCert &lt;url&gt;"</li>
+    <li>When prompted hit enter (to accept the default option)</li>
+    <li>There should now be a file called jssecacerts in the current directory. Copy this file into the ".\lib\security" directory where your Java runtime is installed.</li>
+</ul>
+

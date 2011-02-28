@@ -7,3 +7,4 @@ cobertura.ser
 coveragereport.dir/
 dist/
 nsis/upm-*.exe
+website/_site/

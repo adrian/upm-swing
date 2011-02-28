@@ -1,0 +1,25 @@
+---
+layout: default
+title: Database Sharing
+---
+<h2>Database Sharing</h2>
+<p>
+    Database sharing came about because I needed a way of keeping my database in sync across multiple machines. It works by allowing you to upload/download your database to/from a HTTP/HTTPS location.
+</p>
+
+<h3>Server Side Steps</h3>
+<p>
+    To use database sharing you'll need access to a webserver accessible from each of the machines and devices you want to share the database between. The server should support PHP.
+</p>
+<p>
+    At present UPM supports HTTP and HTTPS. The URL can be password protected by basic authentication. 
+</p>
+<p>
+    Two PHP files are required on the webserver, <b>deletefile.php</b> and <b>upload.php</b>. Both of these files come packaged with the desktop version of UPM in the <b>.\server\http</b> directory. Alternatively they can be downloaded directly from <a href="https://github.com/adrian/upm-swing/tree/master/server/http">here</a>.
+</p>
+
+<h3>Client Side Steps</h3>
+<ul>
+    <li><a href="upm_android_userguide.html#database_sharing">Android version of UPM</a></li>
+    <li><a href="upm_swing_userguide.html#database_sharing">Desktop version of UPM</a></li>
+</ul>

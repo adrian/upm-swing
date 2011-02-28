@@ -1,177 +1,27 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-    <head>
-        <title>Universal Password Manager - Database Sharing</title>
-        <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
-        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/base/base-min.css">
-        <link rel="stylesheet" href="styles.css" type="text/css" media="screen, projection">
-        <script type="text/javascript">
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-1107504-6']);
-            _gaq.push(['_trackPageview']);
-
-           (function() {
-             var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-           })();
-        </script>
-    </head>
-    <body>
-        <a href="http://github.com/adrian"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://assets1.github.com/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf?repo=&url=http%3A%2F%2Fs3.amazonaws.com%2Fgithub%2Fribbons%2Fforkme_right_red_aa0000.png&path=" alt="Fork me on GitHub"></a>
-    
-        <div id="custom-doc" class="yui-t7">
-
-            <div id="hd">
-                <h1>Universal Password Manager</h1>
-                <hr>
-            </div>
-
-            <div id="bd">
-                <div class="yui-g">
-                    <div class="menu">
-                        <a href="index.html">Home</a> -
-                        <a href="http://sourceforge.net/projects/upm/">UPM on Sourceforge</a> -
-                        <a href="userguide.html">User Guide</a> -
-                        <a href="screenshots.html">Screenshots</a> -
-                        <a href="http://sourceforge.net/project/showfiles.php?group_id=154394">Download</a> -
-                        <a href="http://sourceforge.net/projects/upm/support">Support</a>
-                    </div>
-
-                    <h1>Contents</h1>
-                    <ul>
-                        <li><a href="#android-extract-db">Extract a copy of your password database from an Android device</a></li>
-                        <li><a href="#database-sharing">Database Sharing</a></li>
-                        <li><a href="#how-to-install-and-run-upm-on-linux">How to Install and Run UPM on Linux</a></li>
-                        <li><a href="#howto-add-a-trusted-https-certificate-android">How to Add a Trusted HTTPS Certificate (Android Edition)</a></li>
-                        <li><a href="#howto-add-a-trusted-https-certificate-swing">How to Add a Trusted HTTPS Certificate (SWING Edition)</a></li>
-                        <li><a href="#installing-jce">Installing the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files</a></li>
-                    </ul>
-
-                    <a name="android-extract-db"></a>
-                    <h1>Extract a copy of your password database from an Android device</h1>
-                    <p>
-                        UPM on Android stores your password database in an area that's only accessible to UPM. It's referred to as <a href="http://developer.android.com/intl/fr/guide/topics/data/data-storage.html#filesInternal">Internal Storage</a>. One of the consequences of this is that database is deleted when UPM is uninstalled.
-                    </p>
-                    <p>
-                        Within the UPM application the Backup menu option will copy the database from the private area to your SD card. You should do this on a regular basis in case your phone becomes inoperable.
-                    </p>
-                    <p>
-                        If it happens that you can't access UPM for some reason and you don't have a backup of your database all is not lost. It's still possible to extract the database using <a href="http://developer.android.com/intl/fr/guide/developing/tools/adb.html">adb</a>, one of the Android developer tools.
-                        <ol>
-                          <li>Install adb. Try <a href="http://www.addictivetips.com/mobile/what-is-adb-and-how-to-install-it-android/">this guide.</a></li>
-                          <li>If you haven't already done so connect your phone to your PC using your USB cable</li>
-                          <li>Open a command line and execute 'adb pull /data/data/com.u17od.upm/files/upm.db'</li>
-                        </ol>
-                        You should now have the file upm.db on your PC. This is the encrypted UPM database containing all your usernames and passwords. You can open it using the <a href="http://sourceforge.net/projects/upm/files/">desktop version of UPM</a> and/or use the "Restore" menu option using UPM for Android.
-                    </p>
-                    
-                    
-                    <a name="database-sharing"></a>
-                    <h1>Database Sharing</h1>
-                    <p>
-                        Database sharing came about because I needed a way of keeping my database in sync across multiple machines. It works by allowing you to upload and download your database to a HTTP location.
-                    </p>
-
-                    <h2>Server Side Steps</h2>
-                    <p>
-                        To use database sharing you need to specify where you want your remote database stored. At present UPM only supports HTTP locations (both password protected by basic authentication and non password protected). You'll need access to a public webserver to use this feature.
-                    </p>
-                    <p>
-                        To support database sharing UPM requires two PHP files on your webserver, deletefile.php and upload.php. Both of these files come packaged with the desktop version of UPM in the .\server\http directory. Alternatively they can be downloaded directly from <a href="http://upm.svn.sourceforge.net/viewvc/upm/swing/trunk/server/http/">here</a>.
-                    </p>
-
-                    <h2>Database Configuration - Desktop Version</h2>
-                    <p>
-                        To configure your database with the remote location open your database and go to the <i>Database -> Database Properties</i> menu item. In the URL field enter the URL of your remote location. If you put the upload.php file at http://www.mydomain.com/securedir/upload.php then enter http://www.mydomain.com/securedir in the URL field. If this URL is password protected then select the account in your database that has the relevant username and password.
-                    </p>
-
-                    <p>
-                        When the text "Revision x - Unsynchronised" appears in red in the status bar this means that your local and remote databases may by out of sync. To synchronise them press the <i>Synchronise</i> button or the menu item <i>Database -> Sync with Remote Database</i>. When the databases are in sync the status bar will read "Revision x - Synchronised".
-                    </p>
-
-                    <h2>Database Configuration - Android Version</h2>
-                    <p>
-                       <ul>
-                         <li>Open your database and select <i>Menu -> Preferences</i>.</li>
-                         <li>Select <i>URL</i> and enter the URL of the directory containing the UPM PHP files, e.g. http://www.myserver.com/upm</li>
-                         <li>If your webserver directory is password protected use the <i>HTTP Authentication Account</i> preference to select an account from your database containing the username and password.
-                       </ul>
-                    </p>
-                    
-                    <p>
-                       UPM will request that you sync with your remote database before allowing you to perform and Add/Edit/Delete operation. Once you've synced you'll have 5 minutes to make changes before you need to sync again. Don't forget to sync up after you've made your changes to ensure that your modifications are made available to your other UPM instances.
-                    </p>
-
-                    <a name="how-to-install-and-run-upm-on-linux"></a>
-                    <h1>How to Install and Run UPM on Linux</h1>
-                    <p>
-                       First of all make sure you have Java installed. If you're running Ubuntu <a href="http://www.ubuntugeek.com/install-java-runtime-environment-jre-in-ubuntu-9-10-karmic.html">these instructions</a> are pretty good.
-                    </p>
-                    
-                    <p>
-                       You're now ready to run UPM. You can do this one of two ways. You can right click the file upm.jar and select "Open with Sun Java6 Runtime" or you can start a command shell, go to the directory containing upm.jar and enter 'java -jar upm.jar'.
-                    </p>
-
-                    <a name="howto-add-a-trusted-https-certificate-android"></a>
-                    <h1>How to Add a Trusted HTTPS Certificate (Android Edition)</h1>
-                    <p>
-                       If you use a HTTPS URL for your remote database and the server is using a self signed certificate you'll get this error when you attempt to sync, <i>javax.net.ssl.SSLException: Not trusted server certificate</i>. What you need to do is import the server's certificate into UPM so that it knows it can be trusted. Here's how.
-                    </p>
-
-                    <p>
-                       <ul>
-                         <li>The certificate can be easily retrieved using your browser. These steps will work for Firefox. It should be similarly easy using any other browser.
-                           <ul>
-                             <li>Vist the URL in your browser. Be sure to use HTTPS, e.g. https://www.17od.com</li>
-                             <li>Select Tools -> Page Info -> Security</li>
-                             <li>Click "View Certificate"</li>
-                             <li>Go to the Details tab</li>
-                             <li>Click Export - save the file with the name upm.cer</li>
-                           </ul>
-                         </li>
-                         <li>Connect your handset to your computer and mount the SD card</li>
-                         <li>Copy the file "upm.cer" to the root directory of your SD card. UPM will look in the root of your SD card for a file with this name.</li>
-                         <li>Start UPM</li>
-                         <li>Select Menu -> More -> Import Certificate. You should see the message "Certificate Imported"</li>
-                         <li>If the certificate was automatically generated for you by your hosting provider then it's likely that it won't have your website URL as the Common Name (it'll probably be some generic name shared by all domains hosted on that server). Android will reject the certificate on that basis. To get around this select Menu -> Preferences -> Trusted Hostname and enter your webserver hostname, e.g. www.17od.com. This tells UPM to trust that hostname.</li>
-                       </ul>
-                    </p>
-
-                    <a name="howto-add-a-trusted-https-certificate-swing"></a>
-                    <h1>How to Add a Trusted HTTPS Certificate (SWING Edition)</h1>
-                    <p>
-                       If you use a HTTPS URL for your remote database and the server is using a self signed certificate you'll get this error, <i>javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target</i>. What you need to do is add the server's certificate to your trusted certificate keystore. Here's how,
-                    </p>
-
-                    <p>
-                       <ul>
-                         <li>Open a command prompt and cd to the directory where UPM is installed</li>
-                         <li>Execute "java -classpath upm.jar InstallCert &lt;url&gt;"</li>
-                         <li>When prompted hit enter (to accept the default option)</li>
-                         <li>There should now be a file called jssecacerts in the current directory. Copy this file into the ".\lib\security" directory where your Java runtime is installed.</li>
-                       </ul>
-                    </p>
-
-                    <a name="installing-jce"></a>
-                    <h1>Installing the Java Cryptography Extension Unlimited Strength Jurisdiction Policy Files</h1>
-                    <p>
-                      <b>Note:</b> Installing the JCE Unlimited Strength Jurisdiction Policy Files is not necessary since UPM 1.6.
-                    </p>
-                    <p>
-                       The SUN JRE ships with a weak set of cryptographic algorithims. This is due to US export/import restrictions. To install the max strength algorithims you'll need to install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These can be downloaded from <a href="http://java.sun.com/javase/downloads/index.jsp">this page</a>, (the last download link near the bottom of the page). The downloaded zip will contain a few files, the most important being local_policy.jar and US_export_policy.jar. These two files need to replace two with the same name located in your JRE's installation directory. This directory can be a bit tricky to locate. On Windows it will be C:\Program Files\Java\jre6. On Ubuntu it will be something like /usr/lib/jvm/java-6-sun/jre. The files you want to replace are in the directory &lt;JRE install dir&gt;\lib\security.
-                    </p>
-
-                </div>
-            </div>
-
-            <div id="ft">
-                <hr>
-                <a href="http://sourceforge.net/projects/upm"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=154394&amp;type=12" width="120" height="30" alt="Get Universal Password Manager at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
-                <a href="http://sourceforge.net/donate/index.php?group_id=154394"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /> </a>
-            </div>
-
-        </div>
-    </body>
-</html>
+---
+layout: default
+title: User Guide
+---
+<table style="margin-left: auto; margin-right: auto">
+  <tr>
+    <td>
+      <a href="upm_android_userguide.html">
+        <img class="icon" src="images/upm-android.png" alt="UPM for Android User Guide"/>
+      </a>
+    </td>
+    <td>
+      <a href="upm_swing_userguide.html">
+        <img class="icon" src="images/upm-windows-mac-linux.png" alt="UPM for Windows/Mac/Linux User Guide"/>    
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: center">
+      <a href="upm_android_userguide.html" alt="UPM for Android User Guide">UPM for Android User Guide</a>
+    </td>
+    <td style="text-align: center">
+      <a href="upm_swing_userguide.html" alt="UPM for Windows/Mac/Linux User Guide">UPM for Windows/Mac/Linux User Guide</a>
+    </td>
+  </tr>
+</table>
 
