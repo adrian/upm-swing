@@ -202,10 +202,12 @@ public class AccountDialog extends EscapeDialog {
             generateRandomPasswordButton.setEnabled(false);
         }
         generateRandomPasswordButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionevent) {
+            public void actionPerformed(ActionEvent actionevent) {            	
                 SecureRandom random = new SecureRandom();
+                int nPwdLength = 8 + random.nextInt(7);
+                
                 StringBuffer passwordBuffer = new StringBuffer();
-                for(int i=0; i<8; i++) {
+                for(int i=0; i<nPwdLength; i++) {
                     passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
                 }
                 password.setText(passwordBuffer.toString());
