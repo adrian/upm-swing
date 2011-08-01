@@ -27,6 +27,8 @@ import java.awt.Cursor;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -523,7 +525,17 @@ public class DatabaseActions {
         String dbFileName = existingDatabase.getDatabaseFile().getAbsolutePath();
         boolean successful = existingDatabase.getDatabaseFile().delete();
         if (successful) {
-            successful = newDatabase.getDatabaseFile().renameTo(new File(dbFileName));
+            try {
+            	// copy temp file to database file
+            	Util.copy(newDatabase.getDatabaseFile(), new File(dbFileName));
+        		
+        		// delete temp file
+        		newDatabase.getDatabaseFile().delete();
+        	}
+        	catch (IOException ex) {
+        		successful = false;
+        	}
+        	
             if (!successful) {
                 throw new PasswordDatabaseException(Translator.translate("couldntRename", new Object[] {existingDatabase.getDatabaseFile().getAbsolutePath(), existingDatabase.getDatabaseFile().getName()}));
             }
