@@ -525,20 +525,11 @@ public class DatabaseActions {
         String dbFileName = existingDatabase.getDatabaseFile().getAbsolutePath();
         boolean successful = existingDatabase.getDatabaseFile().delete();
         if (successful) {
-        	
-        	try {
-        		// copy temp file to database file
-        		FileReader in = new FileReader(newDatabase.getDatabaseFile());
-        		FileWriter out = new FileWriter(dbFileName);
-        		int c;
+            try {
+            	// copy temp file to database file
+            	Util.copy(newDatabase.getDatabaseFile(), new File(dbFileName));
         		
-        		while ((c = in.read()) != -1)
-        			out.write(c);
-        		
-        		in.close();
-        		out.close();
-        		
-        		// Delete temp file
+        		// delete temp file
         		newDatabase.getDatabaseFile().delete();
         	}
         	catch (IOException ex) {
