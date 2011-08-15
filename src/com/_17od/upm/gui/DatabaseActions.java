@@ -516,32 +516,8 @@ public class DatabaseActions {
     public void resetSearch() {
         mainWindow.getSearchField().setText("");
     }
-    
-    
-    private static void replaceDatabase(PasswordDatabase existingDatabase, PasswordDatabase newDatabase) throws PasswordDatabaseException {
-        // Delete the existing database and then copy the new db into it's place
-        String dbFileName = existingDatabase.getDatabaseFile().getAbsolutePath();
-        boolean successful = existingDatabase.getDatabaseFile().delete();
-        if (successful) {
-            try {
-                // copy temp file to database file
-                Util.copy(newDatabase.getDatabaseFile(), new File(dbFileName));
 
-                // delete temp file
-                newDatabase.getDatabaseFile().delete();
-            } catch (IOException ex) {
-                successful = false;
-            }
 
-            if (!successful) {
-                throw new PasswordDatabaseException(Translator.translate("couldntRename", new Object[] {existingDatabase.getDatabaseFile().getAbsolutePath(), existingDatabase.getDatabaseFile().getName()}));
-            }
-        } else {
-            throw new PasswordDatabaseException(Translator.translate("couldntDelete"));
-        }
-    }
-
-    
     public void showDatabaseProperties() throws ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
         try {
             if (getLatestVersionOfDatabase()) {
@@ -593,7 +569,7 @@ public class DatabaseActions {
                 }
 
                 // Save the downloaded database file to the new location
-                Util.copy(downloadedDatabaseFile, saveDatabaseTo);
+                Util.copyFile(downloadedDatabaseFile, saveDatabaseTo);
                 
                 // Now open the downloaded database 
                 openDatabase(saveDatabaseTo.getAbsolutePath());
@@ -662,7 +638,7 @@ public class DatabaseActions {
                     transport.put(remoteLocation, database.getDatabaseFile(), httpUsername, httpPassword);
                     syncSuccessful = true;
                 } else if (database.getRevision() < remoteDatabase.getRevision()) {
-                    replaceDatabase(database, remoteDatabase);
+                    Util.copyFile(remoteDatabaseFile, database.getDatabaseFile());
                     database = new PasswordDatabase(
                             remoteDatabase.getRevisionObj(),
                             remoteDatabase.getDbOptions(),

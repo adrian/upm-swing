@@ -26,9 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 
 import javax.swing.ImageIcon;
 
@@ -58,18 +57,21 @@ public class Util {
     }
 
 
-    public static void copy(File src, File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
-    
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
+    public static void copyFile(File srcFile, File destFile) throws IOException {
+        FileChannel sourceChannel = null;
+        FileChannel destinationChannel = null;
+        try {
+            sourceChannel = new FileInputStream(srcFile).getChannel();
+            destinationChannel = new FileOutputStream(destFile).getChannel();
+            destinationChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+        } finally {
+            if (sourceChannel != null) {
+                sourceChannel.close();
+            }
+            if (destinationChannel != null) {
+                destinationChannel.close();
+            }
         }
-        in.close();
-        out.close();
     }
-    
+
 }
