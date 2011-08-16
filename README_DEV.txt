@@ -47,6 +47,22 @@ native2ascii -encoding UTF-16BE upm_cs.properties.biged > upm_cs.properties
 
 native2ascii is a tool that comes with the Java JDK.
 
+Installing Jekyll
+=================
+On Ubuntu 11.04.
+  $ sudo apt-get install rubygems
+  $ sudo gem install jekyll
+
+Edit ~/.profile and add,
+  PATH=$PATH:/var/lib/gems/1.8/bin/
+
+Generating the Website
+======================
+$ cd website
+$ jekyll 
+
 Uploading website to Sourceforge
 ================================
-scp <filename> adrianshome@shell.sourceforge.net:/home/groups/u/up/upm/htdocs
+$ cd website
+$ rsync -avzP --delete -e ssh _site/ adrianshome,upm@web.sourceforge.net:/home/project-web/upm/htdocs/
+
