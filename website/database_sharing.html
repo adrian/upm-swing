@@ -7,10 +7,15 @@ title: Database Sharing
     Database sharing came about because I needed a way of keeping my database in sync across multiple machines. It works by allowing you to upload/download your database to/from a HTTP/HTTPS location.
 </p>
 
-<h3>Server Side Steps</h3>
+<h3>Requirements</h3>
 <p>
-    To use database sharing you'll need access to a webserver accessible from each of the machines and devices you want to share the database between. The server should support PHP.
+    You'll need your own webserver capable of hosting <A href="http://en.wikipedia.org/wiki/PHP">PHP</a> scripts. If you don't already have one you'll need to purchase a <a href="http://en.wikipedia.org/wiki/Web_hosting_service">web hosting service</a>. A quick google for "<a href="http://www.google.com/search?q=web+hosting">web hosting</a>" should throw up quite a few options.
 </p>
+<p>
+    The webserver should be accessible from each machine and device you want to share the database between.
+</p>
+
+<h3>Server Side Steps</h3>
 <p>
     At present UPM supports HTTP and HTTPS. The URL can be password protected by basic authentication. 
 </p>
