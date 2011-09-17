@@ -24,8 +24,8 @@ package com._17od.upm.gui;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -88,8 +88,8 @@ public class DatabaseActions {
             JPasswordField confirmedMasterPassword = new JPasswordField("");
             JOptionPane pane = new JOptionPane(new Object[] {Translator.translate("enterMasterPassword"), masterPassword, Translator.translate("confirmation"), confirmedMasterPassword}, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
             JDialog dialog = pane.createDialog(mainWindow, Translator.translate("masterPassword"));
-            dialog.addComponentListener(new ComponentAdapter(){
-                public void componentShown(ComponentEvent e){
+            dialog.addWindowFocusListener(new WindowAdapter() {
+                public void windowGainedFocus(WindowEvent e) {
                     masterPassword.requestFocusInWindow();
                 }
             });
@@ -155,8 +155,8 @@ public class DatabaseActions {
                         JPasswordField confirmedMasterPassword = new JPasswordField("");
                         JOptionPane pane = new JOptionPane(new Object[] {Translator.translate("enterNewMasterPassword"), masterPassword, Translator.translate("confirmation"), confirmedMasterPassword}, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
                         JDialog dialog = pane.createDialog(mainWindow, Translator.translate("changeMasterPassword"));
-                        dialog.addComponentListener(new ComponentAdapter(){
-                            public void componentShown(ComponentEvent e){
+                        dialog.addWindowFocusListener(new WindowAdapter() {
+                            public void windowGainedFocus(WindowEvent e) {
                                 masterPassword.requestFocusInWindow();
                             }
                         });
@@ -239,8 +239,8 @@ public class DatabaseActions {
         final JPasswordField masterPassword = new JPasswordField("");
         JOptionPane pane = new JOptionPane(new Object[] {message, masterPassword }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
         JDialog dialog = pane.createDialog(mainWindow, Translator.translate("masterPassword"));
-        dialog.addComponentListener(new ComponentAdapter(){
-            public void componentShown(ComponentEvent e){
+        dialog.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent e) {
                 masterPassword.requestFocusInWindow();
             }
         });
