@@ -13,6 +13,10 @@
     margin-bottom: 2em;
 }
 
+#ads {
+    text-align: center;
+}
+
 hr {
     color:#ddd;
     height:.1em;
