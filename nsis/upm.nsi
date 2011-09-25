@@ -24,7 +24,9 @@
 ;--------------------------------
 ;General
 
-  !define UPM_VERSION "1.6.1"
+  !ifndef UPM_VERSION
+    !error "No UPM_VERSION parameter passed"
+  !endif
 
   ;Name and file
   Name "Universal Password Manager"

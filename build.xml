@@ -122,13 +122,14 @@
 
 
     <!-- Perform a build -->
-    <target name="build" depends="checkversion, clean, test">
+    <target name="build" depends="checkversion, clean, compile">
 
         <delete dir="${dist}"/>
 
-        <echo message="Performing the build ${version}"/>
+        <echo message="Building UPM version ${version}"/>
 
         <!-- Build the basic JAR distribution -->
+        <echo message="Building the generic tar.gz distribution"/>
         <mkdir dir="${dist}\build"/>    
         <jar destfile="${dist}\build\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif **\*.png **\*.properties" excludes="**\invest\**">
             <manifest>
@@ -154,6 +155,7 @@
         <delete file="${dist}\${short.name}-${version}.tar"/>
 
         <!-- Build the source distribution -->
+        <echo message="Building the source distribution"/>
         <tar destfile="${dist}\${short.name}-src-${version}.tar">
             <tarfileset dir="${basedir}" prefix="${short.name}-src-${version}">
                 <include name="build.xml"/>
@@ -176,6 +178,7 @@
         <delete file="${dist}\${short.name}-src-${version}.tar"/>
 
         <!-- Build the Mac OS X distribution -->
+        <echo message="Building the Mac OS X distribution"/>
         <property name="dist-mac-dir" value="${basedir}/${dist}/${short.name}-mac-${version}"/>
         <mkdir dir="${dist-mac-dir}"/>
         <copy file="${basedir}\server\http\upload.php" todir="${dist-mac-dir}\server\http"/>
@@ -205,6 +208,12 @@
         <exec executable="tar" dir="${basedir}">
             <arg line="-czvf dist/${short.name}-mac-${version}.tar.gz -C dist/ ${short.name}-mac-${version}"/>
         </exec>
+
+        <echo message="Building the Windows distribution"/>
+        <exec executable="makensis" dir="${basedir}">
+            <arg line="-DUPM_VERSION=${version} ${basedir}/nsis/upm.nsi"/>
+        </exec>
+        <move file="${basedir}/nsis/upm-${version}.exe" todir="${dist}"/>
     </target>
 
 
@@ -218,7 +227,7 @@
         </svn>
     </target>
 
-    
+
     <target name="test" depends="compile">
         <!-- I had to put the junit.jar file into my ANT_HOME\lib in order for
              the junit task to work -->
