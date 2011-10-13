@@ -2,7 +2,7 @@
  * $Id$
  * 
  * Universal Password Manager
- * Copyright (C) 2005-2010 Adrian Smith
+ * Copyright (C) 2005-2011 Adrian Smith
  *
  * This file is part of Universal Password Manager.
  *   
@@ -57,7 +57,7 @@ public class AboutDialog extends EscapeDialog {
         aboutText.append("Universal Password Manager\n");
         aboutText.append(version);
         aboutText.append("\n\n");
-        aboutText.append("Copyright \u00a9 2005-2010 Adrian Smith & Contributors\n\n");
+        aboutText.append("Copyright \u00a9 2005-2011 Adrian Smith & Contributors\n\n");
         aboutText.append("adrian@17od.com\n");
         aboutText.append("http://upm.sourceforge.net");
         jTextArea.setText(aboutText.toString());
