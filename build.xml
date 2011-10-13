@@ -149,6 +149,7 @@
         <copy file="${basedir}\COPYING.txt" todir="${dist}\build"/>
         <copy file="${basedir}\README.txt" todir="${dist}\build"/>
         <tar destfile="${dist}\${short.name}-${version}.tar">
+            <tarfileset file="${basedir}\bin\upm.sh" prefix="${short.name}-${version}" filemode="755"/>
             <tarfileset dir="${dist}\build" prefix="${short.name}-${version}"/>
         </tar>
         <gzip src="${dist}\${short.name}-${version}.tar" destfile="${dist}\${short.name}-${version}.tar.gz"/>
