@@ -106,6 +106,7 @@ Contents
      * German
      * Italian
      * Spanish
+     * French
    I'd really appreciate help from anyone willing to provide translations for
    UPM's messages. You can find the English resource bundle (upm.properties) in
    the upm.jar file that ships with UPM (Winzip, 7-Zip, or some other zip tool
@@ -119,6 +120,10 @@ Contents
 
 6. History
    -------
+   15-Oct-2011 : Version 1.7
+      - Fixed a file rename problem that caused database sync to fail when multiple filesystems are involved (Issue #2)
+      - Fixed focus problems on the Enter Master Password dialog
+
    01-Feb-2011 : Version 1.6.1
       - Enable CTRL-C on the account details password field
 
