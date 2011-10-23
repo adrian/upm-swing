@@ -48,7 +48,7 @@
                 }
                 
                 // Set the correct permissions on the file
-                chmod('./'.$uploadedFileName, 0744);
+                chmod('./'.$uploadedFileName, 0600);
 
                 // Looks like the upload was successful so return a success message
                 echo OK;
