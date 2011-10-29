@@ -25,6 +25,7 @@ package com._17od.upm.database;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 
 public class AccountInformation extends FlatPackObject {
@@ -53,10 +54,15 @@ public class AccountInformation extends FlatPackObject {
         this.url = url;
         this.notes = notes;
     }
-    
-    
+
+
     public AccountInformation(InputStream is) throws IOException, ProblemReadingDatabaseFile {
-        assemble(is);
+        assemble(is, Charset.forName("UTF-8"));
+    }
+
+
+    public AccountInformation(InputStream is, Charset charset) throws IOException, ProblemReadingDatabaseFile {
+        assemble(is, charset);
     }
     
     
@@ -68,12 +74,12 @@ public class AccountInformation extends FlatPackObject {
         os.write(flatPack(notes));
     }
 
-    private void assemble(InputStream is) throws IOException, ProblemReadingDatabaseFile {
-        accountName = getString(is);
-        userId = new String(getBytes(is));
-        password = new String(getBytes(is));
-        url = new String(getBytes(is));
-        notes = new String(getBytes(is));
+    private void assemble(InputStream is, Charset charset) throws IOException, ProblemReadingDatabaseFile {
+        accountName = getString(is, charset);
+        userId = getString(is, charset);
+        password = getString(is, charset);
+        url = getString(is, charset);
+        notes = getString(is, charset);
     }
     
     public String getAccountName() {
