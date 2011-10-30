@@ -30,23 +30,23 @@ import java.io.OutputStream;
 public class AccountInformation extends FlatPackObject {
 
     private String accountName;
-    private byte[] userId;
-    private byte[] password;
-    private byte[] url;
-    private byte[] notes;
+    private String userId;
+    private String password;
+    private String url;
+    private String notes;
 
 
     public AccountInformation() {
         accountName = "";
-        userId = "".getBytes();
-        password = "".getBytes();
-        url = "".getBytes();
-        notes = "".getBytes();
+        userId = "";
+        password = "";
+        url = "";
+        notes = "";
     }
     
     
-    public AccountInformation(String accountName, byte[] userId, byte[] password,
-            byte[] url, byte[] notes) {
+    public AccountInformation(String accountName, String userId,
+            String password, String url, String notes) {
         this.accountName = accountName;
         this.userId = userId;
         this.password = password;
@@ -70,10 +70,10 @@ public class AccountInformation extends FlatPackObject {
 
     private void assemble(InputStream is) throws IOException, ProblemReadingDatabaseFile {
         accountName = getString(is);
-        userId = getBytes(is);
-        password = getBytes(is);
-        url = getBytes(is);
-        notes = getBytes(is);
+        userId = new String(getBytes(is));
+        password = new String(getBytes(is));
+        url = new String(getBytes(is));
+        notes = new String(getBytes(is));
     }
     
     public String getAccountName() {
@@ -84,35 +84,35 @@ public class AccountInformation extends FlatPackObject {
         this.accountName = accountName;
     }
 
-    public byte[] getNotes() {
+    public String getNotes() {
         return notes;
     }
 
-    public void setNotes(byte[] notes) {
+    public void setNotes(String notes) {
         this.notes = notes;
     }
 
-    public byte[] getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(byte[] password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public byte[] getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(byte[] url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
-    public byte[] getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(byte[] userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

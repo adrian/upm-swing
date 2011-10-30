@@ -33,6 +33,8 @@ import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -45,12 +47,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
+
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.transport.Transport;
 import com._17od.upm.transport.TransportException;
 import com._17od.upm.util.Translator;
-
-import java.util.Arrays;
 
 
 public class DatabasePropertiesDialog extends EscapeDialog {
@@ -202,8 +203,8 @@ public class DatabasePropertiesDialog extends EscapeDialog {
                         try {
                             Transport transport = Transport.getTransportForURL(url);
                             if (!authEntry.equals("")) {
-                                byte[] userId = database.getAccount(authEntry).getUserId();
-                                byte[] password = database.getAccount(authEntry).getPassword();
+                                String userId = database.getAccount(authEntry).getUserId();
+                                String password = database.getAccount(authEntry).getPassword();
                                 transport.put(remoteLocation, database.getDatabaseFile(), userId, password);
                             } else {
                                 transport.put(remoteLocation, database.getDatabaseFile());

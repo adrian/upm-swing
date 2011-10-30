@@ -561,7 +561,7 @@ public class DatabaseActions {
                 
                 // Download the database
                 Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
-                File downloadedDatabaseFile = transport.getRemoteFile(remoteLocation, username.getBytes(), password.getBytes());
+                File downloadedDatabaseFile = transport.getRemoteFile(remoteLocation, username, password);
                 
                 // Delete the file is it already exists
                 if (saveDatabaseTo.exists()) {
@@ -591,8 +591,8 @@ public class DatabaseActions {
             // Get the remote database options
             String remoteLocation = database.getDbOptions().getRemoteLocation();
             String authDBEntry = database.getDbOptions().getAuthDBEntry();
-            byte[] httpUsername = null;
-            byte[] httpPassword = null;
+            String httpUsername = null;
+            String httpPassword = null;
             if (!authDBEntry.equals("")) {
                 httpUsername = database.getAccount(authDBEntry).getUserId();
                 httpPassword = database.getAccount(authDBEntry).getPassword();

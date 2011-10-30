@@ -39,8 +39,8 @@ public class TestHTTPTransport extends TestCase {
     private File fileToUpload;
     private byte[] fileContents;
     private HTTPTransport transport;
-    private byte[] httpUsername;
-    private byte[] httpPassword;
+    private String httpUsername;
+    private String httpPassword;
     private String httpURL;
 
 
@@ -61,8 +61,8 @@ public class TestHTTPTransport extends TestCase {
         if (propertiesFile != null) {
             Properties properties = new Properties();
             properties.load(new FileInputStream(propertiesFile));
-            httpUsername = properties.getProperty("junit.http.username").getBytes();
-            httpPassword = properties.getProperty("junit.http.password").getBytes();
+            httpUsername = properties.getProperty("junit.http.username");
+            httpPassword = properties.getProperty("junit.http.password");
             httpURL = properties.getProperty("junit.http.url");
         }
     }

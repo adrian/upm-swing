@@ -22,24 +22,22 @@
  */
 package com._17od.upm.database;
 
-import junit.framework.TestCase;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.EOFException;
+import java.io.IOException;
 
-import com._17od.upm.database.AccountInformation;
-import com._17od.upm.database.ProblemReadingDatabaseFile;
+import junit.framework.TestCase;
 
 
 public class TestAccountInformation extends TestCase {
 
     public void testFlatPack() throws IOException {
         AccountInformation ai = new AccountInformation("Hotmail",
-                "this is the userid".getBytes(),
-                "this is the password".getBytes(),
-                "this is the url".getBytes(),
-                "this is the notes".getBytes());
+                "this is the userid",
+                "this is the password",
+                "this is the url",
+                "this is the notes");
         
         
         ByteArrayOutputStream os = new ByteArrayOutputStream();

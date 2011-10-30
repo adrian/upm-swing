@@ -41,6 +41,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
+
 import com._17od.upm.util.Preferences;
 
 
@@ -83,7 +84,7 @@ public class HTTPTransport extends Transport {
     }
     
     
-    public void put(String targetLocation, File file, byte[] username, byte[] password) throws TransportException {
+    public void put(String targetLocation, File file, String username, String password) throws TransportException {
 
         targetLocation = addTrailingSlash(targetLocation) + "upload.php";
         
@@ -146,13 +147,13 @@ public class HTTPTransport extends Transport {
     }
     
     
-    public byte[] get(String url, String fileName, byte[] username, byte[] password) throws TransportException {
+    public byte[] get(String url, String fileName, String username, String password) throws TransportException {
         url = addTrailingSlash(url);
         return get(url + fileName, username, password);
     }
     
     
-    public byte[] get(String url, byte[] username, byte[] password) throws TransportException {
+    public byte[] get(String url, String username, String password) throws TransportException {
 
         byte[] retVal = null;
 
@@ -204,13 +205,13 @@ public class HTTPTransport extends Transport {
     }
 
     
-    public File getRemoteFile(String remoteLocation, String fileName, byte[] httpUsername, byte[] httpPassword) throws TransportException {
+    public File getRemoteFile(String remoteLocation, String fileName, String httpUsername, String httpPassword) throws TransportException {
         remoteLocation = addTrailingSlash(remoteLocation);
         return getRemoteFile(remoteLocation + fileName, httpUsername, httpPassword);
     }
 
 
-    public File getRemoteFile(String remoteLocation, byte[] httpUsername, byte[] httpPassword) throws TransportException {
+    public File getRemoteFile(String remoteLocation, String httpUsername, String httpPassword) throws TransportException {
         try {
             byte[] remoteFile = get(remoteLocation, httpUsername, httpPassword);
             File downloadedFile = File.createTempFile("upm", null);
@@ -224,7 +225,7 @@ public class HTTPTransport extends Transport {
     }
 
     
-    public void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException {
+    public void delete(String targetLocation, String name, String username, String password) throws TransportException {
 
         targetLocation = addTrailingSlash(targetLocation) + "deletefile.php";
 

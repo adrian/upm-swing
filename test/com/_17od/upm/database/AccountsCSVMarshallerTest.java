@@ -48,10 +48,10 @@ public class AccountsCSVMarshallerTest extends TestCase {
     public void testWithOneSimpleAccount() throws ExportException, IOException {
         AccountInformation account = new AccountInformation(
                 "Test Account1", 
-                "testuser1".getBytes(),
-                "test password1".getBytes(), 
-                "http://www.test.com1".getBytes(),
-                "this is a test note1".getBytes());
+                "testuser1",
+                "test password1", 
+                "http://www.test.com1",
+                "this is a test note1");
 
         ArrayList accounts = new ArrayList();
         accounts.add(account);
@@ -71,22 +71,22 @@ public class AccountsCSVMarshallerTest extends TestCase {
     public void testWithMultipleSimpleAccounts() throws IOException, ExportException {
         AccountInformation account1 = new AccountInformation(
                 "Test Account1", 
-                "testuser1".getBytes(),
-                "test password1".getBytes(), 
-                "http://www.test.com1".getBytes(),
-                "this is a test note1".getBytes());
+                "testuser1",
+                "test password1", 
+                "http://www.test.com1",
+                "this is a test note1");
         AccountInformation account2 = new AccountInformation(
                 "Test Account2", 
-                "testuser2".getBytes(),
-                "test password2".getBytes(), 
-                "http://www.test.com2".getBytes(),
-                "this is a test note2".getBytes());
+                "testuser2",
+                "test password2", 
+                "http://www.test.com2",
+                "this is a test note2");
         AccountInformation account3 = new AccountInformation(
                 "Test Account3", 
-                "testuser3".getBytes(),
-                "test password3".getBytes(), 
-                "http://www.test.com3".getBytes(),
-                "this is a test note3".getBytes());
+                "testuser3",
+                "test password3", 
+                "http://www.test.com3",
+                "this is a test note3");
 
         ArrayList accounts = new ArrayList();
         accounts.add(account1);
@@ -112,10 +112,10 @@ public class AccountsCSVMarshallerTest extends TestCase {
     public void testWhenNotesHaveCRLF() throws IOException, ExportException {
         AccountInformation account = new AccountInformation(
                 "Test Account1", 
-                "testuser1".getBytes(),
-                "test password1".getBytes(), 
-                "http://www.test.com1".getBytes(),
-                "this is a \ntest note1".getBytes());
+                "testuser1",
+                "test password1", 
+                "http://www.test.com1",
+                "this is a \ntest note1");
 
         ArrayList accounts = new ArrayList();
         accounts.add(account);
@@ -135,10 +135,10 @@ public class AccountsCSVMarshallerTest extends TestCase {
     public void testWhenNotesHasComma() throws IOException, ExportException {
         AccountInformation account = new AccountInformation(
                 "Test Account1", 
-                "testuser1".getBytes(),
-                "test password1".getBytes(), 
-                "http://www.test.com1".getBytes(),
-                "this is a ,test note1".getBytes());
+                "testuser1",
+                "test password1", 
+                "http://www.test.com1",
+                "this is a ,test note1");
 
         ArrayList accounts = new ArrayList();
         accounts.add(account);
@@ -158,10 +158,10 @@ public class AccountsCSVMarshallerTest extends TestCase {
     public void testImport() throws IOException, ExportException, ImportException {
         AccountInformation account = new AccountInformation(
                 "Test Account1", 
-                "testuser1".getBytes(),
-                "test password1".getBytes(), 
-                "http://www.test.com1".getBytes(),
-                "this is a test note1".getBytes());
+                "testuser1",
+                "test password1", 
+                "http://www.test.com1",
+                "this is a test note1");
 
         ArrayList accounts = new ArrayList();
         accounts.add(account);

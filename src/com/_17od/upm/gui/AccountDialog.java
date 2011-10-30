@@ -34,7 +34,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -389,24 +388,24 @@ public class AccountDialog extends EscapeDialog {
             JOptionPane.showMessageDialog(parentWindow, Translator.translate("accountAlreadyExistsWithName", accountName.getText().trim()), Translator.translate("accountAlreadyExists"), JOptionPane.ERROR_MESSAGE);
         } else {
             // Check for changes
-            if (!Arrays.equals(pAccount.getUserId(), userId.getText().getBytes())) {
+            if (!pAccount.getUserId().equals(userId.getText())) {
                 accountChanged = true;
             }
-            if (!Arrays.equals(pAccount.getPassword(), password.getText().getBytes())) {
+            if (!pAccount.getPassword().equals(password.getText())) {
                 accountChanged = true;
             }
-            if (!Arrays.equals(pAccount.getUrl(), url.getText().getBytes())) {
+            if (!pAccount.getUrl().equals(url.getText())) {
                 accountChanged = true;
             }
-            if (!Arrays.equals(pAccount.getNotes(), notes.getText().getBytes())) {
+            if (!pAccount.getNotes().equals(notes.getText())) {
                 accountChanged = true;
             }
 
             pAccount.setAccountName(accountName.getText().trim());
-            pAccount.setUserId(userId.getText().getBytes());
-            pAccount.setPassword(password.getText().getBytes());
-            pAccount.setUrl(url.getText().getBytes());
-            pAccount.setNotes(notes.getText().getBytes());
+            pAccount.setUserId(userId.getText());
+            pAccount.setPassword(password.getText());
+            pAccount.setUrl(url.getText());
+            pAccount.setNotes(notes.getText());
             
             setVisible(false);
             dispose();

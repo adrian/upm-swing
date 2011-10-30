@@ -32,17 +32,17 @@ import java.net.URL;
  */
 public abstract class Transport {
 
-    public abstract void put(String targetLocation, File file, byte[] username, byte[] password) throws TransportException;
+    public abstract void put(String targetLocation, File file, String username, String password) throws TransportException;
     
     public abstract void put(String targetLocation, File file) throws TransportException;
 
     public abstract byte[] get(String url, String fileName) throws TransportException;
 
-    public abstract byte[] get(String url, String fileName, byte[] username, byte[] password) throws TransportException;
+    public abstract byte[] get(String url, String fileName, String username, String password) throws TransportException;
 
-    public abstract byte[] get(String url, byte[] username, byte[] password) throws TransportException;
+    public abstract byte[] get(String url, String username, String password) throws TransportException;
 
-    public abstract void delete(String targetLocation, String name, byte[] username, byte[] password) throws TransportException;
+    public abstract void delete(String targetLocation, String name, String username, String password) throws TransportException;
 
     public abstract void delete(String targetLocation, String name) throws TransportException;
 
@@ -50,9 +50,9 @@ public abstract class Transport {
 
     public abstract File getRemoteFile(String remoteLocation) throws TransportException;
 
-    public abstract File getRemoteFile(String remoteLocation, String fileName, byte[] username, byte[] password) throws TransportException;
+    public abstract File getRemoteFile(String remoteLocation, String fileName, String username, String password) throws TransportException;
     
-    public abstract File getRemoteFile(String remoteLocation, byte[] username, byte[] password) throws TransportException;
+    public abstract File getRemoteFile(String remoteLocation, String username, String password) throws TransportException;
 
     public static Transport getTransportForURL(URL url) {
         Transport retVal = null;

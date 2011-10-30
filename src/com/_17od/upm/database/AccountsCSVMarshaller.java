@@ -73,10 +73,10 @@ public class AccountsCSVMarshaller {
                 }
                 accounts.add(new AccountInformation(
                         csvReader.get(0),
-                        csvReader.get(1).getBytes(),
-                        csvReader.get(2).getBytes(),
-                        csvReader.get(3).getBytes(),
-                        csvReader.get(4).getBytes()));
+                        csvReader.get(1),
+                        csvReader.get(2),
+                        csvReader.get(3),
+                        csvReader.get(4)));
             }
         } catch (FileNotFoundException e) {
             throw new ImportException(e);

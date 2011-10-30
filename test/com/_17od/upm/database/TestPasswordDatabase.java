@@ -83,10 +83,10 @@ public class TestPasswordDatabase extends TestCase {
         
         //Add an account
         AccountInformation ai = new AccountInformation("Hotmail",
-                "this is the userid".getBytes(),
-                "this is the password".getBytes(),
-                "this is the url".getBytes(),
-                "this is the notes".getBytes());
+                "this is the userid",
+                "this is the password",
+                "this is the url",
+                "this is the notes");
         db.addAccount(ai);
         PasswordDatabasePersistence pers = new PasswordDatabasePersistence(password);
         pers.save(db);
@@ -114,15 +114,15 @@ public class TestPasswordDatabase extends TestCase {
         
         //Add an account
         AccountInformation ai = new AccountInformation("Hotmail",
-                "this is the userid".getBytes(),
-                "this is the password".getBytes(),
-                "this is the url".getBytes(),
-                "this is the notes".getBytes());
+                "this is the userid",
+                "this is the password",
+                "this is the url",
+                "this is the notes");
         AccountInformation ai2 = new AccountInformation("Yahoo Mail",
-                "this is the userid2".getBytes(),
-                "this is the password2".getBytes(),
-                "this is the url2".getBytes(),
-                "this is the notes2".getBytes());
+                "this is the userid2",
+                "this is the password2",
+                "this is the url2",
+                "this is the notes2");
         db.addAccount(ai);
         db.addAccount(ai2);
         PasswordDatabasePersistence dbPers = new PasswordDatabasePersistence(password);
