@@ -25,11 +25,13 @@ package com._17od.upm.transport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import com._17od.upm.util.Preferences;
-import junit.framework.TestCase;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
+
+import junit.framework.TestCase;
+
+import com._17od.upm.util.Preferences;
 
 
 public class TestHTTPTransport extends TestCase {
@@ -39,9 +41,7 @@ public class TestHTTPTransport extends TestCase {
     private HTTPTransport transport;
     private byte[] httpUsername;
     private byte[] httpPassword;
-    private String uploadURL;
-    private String deleteURL;
-    private String baseURL;
+    private String httpURL;
 
 
     public void setUp() throws Exception {
@@ -63,16 +63,14 @@ public class TestHTTPTransport extends TestCase {
             properties.load(new FileInputStream(propertiesFile));
             httpUsername = properties.getProperty("junit.http.username").getBytes();
             httpPassword = properties.getProperty("junit.http.password").getBytes();
-            uploadURL = properties.getProperty("junit.http.upload.url");
-            deleteURL = properties.getProperty("junit.http.delete.url");
-            baseURL = uploadURL.substring(0, uploadURL.lastIndexOf("/") + 1);
+            httpURL = properties.getProperty("junit.http.url");
         }
     }
 
 
     public void tearDown() throws Exception {
         try {
-            transport.delete(deleteURL, fileToUpload.getName(), httpUsername, httpPassword);
+            transport.delete(httpURL, fileToUpload.getName(), httpUsername, httpPassword);
         } catch (Exception e) {
             //Don't worry about errors here
         }
@@ -81,17 +79,17 @@ public class TestHTTPTransport extends TestCase {
 
     public void testPut() throws Exception {
         //Upload the file
-        transport.put(uploadURL, fileToUpload, httpUsername, httpPassword);
+        transport.put(httpURL, fileToUpload, httpUsername, httpPassword);
     }
 
 
     public void testPutExistingFile() throws Exception {
         //Upload the file
-        transport.put(uploadURL, fileToUpload, httpUsername, httpPassword);
+        transport.put(httpURL, fileToUpload, httpUsername, httpPassword);
 
         try {
             //Now attempt to upload the file again
-            transport.put(uploadURL, fileToUpload, httpUsername, httpPassword);
+            transport.put(httpURL, fileToUpload, httpUsername, httpPassword);
 
             //Should have got an error here
             fail("Should have got an error when uploading an existing file");
@@ -105,10 +103,10 @@ public class TestHTTPTransport extends TestCase {
 
     public void testGet() throws Exception {
         //Upload the file
-        transport.put(uploadURL, fileToUpload, httpUsername, httpPassword);
+        transport.put(httpURL, fileToUpload, httpUsername, httpPassword);
 
         //Get the file back
-        byte[] retrievedFileContents = transport.get(baseURL + fileToUpload.getName(), httpUsername, httpPassword);
+        byte[] retrievedFileContents = transport.get(httpURL + fileToUpload.getName(), httpUsername, httpPassword);
 
         //Compare before and after file
         if (!Arrays.equals(fileContents, retrievedFileContents)) {
@@ -120,14 +118,14 @@ public class TestHTTPTransport extends TestCase {
     public void testDelete() throws Exception {
         
         //Upload the file
-        transport.put(uploadURL, fileToUpload, httpUsername, httpPassword);
+        transport.put(httpURL, fileToUpload, httpUsername, httpPassword);
 
         //Delete the file
-        transport.delete(deleteURL, fileToUpload.getName(), httpUsername, httpPassword);
+        transport.delete(httpURL, fileToUpload.getName(), httpUsername, httpPassword);
 
         try {
             //Now try to get the file back
-            transport.get(baseURL + fileToUpload.getName(), httpUsername, httpPassword);
+            transport.get(httpURL + fileToUpload.getName(), httpUsername, httpPassword);
 
             //Should have got an error here
             fail("Should have got an error when retrieving a non-existant file");
