@@ -48,6 +48,7 @@ import com._17od.upm.database.PasswordDatabasePersistence;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.transport.Transport;
 import com._17od.upm.transport.TransportException;
+import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
 
@@ -117,6 +118,21 @@ public class DatabaseActions {
         accountNames = new ArrayList();
         doOpenDatabaseActions();
 
+        // If a "Database to Load on Startup" hasn't been set yet then ask the
+        // user if they'd like to open this database on startup.
+        if (Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP).equals("") || 
+                Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP) == null) {
+            int option = JOptionPane.showConfirmDialog(mainWindow, 
+                    Translator.translate("setNewLoadOnStartupDatabase"),
+                    Translator.translate("newPasswordDatabase"),
+                    JOptionPane.YES_NO_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
+                Preferences.set(
+                        Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, 
+                        newDatabaseFile.getAbsolutePath());
+                Preferences.save();
+            }
+        }
     }
 
 
