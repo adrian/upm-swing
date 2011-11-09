@@ -39,6 +39,7 @@ import com._17od.upm.crypto.CryptoException;
 import com._17od.upm.crypto.DESDecryptionService;
 import com._17od.upm.crypto.EncryptionService;
 import com._17od.upm.crypto.InvalidPasswordException;
+import com._17od.upm.util.Util;
 
 /**
  * This factory is used to load or create a PasswordDatabase. Different versions
@@ -126,7 +127,7 @@ public class PasswordDatabasePersistence {
                 // encoded using UTF-8. To ensure we can still open older dbs
                 // we default back to the then character set, the system default
                 if (dbVersion < 3) {
-                    charset = Charset.defaultCharset();
+                    charset = Util.defaultCharset();
                 }
 
                 //Attempt to decrypt the database information
@@ -218,7 +219,7 @@ public class PasswordDatabasePersistence {
                 // encoded using UTF-8. To ensure we can still open older dbs
                 // we default back to the then character set, the system default
                 if (dbVersion < 3) {
-                    charset = Charset.defaultCharset();
+                    charset = Util.defaultCharset();
                 }
 
                 //Attempt to decrypt the database information

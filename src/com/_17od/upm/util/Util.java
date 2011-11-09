@@ -22,12 +22,15 @@
  */
 package com._17od.upm.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 
 import javax.swing.ImageIcon;
 
@@ -72,6 +75,12 @@ public class Util {
                 destinationChannel.close();
             }
         }
+    }
+
+    public static Charset defaultCharset() {
+        return Charset.forName(
+                new OutputStreamWriter(
+                        new ByteArrayOutputStream()).getEncoding());
     }
 
 }
