@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * Universal Password Manager
  * Copyright (C) 2005-2011 Adrian Smith
  *

@@ -200,6 +200,3 @@ Contents
 
    5-Dec-2005 : Version 1.0b1
       First release.
-
-$Id$
-
