@@ -106,9 +106,7 @@
         <!-- Compile the Cobertura instrumented classes -->
         <delete file="cobertura.ser"/>
         <cobertura-instrument todir="${build.instrumented}">
-            <fileset dir="${build}">
-                <exclude name="**\invest\**"/>
-            </fileset>
+            <fileset dir="${build}"/>
         </cobertura-instrument>
 
     </target>
@@ -129,7 +127,7 @@
         <!-- Build the basic JAR distribution -->
         <echo message="Building the generic tar.gz distribution"/>
         <mkdir dir="${dist}\build"/>    
-        <jar destfile="${dist}\build\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif **\*.png **\*.properties" excludes="**\invest\**">
+        <jar destfile="${dist}\build\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif **\*.png **\*.properties">
             <manifest>
                 <attribute name="Implementation-Title" value="${short.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
@@ -164,7 +162,6 @@
                 <include name="README.txt"/>
                 <include name="README_DEV.txt"/>
                 <include name="src\**"/>
-                <exclude name="src\**\invest\**"/>
                 <include name="images\**"/>
                 <include name="test\**"/>
                 <include name="lib\**"/>
