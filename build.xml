@@ -35,7 +35,6 @@
     <property name="short.name" value="upm"/>
     <property name="full.name" value="UPM"/>
     <property name="lib" value="lib"/>
-    <property name="repos.url" value="https://upm.svn.sourceforge.net/svnroot/upm/swing"/>
     <property name="coveragereport.dir" value="coveragereport.dir"/>
 
 
@@ -56,17 +55,6 @@
         </fileset>
     </path>
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
-
-    <taskdef resource="svntask.properties">
-        <classpath>
-            <pathelement location="${svnant.home}\lib\svnant.jar"/>
-            <pathelement location="${svnant.home}\lib\svnClientAdapter.jar"/>
-            <pathelement location="${svnant.home}\lib\svnjavahl.jar"/>
-            <pathelement location="${svnant.home}\lib\commons-lang-2.0.jar"/>
-            <pathelement location="${svnant.home}\lib\jakarta-regexp-1.3.jar"/>
-            <pathelement location="${svnant.home}\lib\AppleJavaExtensions.jar"/>
-        </classpath>
-    </taskdef>
 
     <taskdef name="jarbundler" classpath="${lib}\jarbundler-2.1.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
 
@@ -211,17 +199,6 @@
             <arg line="-DUPM_VERSION=${version} ${basedir}/nsis/upm.nsi"/>
         </exec>
         <move file="${basedir}/nsis/upm-${version}.exe" todir="${dist}"/>
-    </target>
-
-
-    <target name="release">
-        <fail unless="svn.username" message="Need to pass the parameter 'svn.username' to this target"/>
-        <fail unless="svn.password" message="Need to pass the parameter 'svn.password' to this target"/>
-        <fail unless="version" message="Need to pass the parameter 'version' to this target"/>
-
-        <svn username="${svn.username}" password="${svn.password}">
-            <copy srcUrl="${repos.url}/trunk" destUrl="${repos.url}/tags/${version}" message="Release ${version}"/>
-        </svn>
     </target>
 
 
