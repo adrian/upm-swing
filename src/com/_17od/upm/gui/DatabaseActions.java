@@ -118,8 +118,8 @@ public class DatabaseActions {
 
         // If a "Database to Load on Startup" hasn't been set yet then ask the
         // user if they'd like to open this database on startup.
-        if (Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP).equals("") || 
-                Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP) == null) {
+        if (Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP) == null ||
+                Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP).equals("")) {
             int option = JOptionPane.showConfirmDialog(mainWindow, 
                     Translator.translate("setNewLoadOnStartupDatabase"),
                     Translator.translate("newPasswordDatabase"),
