@@ -120,6 +120,10 @@ Contents
 
 6. History
    -------
+   23-Jan-2012 : Version 1.8
+     - Added support for UTF-8 (issue #9)
+     - Set "Load Database on Startup" after creating a new database (issue #8)
+
    15-Oct-2011 : Version 1.7
       - Fixed a file rename problem that caused database sync to fail when multiple filesystems are involved (Issue #2)
       - Fixed focus problems on the Enter Master Password dialog
