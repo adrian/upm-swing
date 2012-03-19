@@ -429,16 +429,21 @@ public class DatabaseActions {
                 accInfo = accDialog.getAccount();
                 database.deleteAccount(selectedAccName);
                 database.addAccount(accInfo);
-                saveDatabase();
                 //If the new account name is different to the old account name then update the
                 //accountNames array and refilter the listview  
                 if (!accInfo.getAccountName().equals(selectedAccName)) {
+                    // User might change the account name for the Authentication Entry
+                    // so this has to be checked
+                    if (selectedAccName.equals(database.getDbOptions().getAuthDBEntry())) {
+                        database.getDbOptions().setAuthDBEntry(accInfo.getAccountName());
+                    }
                     int i = accountNames.indexOf(selectedAccName);
                     accountNames.remove(i);
                     accountNames.add(accInfo.getAccountName());
                     //[1375390] Ensure that the listview is properly filtered after an edit
                     filter();
                 }
+                saveDatabase();
             }
         }
 
