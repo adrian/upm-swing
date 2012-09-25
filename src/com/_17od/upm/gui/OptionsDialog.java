@@ -31,6 +31,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.Locale;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -57,6 +58,7 @@ public class OptionsDialog extends EscapeDialog {
 
     private JTextField dbToLoadOnStartup;
     private JCheckBox enableProxyCheckbox;
+    private JCheckBox hideAccountPasswordCheckbox;
     private JTextField httpProxyHost;
     private JTextField httpProxyPort;
     private JTextField httpProxyUsername;
@@ -176,6 +178,20 @@ public class OptionsDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(localeComboBox, c);
 
+        // The "Hide account password" row
+        Boolean hideAccountPassword = new Boolean(Preferences.get(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, "true"));
+        hideAccountPasswordCheckbox = new JCheckBox(Translator.translate("hideAccountPassword"), hideAccountPassword.booleanValue());
+        c.gridx = 0;
+        c.gridy = 4;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 2, 5, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        mainPanel.add(hideAccountPasswordCheckbox, c);
+        
+        
         // Some spacing
         emptyBorderPanel.add(Box.createVerticalGlue());
 
@@ -379,6 +395,7 @@ public class OptionsDialog extends EscapeDialog {
     private void okButtonAction() {
         try {
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
+            Preferences.set(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, String.valueOf(hideAccountPasswordCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_HOST, httpProxyHost.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PORT, httpProxyPort.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME, httpProxyUsername.getText());

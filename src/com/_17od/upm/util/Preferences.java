@@ -39,6 +39,8 @@ public class Preferences {
     public class ApplicationOptions {
         public static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
 
+        public static final String ACCOUNT_HIDE_PASSWORD="account.hidePassword";
+
         public static final String HTTP_PROXY_ENABLED="http.proxy.enabled";
         public static final String HTTP_PROXY_HOST="http.proxy.host";
         public static final String HTTP_PROXY_PORT="http.proxy.port";
@@ -58,12 +60,17 @@ public class Preferences {
     private static String propertiesFile;
 
 
-    public static String get(String name) {
-        String retVal = preferences.getProperty(name); 
+    public static String get(String name, String defaultValue) {
+        String retVal = preferences.getProperty(name, defaultValue); 
         if (log.isDebugEnabled()) {
             log.debug("Returning the property, name=" + name + ", value=" + retVal);
         }
         return retVal;
+    }
+
+
+    public static String get(String name) {
+        return get(name, null);
     }
 
     

@@ -46,6 +46,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com._17od.upm.database.AccountInformation;
+import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
 
 
@@ -232,6 +233,12 @@ public class AccountDialog extends EscapeDialog {
                 }
             }
         });
+
+        Boolean hideAccountPassword = new Boolean(
+                Preferences
+                        .get(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, "true"));
+        hidePasswordCheckbox.setSelected(hideAccountPassword.booleanValue());
+        
         c.gridx = 2;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
