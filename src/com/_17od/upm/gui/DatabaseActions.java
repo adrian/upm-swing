@@ -44,8 +44,11 @@ import com._17od.upm.database.ImportException;
 import com._17od.upm.database.PasswordDatabase;
 import com._17od.upm.database.PasswordDatabasePersistence;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
+import com._17od.upm.gui.MainWindow.ChangeDatabaseAction;
 import com._17od.upm.transport.Transport;
 import com._17od.upm.transport.TransportException;
+import com._17od.upm.util.FileChangedCallback;
+import com._17od.upm.util.FileMonitor;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
@@ -58,6 +61,8 @@ public class DatabaseActions {
     private ArrayList accountNames;
     private boolean localDatabaseDirty = true;
     private PasswordDatabasePersistence dbPers;
+    private FileMonitor fileMonitor;
+    private boolean databaseNeedsReload = false;
 
 
     public DatabaseActions(MainWindow mainWindow) {
@@ -222,11 +227,25 @@ public class DatabaseActions {
         mainWindow.getImportMenuItem().setEnabled(true);
 
         mainWindow.setTitle(database.getDatabaseFile() + " - " + MainWindow.getApplicationName());
-        
+
         setLocalDatabaseDirty(true);
+        databaseNeedsReload = false;
 
         accountNames = getAccountNames();
         populateListview(accountNames);
+
+        // Start a thread to listen for changes to the db file
+        FileChangedCallback callback = new FileChangedCallback() {
+            public void fileChanged(File file) {
+                databaseNeedsReload = true;
+                mainWindow.setFileChangedPanelVisible(true);
+            }
+        };
+        fileMonitor = new FileMonitor(database.getDatabaseFile(), callback);
+        Thread thread = new Thread(fileMonitor);
+        thread.start();
+
+        mainWindow.getDatabaseFileChangedPanel().setVisible(false);
     }
     
     
@@ -413,31 +432,38 @@ public class DatabaseActions {
     }
 
 
-    public void editAccount() throws TransportException, ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
+    public void editAccount(String accountName) throws TransportException,
+            ProblemReadingDatabaseFile, IOException, CryptoException,
+            PasswordDatabaseException, InvalidPasswordException, UPMException {
 
         if (getLatestVersionOfDatabase()) {
-            AccountInformation accInfo = getSelectedAccount();
-            String selectedAccName = (String) accInfo.getAccountName();
+            AccountInformation accInfo = database.getAccount(accountName);
+            if (accInfo == null) {
+                throw new UPMException(
+                        Translator.translate(
+                                "accountDoesntExist", accountName));
+            }
+
             AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, false, accountNames);
             accDialog.pack();
             accDialog.setLocationRelativeTo(mainWindow);
             accDialog.show();
 
-            //If the ok button was clicked then save the account to the database and update the 
+            //If the ok button was clicked then save the account to the database and update the
             //listview with the new account name (if it's changed) 
             if (accDialog.okClicked() && accDialog.getAccountChanged()) {
                 accInfo = accDialog.getAccount();
-                database.deleteAccount(selectedAccName);
+                database.deleteAccount(accountName);
                 database.addAccount(accInfo);
                 //If the new account name is different to the old account name then update the
                 //accountNames array and refilter the listview  
-                if (!accInfo.getAccountName().equals(selectedAccName)) {
+                if (!accInfo.getAccountName().equals(accountName)) {
                     // User might change the account name for the Authentication Entry
                     // so this has to be checked
-                    if (selectedAccName.equals(database.getDbOptions().getAuthDBEntry())) {
+                    if (accountName.equals(database.getDbOptions().getAuthDBEntry())) {
                         database.getDbOptions().setAuthDBEntry(accInfo.getAccountName());
                     }
-                    int i = accountNames.indexOf(selectedAccName);
+                    int i = accountNames.indexOf(accountName);
                     accountNames.remove(i);
                     accountNames.add(accInfo.getAccountName());
                     //[1375390] Ensure that the listview is properly filtered after an edit
@@ -449,7 +475,7 @@ public class DatabaseActions {
 
     }
 
-    
+
     public void filter() {
         String filterStr = mainWindow.getSearchField().getText().toLowerCase();
 
@@ -598,12 +624,105 @@ public class DatabaseActions {
         
     }
 
-    
+    public void reloadDatabase()
+            throws InvalidPasswordException, ProblemReadingDatabaseFile, IOException {
+        PasswordDatabase reloadedDb = null;
+        try {
+            reloadedDb = dbPers.load(database.getDatabaseFile());
+        } catch (InvalidPasswordException e) {
+            // The password for the reloaded database is different to that of
+            // the open database
+            boolean okClicked = false;
+            do {
+                char[] password = askUserForPassword(Translator.translate("enterDatabasePassword"));
+                if (password == null) {
+                    okClicked = false;
+                } else {
+                    okClicked = true;
+                    try {
+                        reloadedDb = dbPers.load(database.getDatabaseFile(), password);
+                    } catch (InvalidPasswordException invalidPassword) {
+                        JOptionPane.showMessageDialog(mainWindow, Translator.translate("incorrectPassword"));
+                    } catch (CryptoException e1) {
+                        errorHandler(e);
+                    }
+                }
+            } while (okClicked && reloadedDb == null);
+        }
+
+        if (reloadedDb != null) {
+            database = reloadedDb;
+            doOpenDatabaseActions();
+        }
+    }
+
+    public void reloadDatabaseBefore(ChangeDatabaseAction editAction)
+            throws InvalidPasswordException, ProblemReadingDatabaseFile,
+            IOException {
+        boolean proceedWithAction = false;
+        if (this.databaseNeedsReload) {
+            int answer = JOptionPane.showConfirmDialog(mainWindow,
+                    Translator.translate("askReloadDatabase"),
+                    Translator.translate("reloadDatabase"),
+                    JOptionPane.YES_NO_OPTION);
+            if (answer == JOptionPane.YES_OPTION) {
+                proceedWithAction = reloadDatabaseFromDisk();
+            }
+        } else {
+            proceedWithAction = true;
+        }
+
+        if (proceedWithAction) {
+            editAction.doAction();
+        }
+    }
+
+    public boolean reloadDatabaseFromDisk() throws InvalidPasswordException,
+            ProblemReadingDatabaseFile, IOException {
+        boolean reloadSuccessful = false;
+
+        PasswordDatabase reloadedDb = null;
+        try {
+            reloadedDb = dbPers.load(database.getDatabaseFile());
+        } catch (InvalidPasswordException e) {
+            // The password for the reloaded database is different to that of
+            // the open database
+            boolean okClicked = false;
+            do {
+                char[] password = askUserForPassword(Translator
+                        .translate("enterDatabasePassword"));
+                if (password == null) {
+                    okClicked = false;
+                } else {
+                    okClicked = true;
+                    try {
+                        reloadedDb = dbPers.load(database.getDatabaseFile(),
+                                password);
+                    } catch (InvalidPasswordException invalidPassword) {
+                        JOptionPane.showMessageDialog(mainWindow,
+                                Translator.translate("incorrectPassword"));
+                    } catch (CryptoException e1) {
+                        errorHandler(e);
+                    }
+                }
+            } while (okClicked && reloadedDb == null);
+        }
+
+        if (reloadedDb != null) {
+            database = reloadedDb;
+            doOpenDatabaseActions();
+            reloadSuccessful = true;
+        }
+
+        return reloadSuccessful;
+    }
+
     public boolean syncWithRemoteDatabase() throws TransportException, ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
 
         boolean syncSuccessful = false;
-            
+
         try {
+            fileMonitor.pause();
 
             mainWindow.getContentPane().setCursor(new Cursor(Cursor.WAIT_CURSOR));
             
@@ -676,6 +795,7 @@ public class DatabaseActions {
 
         } finally {
             mainWindow.getContentPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            fileMonitor.start();
         }
 
         return syncSuccessful;
@@ -823,6 +943,9 @@ public class DatabaseActions {
 
     private void saveDatabase() throws IOException, CryptoException {
         dbPers.save(database);
+        if (fileMonitor != null) {
+            fileMonitor.start();
+        }
         if (databaseHasRemoteInstance()) {
             setLocalDatabaseDirty(true);
         } else {

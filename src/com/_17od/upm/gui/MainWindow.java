@@ -20,6 +20,7 @@
  */
 package com._17od.upm.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -41,6 +42,8 @@ import java.security.GeneralSecurityException;
 
 import javax.crypto.IllegalBlockSizeException;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -49,6 +52,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -57,6 +61,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -129,7 +134,9 @@ public class MainWindow extends JFrame implements ActionListener {
 
     private JList accountsListview;
     private JLabel statusBar = new JLabel(" ");
-    
+    private JPanel databaseFileChangedPanel;
+
+
     private DatabaseActions dbActions;
 
 
@@ -355,9 +362,42 @@ public class MainWindow extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         getContentPane().add(accountsScrollList, c);
 
-        // Add the statusbar
+        // The "File Changed" panel
         c.gridx = 0;
         c.gridy = 4;
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(0, 1, 0, 1);
+        c.ipadx = 3;
+        c.ipady = 3;
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.BOTH;
+        databaseFileChangedPanel = new JPanel();
+        databaseFileChangedPanel.setLayout(new BoxLayout(databaseFileChangedPanel, BoxLayout.X_AXIS));
+        databaseFileChangedPanel.setBackground(new Color(249, 172, 60));
+        databaseFileChangedPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        JLabel fileChangedLabel = new JLabel("Database file changed");
+        fileChangedLabel.setAlignmentX(LEFT_ALIGNMENT);
+        databaseFileChangedPanel.add(fileChangedLabel);
+        databaseFileChangedPanel.add(Box.createHorizontalGlue());
+        JButton reloadButton = new JButton("Reload");
+        reloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    dbActions.reloadDatabaseFromDisk();
+                } catch (Exception ex) {
+                    dbActions.errorHandler(ex);
+                }
+            }
+        });
+        databaseFileChangedPanel.add(reloadButton);
+        databaseFileChangedPanel.setVisible(false);
+        getContentPane().add(databaseFileChangedPanel, c);
+
+        // Add the statusbar
+        c.gridx = 0;
+        c.gridy = 5;
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(0, 1, 1, 1);
         c.weightx = 1;
@@ -367,8 +407,11 @@ public class MainWindow extends JFrame implements ActionListener {
         getContentPane().add(statusBar, c);
 
     }
-    
-    
+
+    public void setFileChangedPanelVisible(boolean visible) {
+        databaseFileChangedPanel.setVisible(visible);
+    }
+
     private JToolBar createToolBar() {
         
         JToolBar toolbar = new JToolBar();
@@ -753,11 +796,16 @@ public class MainWindow extends JFrame implements ActionListener {
             } else if (event.getActionCommand() == MainWindow.SYNC_DATABASE_TXT) {
                 dbActions.syncWithRemoteDatabase();
             } else if (event.getActionCommand() == MainWindow.ADD_ACCOUNT_TXT) {
-                dbActions.addAccount();
+                dbActions.reloadDatabaseBefore(
+                        new AddAccountAction());
             } else if (event.getActionCommand() == MainWindow.EDIT_ACCOUNT_TXT) {
-                dbActions.editAccount();
+                String selectedAccName =
+                        (String) this.accountsListview.getSelectedValue();
+                dbActions.reloadDatabaseBefore(
+                        new EditAccountAction(selectedAccName));
             } else if (event.getActionCommand() == MainWindow.DELETE_ACCOUNT_TXT) {
-                dbActions.deleteAccount();
+                dbActions.reloadDatabaseBefore(
+                        new DeleteAccountAction());
             } else if (event.getActionCommand() == MainWindow.VIEW_ACCOUNT_TXT) {
                 dbActions.viewAccount();
             } else if (event.getActionCommand() == MainWindow.OPTIONS_TXT) {
@@ -767,15 +815,18 @@ public class MainWindow extends JFrame implements ActionListener {
             } else if (event.getActionCommand() == MainWindow.RESET_SEARCH_TXT) {
                 dbActions.resetSearch();
             } else if (event.getActionCommand() == MainWindow.CHANGE_MASTER_PASSWORD_TXT) {
-                dbActions.changeMasterPassword();
+                dbActions.reloadDatabaseBefore(
+                        new ChangeMasterPasswordAction());
             } else if (event.getActionCommand() == MainWindow.DATABASE_PROPERTIES_TXT) {
-                dbActions.showDatabaseProperties();
+                dbActions.reloadDatabaseBefore(
+                        new ShowDatabasePropertiesAction());
             } else if (event.getActionCommand() == MainWindow.EXIT_TXT) {
                 dbActions.exitApplication();
             } else if (event.getActionCommand() == MainWindow.EXPORT_TXT) {
                 dbActions.export();
             } else if (event.getActionCommand() == MainWindow.IMPORT_TXT) {
-                dbActions.importAccounts();
+                dbActions.reloadDatabaseBefore(
+                        new ImportAccountsAction());
             }
         } catch (Exception e) {
             dbActions.errorHandler(e);
@@ -805,6 +856,10 @@ public class MainWindow extends JFrame implements ActionListener {
 
     public JLabel getStatusBar() {
         return statusBar;
+    }
+
+    public JPanel getDatabaseFileChangedPanel() {
+        return databaseFileChangedPanel;
     }
 
     
@@ -847,5 +902,75 @@ public class MainWindow extends JFrame implements ActionListener {
         optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
         resetSearchButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
     }
-    
+
+    public interface ChangeDatabaseAction {
+        public void doAction();
+    }
+
+    private class EditAccountAction implements ChangeDatabaseAction {
+        private String accountToEdit;
+
+        public EditAccountAction(String accountToEdit) {
+            this.accountToEdit = accountToEdit;
+        }
+
+        public void doAction() {
+            try {
+                dbActions.editAccount(accountToEdit);
+            } catch (Exception e) {
+                dbActions.errorHandler(e);
+            }
+        }
+    }
+
+    private class ChangeMasterPasswordAction implements ChangeDatabaseAction {
+        public void doAction() {
+            try {
+                dbActions.changeMasterPassword();
+            } catch (Exception e) {
+                dbActions.errorHandler(e);
+            }
+        }
+    }
+
+    private class DeleteAccountAction implements ChangeDatabaseAction {
+        public void doAction() {
+            try {
+                dbActions.deleteAccount();
+            } catch (Exception e) {
+                dbActions.errorHandler(e);
+            }
+        }
+    }
+
+    private class AddAccountAction implements ChangeDatabaseAction {
+        public void doAction() {
+            try {
+                dbActions.addAccount();
+            } catch (Exception e) {
+                dbActions.errorHandler(e);
+            }
+        }
+    }
+
+    private class ShowDatabasePropertiesAction implements ChangeDatabaseAction {
+        public void doAction() {
+            try {
+                dbActions.showDatabaseProperties();
+            } catch (Exception e) {
+                dbActions.errorHandler(e);
+            }
+        }
+    }
+
+    private class ImportAccountsAction implements ChangeDatabaseAction {
+        public void doAction() {
+            try {
+                dbActions.importAccounts();
+            } catch (Exception e) {
+                dbActions.errorHandler(e);
+            }
+        }
+    }
+
 }
