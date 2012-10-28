@@ -84,6 +84,12 @@ Contents
 
 6. History
    -------
+   28-Oct-2012 : Version 1.9
+     - Reload database if it changes on disk
+     - Made account password hiding optional
+     - Fix for NPE on renaming the Auth Entry
+     - Changes & corrections to the Spanish translation
+
    23-Jan-2012 : Version 1.8
      - Added support for UTF-8 (issue #9)
      - Set "Load Database on Startup" after creating a new database (issue #8)
