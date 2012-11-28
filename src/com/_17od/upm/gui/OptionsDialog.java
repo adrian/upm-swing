@@ -64,6 +64,8 @@ public class OptionsDialog extends EscapeDialog {
     private JTextField httpProxyUsername;
     private JPasswordField httpProxyPassword;
     private JCheckBox hidePasswordCheckbox;
+    private JCheckBox databaseAutoLockCheckbox;
+    private JTextField databaseAutoLockTime;
     private JLabel proxyLabel;
     private JLabel proxyPortLabel;
     private JLabel proxyUsernameLabel;
@@ -190,8 +192,38 @@ public class OptionsDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         mainPanel.add(hideAccountPasswordCheckbox, c);
-        
-        
+
+        // The "Database auto lock" row
+        Boolean databaseAutoLock = new Boolean(Preferences.get(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, "false"));
+        databaseAutoLockCheckbox = new JCheckBox(Translator.translate("databaseAutoLock"), databaseAutoLock.booleanValue());
+        c.gridx = 0;
+        c.gridy = 5;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 2, 5, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        mainPanel.add(databaseAutoLockCheckbox, c);
+        databaseAutoLockCheckbox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                databaseAutoLockTime.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+            }
+        });
+
+        // The "Database auto lock" field row
+        databaseAutoLockTime = new JTextField(Preferences.get(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME), 5);
+        c.gridx = 1;
+        c.gridy = 5;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(databaseAutoLockTime, c);
+        databaseAutoLockTime.setEnabled(databaseAutoLockCheckbox.isSelected());
+
         // Some spacing
         emptyBorderPanel.add(Box.createVerticalGlue());
 
@@ -396,6 +428,8 @@ public class OptionsDialog extends EscapeDialog {
         try {
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, String.valueOf(hideAccountPasswordCheckbox.isSelected()));
+            Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, String.valueOf(databaseAutoLockCheckbox.isSelected()));
+            Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME, databaseAutoLockTime.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_HOST, httpProxyHost.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PORT, httpProxyPort.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME, httpProxyUsername.getText());

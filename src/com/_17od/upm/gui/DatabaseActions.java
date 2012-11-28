@@ -212,8 +212,39 @@ public class DatabaseActions {
         }
         JOptionPane.showMessageDialog(mainWindow, errorMessage, Translator.translate("error"), JOptionPane.ERROR_MESSAGE);
     }
-    
-    
+
+    private void doCloseDatabaseActions() {
+        mainWindow.getAddAccountButton().setEnabled(false);
+        mainWindow.getAddAccountMenuItem().setEnabled(false);
+        mainWindow.getSearchField().setEnabled(false);
+        mainWindow.getSearchField().setText("");
+        mainWindow.getSearchIcon().setEnabled(false);
+        mainWindow.getResetSearchButton().setEnabled(false);
+        mainWindow.getChangeMasterPasswordMenuItem().setEnabled(false);
+        mainWindow.getDatabasePropertiesMenuItem().setEnabled(false);
+        mainWindow.getExportMenuItem().setEnabled(false);
+        mainWindow.getImportMenuItem().setEnabled(false);
+
+        mainWindow.setTitle(MainWindow.getApplicationName());
+
+        mainWindow.getStatusBar().setText("");
+        databaseNeedsReload = false;
+
+        SortedListModel listview = (SortedListModel) mainWindow.getAccountsListview().getModel();
+        listview.clear();
+
+        mainWindow.getEditAccountButton().setEnabled(false);
+        mainWindow.getCopyUsernameButton().setEnabled(false);
+        mainWindow.getCopyPasswordButton().setEnabled(false);
+        mainWindow.getDeleteAccountButton().setEnabled(false);
+        mainWindow.getEditAccountMenuItem().setEnabled(false);
+        mainWindow.getCopyUsernameMenuItem().setEnabled(false);
+        mainWindow.getCopyPasswordMenuItem().setEnabled(false);
+        mainWindow.getDeleteAccountMenuItem().setEnabled(false);
+        mainWindow.getViewAccountMenuItem().setEnabled(false);
+    }
+
+
     private void doOpenDatabaseActions() {
         mainWindow.getAddAccountButton().setEnabled(true);
         mainWindow.getAddAccountMenuItem().setEnabled(true);
@@ -799,7 +830,23 @@ public class DatabaseActions {
         }
 
         return syncSuccessful;
-        
+
+    }
+
+    public void closeDatabase() {
+        if (database != null)
+        {
+            doCloseDatabaseActions();
+            database = null;
+        }
+    }
+
+    public String getDatabaseFile()
+    {
+        if (database == null)
+            return "";
+
+        return database.getDatabaseFile().getAbsolutePath();
     }
 
 
