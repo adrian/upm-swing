@@ -40,6 +40,8 @@ public class Preferences {
         public static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
 
         public static final String ACCOUNT_HIDE_PASSWORD="account.hidePassword";
+        public static final String DATABASE_AUTO_LOCK="database.auto_lock";
+        public static final String DATABASE_AUTO_LOCK_TIME = "database.auto_lock_time";
 
         public static final String HTTP_PROXY_ENABLED="http.proxy.enabled";
         public static final String HTTP_PROXY_HOST="http.proxy.host";

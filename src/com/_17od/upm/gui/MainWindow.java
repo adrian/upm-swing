@@ -36,6 +36,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -60,6 +62,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.Timer;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -78,10 +81,10 @@ import com._17od.upm.util.Util;
 /**
  * This is the main application entry class
  */
-public class MainWindow extends JFrame implements ActionListener {
+public class MainWindow extends JFrame implements ActionListener, WindowFocusListener {
 
     private static final String applicationName = "Universal Password Manager";
-    
+
     public static final String NEW_DATABASE_TXT = "newDatabaseMenuItem";
     public static final String OPEN_DATABASE_TXT = "openDatabaseMenuItem";
     public static final String OPEN_DATABASE_FROM_URL_TXT = "openDatabaseFromURLMenuItem";
@@ -100,6 +103,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String EXIT_TXT = "exitMenuItem";
     public static final String EXPORT_TXT = "exportMenuItem";
     public static final String IMPORT_TXT = "importMenuItem";
+    public static final String LOCK_TIMER_TXT = "lock";
 
     private JButton addAccountButton;
     private JButton editAccountButton;
@@ -139,6 +143,9 @@ public class MainWindow extends JFrame implements ActionListener {
 
     private DatabaseActions dbActions;
 
+    private Timer timer;
+    private long lastInput;
+    private String reloadDatabaseFile;
 
     public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
         super(title);
@@ -162,7 +169,15 @@ public class MainWindow extends JFrame implements ActionListener {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-        
+
+        // Start a timer to check the lock status every minute
+        timer = new Timer(1000, this);
+        timer.setActionCommand(LOCK_TIMER_TXT);
+        timer.start();
+        reloadDatabaseFile = "";
+        lastInput = 0;
+        addWindowFocusListener(this);
+
         try {
             //Load the startup database if it's configured
             String db = Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP);
@@ -457,6 +472,7 @@ public class MainWindow extends JFrame implements ActionListener {
         copyUsernameButton.setDisabledIcon(Util.loadImage("copy_username_d.gif"));;
         copyUsernameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                inputReceived();
                 copyUsernameToClipboard();
             }
         });
@@ -470,6 +486,7 @@ public class MainWindow extends JFrame implements ActionListener {
         copyPasswordButton.setDisabledIcon(Util.loadImage("copy_password_d.gif"));;
         copyPasswordButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                inputReceived();
                 copyPasswordToClipboard();
             }
         });
@@ -784,8 +801,70 @@ public class MainWindow extends JFrame implements ActionListener {
         return databasePropertiesMenuItem;
     }
 
+    public void inputReceived() {
+        lastInput = System.currentTimeMillis();
+    }
+
+    public void checkLock()
+    {
+        long timeout = 0;
+
+        if (Preferences.get(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, "false") == "true")
+            timeout = Integer.parseInt(Preferences.get(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME, "60")) * 60;
+
+        long secondsPassed = (System.currentTimeMillis() - lastInput) / 1000;
+
+        if (timeout > 0
+            && lastInput > 0
+            && secondsPassed > timeout
+            && reloadDatabaseFile.length() == 0) {
+            String reload = dbActions.getDatabaseFile();
+            dbActions.closeDatabase();
+
+            // Only reload the database if we're in the foreground
+            if (isActive() && reload.length() > 0)
+            {
+                try {
+                    dbActions.openDatabase(reload);
+                } catch (Exception e) {
+                    dbActions.errorHandler(e);
+                }
+            }
+            else
+            {
+                reloadDatabaseFile = reload;
+            }
+        }
+    }
+
+    public void windowGainedFocus(WindowEvent we) {
+
+        // We have focus, is a reload pending?
+        if (reloadDatabaseFile.length() > 0)
+        {
+            try {
+                dbActions.openDatabase(reloadDatabaseFile);
+            } catch (Exception e) {
+                dbActions.errorHandler(e);
+            }
+            reloadDatabaseFile = "";
+        }
+    }
+
+    public void windowLostFocus(WindowEvent e) {
+    }
 
     public void actionPerformed(ActionEvent event) {
+
+        if (event.getActionCommand() == MainWindow.LOCK_TIMER_TXT)
+        {
+            checkLock();
+        }
+        else
+        {
+            inputReceived();
+        }
+
         try {
             if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
                 dbActions.newDatabase();
