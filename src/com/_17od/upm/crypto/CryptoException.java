@@ -25,6 +25,8 @@ package com._17od.upm.crypto;
  */
 public class CryptoException extends Exception {
 
+    private static final long serialVersionUID = 1L;
+
     public CryptoException(Exception e) {
         super(e);
     }

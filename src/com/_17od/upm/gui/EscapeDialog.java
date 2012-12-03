@@ -33,6 +33,8 @@ import javax.swing.KeyStroke;
 
 public class EscapeDialog extends JDialog {
 
+    private static final long serialVersionUID = 1L;
+    
     public EscapeDialog(JFrame frame, String title, boolean modal) {
         super(frame, title, modal);
     }

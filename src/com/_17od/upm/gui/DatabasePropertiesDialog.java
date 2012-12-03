@@ -54,6 +54,8 @@ import com._17od.upm.util.Translator;
 
 public class DatabasePropertiesDialog extends EscapeDialog {
 
+    private static final long serialVersionUID = 1L;
+    
     private boolean databaseNeedsSaving = false;
     
     public DatabasePropertiesDialog(final JFrame frame, ArrayList accountNames, final PasswordDatabase database) {

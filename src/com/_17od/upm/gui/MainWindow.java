@@ -83,6 +83,7 @@ import com._17od.upm.util.Util;
  */
 public class MainWindow extends JFrame implements ActionListener, WindowFocusListener {
 
+    private static final long serialVersionUID = 1L;
     private static final String applicationName = "Universal Password Manager";
 
     public static final String NEW_DATABASE_TXT = "newDatabaseMenuItem";
