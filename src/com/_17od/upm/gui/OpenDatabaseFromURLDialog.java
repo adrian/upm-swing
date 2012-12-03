@@ -46,6 +46,8 @@ import com._17od.upm.util.Translator;
 
 public class OpenDatabaseFromURLDialog extends EscapeDialog {
 
+    private static final long serialVersionUID = 1L;
+
     public JTextField urlTextField;
     public JTextField usernameTextField;
     public JPasswordField passwordTextField;

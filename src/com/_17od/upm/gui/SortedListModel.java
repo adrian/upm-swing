@@ -28,6 +28,8 @@ import javax.swing.AbstractListModel;
 
 public class SortedListModel extends AbstractListModel {
 
+    private static final long serialVersionUID = 1L;
+
     private TreeSet model;
 
 

@@ -22,11 +22,13 @@ package com._17od.upm.transport;
 
 public class TransportException extends Exception {
 
+    private static final long serialVersionUID = 1L;
+
     public TransportException(String message) {
         super(message);
     }
 
-    
+
     public TransportException(String message, Throwable cause) {
         super(message, cause);
     }
@@ -35,5 +37,5 @@ public class TransportException extends Exception {
     public TransportException(Throwable cause) {
         super(cause);
     }
-
+    
 }

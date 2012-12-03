@@ -22,6 +22,8 @@ package com._17od.upm.gui;
 
 public class PasswordDatabaseException extends Exception {
 
+    private static final long serialVersionUID = 1L;
+
     public PasswordDatabaseException(String message) {
         super(message);
     }
