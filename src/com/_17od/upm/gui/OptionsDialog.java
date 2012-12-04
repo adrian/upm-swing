@@ -56,6 +56,8 @@ import com._17od.upm.util.Translator;
 
 public class OptionsDialog extends EscapeDialog {
 
+    private static final long serialVersionUID = 1L;
+    
     private JTextField dbToLoadOnStartup;
     private JCheckBox enableProxyCheckbox;
     private JCheckBox hideAccountPasswordCheckbox;

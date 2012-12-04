@@ -22,12 +22,14 @@ package com._17od.upm.database;
 
 
 public class ProblemReadingDatabaseFile extends Exception {
-    
+
+    private static final long serialVersionUID = 1L;
+
     public ProblemReadingDatabaseFile(String message) {
         super(message);
     }
 
-    
+
     public ProblemReadingDatabaseFile(String message, Throwable cause) {
         super(message, cause);
     }

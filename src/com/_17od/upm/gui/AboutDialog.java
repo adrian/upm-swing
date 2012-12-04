@@ -39,6 +39,8 @@ import com._17od.upm.util.Translator;
 
 public class AboutDialog extends EscapeDialog {
 
+    private static final long serialVersionUID = 1L;
+
     public AboutDialog(JFrame frame) {
         super(frame, Translator.translate("aboutUPM"), true);
 

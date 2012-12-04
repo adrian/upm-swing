@@ -334,7 +334,12 @@ public class PasswordDatabasePersistence {
     }
 
     private byte[] readFile(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
+        InputStream is;
+        try {
+            is = new FileInputStream(file);
+        } catch (IOException e) {
+            throw new IOException("There was a problem with opening the file", e);
+        }
     
         // Create the byte array to hold the data
         byte[] bytes = new byte[(int) file.length()];
@@ -342,17 +347,20 @@ public class PasswordDatabasePersistence {
         // Read in the bytes
         int offset = 0;
         int numRead = 0;
-        while (offset < bytes.length
-               && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-            offset += numRead;
-        }
+        
+        try {
+            while (offset < bytes.length
+                    && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                offset += numRead;
+            }
     
-        // Ensure all the bytes have been read in
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file " + file.getName());
+            // Ensure all the bytes have been read in
+            if (offset < bytes.length) {
+                throw new IOException("Could not completely read file " + file.getName());
+            }
+        } finally {
+            is.close();
         }
-    
-        is.close();
 
         return bytes;
     }
