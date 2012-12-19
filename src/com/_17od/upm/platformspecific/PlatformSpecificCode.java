@@ -48,4 +48,8 @@ public abstract class PlatformSpecificCode {
         return System.getProperty("os.name").equals("Mac OS X");
     }
 
+	public static boolean isLinux() {
+		return System.getProperty("os.name").equals("Linux");
+	}
+
 }

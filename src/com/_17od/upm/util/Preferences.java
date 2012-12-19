@@ -20,6 +20,7 @@
  */
 package com._17od.upm.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,6 +28,8 @@ import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com._17od.upm.platformspecific.PlatformSpecificCode;
 
 
 /**
@@ -89,10 +92,30 @@ public class Preferences {
         //Check for the system property PREF_FILE_SYS_PROP. If supplied it will give the name
         //of the properties file to use. If it's not given then use the properties file in the
         //user's home directory (which may or may not exist)
+		
+		// Mac and Linux have different places to store configuration files -
+		// set PREF_FILE_SYS_PROP appropriately.
+		if(!System.getProperties().containsKey(PREF_FILE_SYS_PROP)) {
+			if(PlatformSpecificCode.isLinux()) {
+				String configBase = System.getenv("XDG_CONFIG_HOME");
+				if(null == configBase || configBase.trim().equals("")) {
+					configBase = System.getProperty("user.home") + System.getProperty("file.separator") + ".config";
+				}
+				System.setProperty(PREF_FILE_SYS_PROP, configBase + System.getProperty("file.separator") + "upm.properties");
+			}
+			else if(PlatformSpecificCode.isMAC()) {
+				System.setProperty(PREF_FILE_SYS_PROP, System.getProperty("user.home") + System.getProperty("file.separator") + "Library" + System.getProperty("file.separator") + "Preferences" + System.getProperty("file.separator") + "upm.properties");
+			}
+		}
+
         propertiesFile = System.getProperty(PREF_FILE_SYS_PROP);
         if (propertiesFile == null || propertiesFile.trim().equals("")) {
             propertiesFile = PREF_FILE;
         }
+
+		// Create propertiesFile directories if it doesn't exist
+		File prefs = new File(propertiesFile);
+		prefs.getParentFile().mkdirs();
 
         //Attempt to load the properties
         try {
