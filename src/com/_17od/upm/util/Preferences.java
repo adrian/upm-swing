@@ -97,7 +97,11 @@ public class Preferences {
 		// set PREF_FILE_SYS_PROP appropriately.
 		if(!System.getProperties().containsKey(PREF_FILE_SYS_PROP)) {
 			if(PlatformSpecificCode.isLinux()) {
-				System.setProperty(PREF_FILE_SYS_PROP, System.getProperty("user.home") + System.getProperty("file.separator") + ".config" + System.getProperty("file.separator") + "upm.properties");
+				String configBase = System.getenv("XDG_CONFIG_HOME");
+				if(null == configBase || configBase.trim().equals("")) {
+					configBase = System.getProperty("user.home") + System.getProperty("file.separator") + ".config";
+				}
+				System.setProperty(PREF_FILE_SYS_PROP, configBase + System.getProperty("file.separator") + "upm.properties");
 			}
 			else if(PlatformSpecificCode.isMAC()) {
 				System.setProperty(PREF_FILE_SYS_PROP, System.getProperty("user.home") + System.getProperty("file.separator") + "Library" + System.getProperty("file.separator") + "Preferences" + System.getProperty("file.separator") + "upm.properties");
