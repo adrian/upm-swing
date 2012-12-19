@@ -20,6 +20,7 @@
  */
 package com._17od.upm.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -107,6 +108,10 @@ public class Preferences {
         if (propertiesFile == null || propertiesFile.trim().equals("")) {
             propertiesFile = PREF_FILE;
         }
+
+		// Create propertiesFile directories if it doesn't exist
+		File prefs = new File(propertiesFile);
+		prefs.getParentFile().mkdirs();
 
         //Attempt to load the properties
         try {
