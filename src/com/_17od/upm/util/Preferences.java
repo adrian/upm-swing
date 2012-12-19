@@ -28,6 +28,8 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com._17od.upm.platformspecific.PlatformSpecificCode;
+
 
 /**
  * This class provides the configuration services to the rest of the application
@@ -89,6 +91,18 @@ public class Preferences {
         //Check for the system property PREF_FILE_SYS_PROP. If supplied it will give the name
         //of the properties file to use. If it's not given then use the properties file in the
         //user's home directory (which may or may not exist)
+		
+		// Mac and Linux have different places to store configuration files -
+		// set PREF_FILE_SYS_PROP appropriately.
+		if(!System.getProperties().containsKey(PREF_FILE_SYS_PROP)) {
+			if(PlatformSpecificCode.isLinux()) {
+				System.setProperty(PREF_FILE_SYS_PROP, System.getProperty("user.home") + System.getProperty("file.separator") + ".config" + System.getProperty("file.separator") + "upm.properties");
+			}
+			else if(PlatformSpecificCode.isMAC()) {
+				System.setProperty(PREF_FILE_SYS_PROP, System.getProperty("user.home") + System.getProperty("file.separator") + "Library" + System.getProperty("file.separator") + "Preferences" + System.getProperty("file.separator") + "upm.properties");
+			}
+		}
+
         propertiesFile = System.getProperty(PREF_FILE_SYS_PROP);
         if (propertiesFile == null || propertiesFile.trim().equals("")) {
             propertiesFile = PREF_FILE;
