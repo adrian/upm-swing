@@ -69,6 +69,7 @@
         <delete>
             <fileset dir="${basedir}" includes="TEST-*"/>
         </delete>
+        <delete file="cobertura.ser"/>
     </target>
 
 
