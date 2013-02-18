@@ -131,7 +131,7 @@
         <copy file="${basedir}\lib\commons-logging-1.1.jar" todir="${dist}\build"/>
         <copy file="${basedir}\lib\bcprov-jdk14-145.jar" todir="${dist}\build"/>
         <copy file="${basedir}\lib\javacsv.jar" todir="${dist}\build"/>
-        <copy file="${basedir}\images\upm.png" todir="${dist}\build"/>
+        <copy file="${basedir}\images\128x128\upm.png" tofile="${dist}\build\upm.png"/>
         <copy file="${basedir}\COPYING.txt" todir="${dist}\build"/>
         <copy file="${basedir}\README.txt" todir="${dist}\build"/>
         <tar destfile="${dist}\${short.name}-${version}.tar">
