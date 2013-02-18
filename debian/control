@@ -1,0 +1,12 @@
+Package: upm
+Version: @version@
+Section: utils
+Priority: optional
+Architecture: all
+Depends: default-jre
+Maintainer: Adrian Smith <adrian@17od.com>
+Homepage: http://upm.sourceforge.net
+Description: Universal Password Manager
+ Universal Password Manager (UPM) allows you to store usernames, passwords,
+ URLs and generic notes in an encrypted database protected by one master
+ password.

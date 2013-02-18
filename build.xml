@@ -36,7 +36,11 @@
     <property name="full.name" value="UPM"/>
     <property name="lib" value="lib"/>
     <property name="coveragereport.dir" value="coveragereport.dir"/>
+    <property name="jdeb.url" value="http://repo1.maven.org/maven2/org/vafer/jdeb/1.0/jdeb-1.0.jar"/>
+    <property name="deps.dir" value="deps"/>
+    <property name="jdeb.jar" value="jdeb-1.0.jar"/>
 
+    <available property="deps.retrieved" file="${deps.dir}/${jdeb.jar}"/>
 
     <!-- Define a classpath for use later on -->
     <path id="project.class.path">
@@ -57,6 +61,12 @@
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
 
     <taskdef name="jarbundler" classpath="${lib}\jarbundler-2.1.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
+
+
+    <target name="retrieve-deps" unless="deps.retrieved">
+        <mkdir dir="${deps.dir}"/>
+        <get src="${jdeb.url}" dest="${deps.dir}"/>
+    </target>
 
 
     <!-- The clean target cleans the environment -->
@@ -200,6 +210,38 @@
             <arg line="-DUPM_VERSION=${version} ${basedir}/nsis/upm.nsi"/>
         </exec>
         <move file="${basedir}/nsis/upm-${version}.exe" todir="${dist}"/>
+    </target>
+
+
+    <target name="deb" depends="build">
+        <taskdef name="deb" classname="org.vafer.jdeb.ant.DebAntTask">
+            <classpath>
+                <fileset file="${deps.dir}/${jdeb.jar}"/>
+            </classpath>
+        </taskdef>
+        <copy todir="${dist}/control">
+            <fileset file="debian/control"/>
+            <filterset begintoken="@" endtoken="@">
+              <filter token="version" value="${version}"/>
+            </filterset>
+        </copy>
+        <deb destfile="${dist}/${short.name}-${version}.deb" control="${dist}/control">
+            <tarfileset dir="${dist}/build" prefix="/usr/share/upm">
+                <include name="*.jar"/>
+            </tarfileset>
+            <tarfileset dir="debian" prefix="/usr/bin" filemode="755">
+                <include name="upm"/>
+            </tarfileset>
+            <tarfileset dir="debian" prefix="/usr/share/applications">
+                <include name="upm.desktop"/>
+            </tarfileset>
+            <tarfileset dir="images/48x48/" prefix="/usr/share/icons/hicolor/48x48/apps">
+                <include name="upm.png"/>
+            </tarfileset>
+            <tarfileset dir="images/128x128/" prefix="/usr/share/icons/hicolor/128-128/apps">
+                <include name="upm.png"/>
+            </tarfileset>
+        </deb>
     </target>
 
 

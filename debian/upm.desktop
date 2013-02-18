@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=UPM
+GenericName=Universal Password Manager
+Version=1.0
+Comment=Universal Password Manager
+Exec=/usr/bin/upm
+Path=/usr/bin/
+Terminal=false
+Type=Application
+Icon=upm
+Categories=Utility
