@@ -24,7 +24,7 @@
 <project name="Universal Password Manager" default="compile" basedir=".">
 
     <property file="build.properties"/>
-    
+
     <!-- Set all the project properties -->
     <property name="src" value="src"/>
     <property name="test.src" value="test"/>
@@ -52,14 +52,6 @@
     </path>
 
 
-    <path id="cobertura.classpath">
-        <fileset dir="${cobertura.dir}">
-            <include name="cobertura.jar" />
-            <include name="lib\**\*.jar" />
-        </fileset>
-    </path>
-    <taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
-
     <taskdef name="jarbundler" classpath="${lib}\jarbundler-2.1.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
 
 
@@ -85,7 +77,6 @@
 
     <!-- The compile target compiles the source -->
     <target name="compile">
-
         <mkdir dir="${build}"/>
         <javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" source="1.4" target="1.4">
             <classpath refid="project.class.path"/>
@@ -101,13 +92,6 @@
                 <exclude name="**\*.java"/>
             </fileset>
         </copy>
-
-        <!-- Compile the Cobertura instrumented classes -->
-        <delete file="cobertura.ser"/>
-        <cobertura-instrument todir="${build.instrumented}">
-            <fileset dir="${build}"/>
-        </cobertura-instrument>
-
     </target>
 
 
@@ -245,9 +229,47 @@
     </target>
 
 
+    <target name="instrument-classes" depends="compile">
+        <path id="cobertura.classpath">
+            <fileset dir="${cobertura.dir}">
+                <include name="cobertura.jar" />
+                <include name="lib\**\*.jar" />
+            </fileset>
+        </path>
+        <taskdef classpathref="cobertura.classpath" resource="tasks.properties"/>
+
+        <!-- Compile the Cobertura instrumented classes -->
+        <delete file="cobertura.ser"/>
+        <cobertura-instrument todir="${build.instrumented}">
+            <fileset dir="${build}"/>
+        </cobertura-instrument>
+    </target>
+
+
     <target name="test" depends="compile">
         <!-- I had to put the junit.jar file into my ANT_HOME\lib in order for
              the junit task to work -->
+        <junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on" fork="yes">
+            <classpath location="${build}"/>
+            <classpath refid="project.class.path"/>
+            <jvmarg value="-Djunit.properties=${basedir}/build.properties"/>
+            <jvmarg value="-Dupm.properties=${basedir}/upm.properties"/>
+            <formatter type="plain"/>
+            <batchtest if="test">
+                <fileset dir="${test.build}">
+                    <include name="**\${test}.class"/>
+                </fileset>
+            </batchtest>
+            <batchtest unless="test">
+                <fileset dir="${test.build}">
+                    <include name="**\*.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+
+    <target name="coverage" depends="instrument-classes">
         <junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on" fork="yes">
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${basedir}/cobertura.ser"/>
             <classpath location="${build.instrumented}"/>
