@@ -41,7 +41,7 @@
   ;overwrite the old one automatically)
   InstallDirRegKey HKLM "Software\UPM" "Install_Dir"
 
-  LicenseData "..\dist\build\COPYING.txt"
+  LicenseData "..\COPYING.txt"
 
   VIAddVersionKey "ProductName" "Universal Password Manager"
   VIAddVersionKey "CompanyName" "Adrian Smith"
@@ -71,15 +71,15 @@ Section "Universal Password Manager"
   ;Files to install
 
   SetOutPath "$INSTDIR\server\http"
-  File ..\dist\build\server\http\upload.php
-  File ..\dist\build\server\http\deletefile.php
+  File ..\server\http\upload.php
+  File ..\server\http\deletefile.php
 
   SetOutPath "$INSTDIR"
   File ..\bin\upm.bat
   File ..\images\upm.ico
   File ..\dist\build\upm.jar
-  File ..\dist\build\COPYING.txt
-  File ..\dist\build\README.txt
+  File ..\COPYING.txt
+  File ..\README.txt
   File ..\lib\commons-codec-1.3.jar
   File ..\lib\commons-httpclient-3.0.jar
   File ..\lib\commons-logging-1.1.jar

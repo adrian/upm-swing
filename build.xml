@@ -21,7 +21,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
 
-<project name="Universal Password Manager" default="compile" basedir=".">
+<project name="Universal Password Manager" default="package-jar" basedir=".">
 
     <property file="build.properties"/>
 
@@ -100,16 +100,10 @@
     </target>
 
 
-    <!-- Perform a build -->
-    <target name="build" depends="checkversion, clean, compile">
-
+    <target name="package-jar" depends="checkversion, clean, test">
         <delete dir="${dist}"/>
 
-        <echo message="Building UPM version ${version}"/>
-
-        <!-- Build the basic JAR distribution -->
-        <echo message="Building the generic tar.gz distribution"/>
-        <mkdir dir="${dist}\build"/>    
+        <mkdir dir="${dist}\build"/>
         <jar destfile="${dist}\build\${short.name}.jar" basedir="${build}" includes="**\*.class **\*.gif **\*.png **\*.properties">
             <manifest>
                 <attribute name="Implementation-Title" value="${short.name}"/>
@@ -118,6 +112,11 @@
                 <attribute name="Main-Class" value="com._17od.upm.gui.MainWindow"/>
             </manifest>
         </jar>
+    </target>
+
+
+    <!-- Package the basic JAR distribution -->
+    <target name="package-tgz" depends="package-jar">
         <copy file="${basedir}\server\http\upload.php" todir="${dist}\build\server\http"/>
         <copy file="${basedir}\server\http\deletefile.php" todir="${dist}\build\server\http"/>
         <copy file="${basedir}\lib\commons-codec-1.3.jar" todir="${dist}\build"/>
@@ -134,9 +133,11 @@
         </tar>
         <gzip src="${dist}\${short.name}-${version}.tar" destfile="${dist}\${short.name}-${version}.tar.gz"/>
         <delete file="${dist}\${short.name}-${version}.tar"/>
+    </target>
 
-        <!-- Build the source distribution -->
-        <echo message="Building the source distribution"/>
+
+    <!-- Package the source distribution -->
+    <target name="package-src">
         <tar destfile="${dist}\${short.name}-src-${version}.tar">
             <tarfileset dir="${basedir}" prefix="${short.name}-src-${version}">
                 <include name="build.xml"/>
@@ -156,9 +157,11 @@
         </tar>
         <gzip src="${dist}\${short.name}-src-${version}.tar" destfile="${dist}\${short.name}-src-${version}.tar.gz"/>
         <delete file="${dist}\${short.name}-src-${version}.tar"/>
+    </target>
 
-        <!-- Build the Mac OS X distribution -->
-        <echo message="Building the Mac OS X distribution"/>
+
+    <!-- Package Mac OS X distribution -->
+    <target name="package-osx" depends="package-jar">
         <property name="dist-mac-dir" value="${basedir}/${dist}/${short.name}-mac-${version}"/>
         <mkdir dir="${dist-mac-dir}"/>
         <copy file="${basedir}\server\http\upload.php" todir="${dist-mac-dir}\server\http"/>
@@ -188,8 +191,11 @@
         <exec executable="tar" dir="${basedir}">
             <arg line="-czvf dist/${short.name}-mac-${version}.tar.gz -C dist/ ${short.name}-mac-${version}"/>
         </exec>
+    </target>
 
-        <echo message="Building the Windows distribution"/>
+
+    <!-- Package Windows installer -->
+    <target name="package-windows" depends="package-jar">
         <exec executable="makensis" dir="${basedir}">
             <arg line="-DUPM_VERSION=${version} ${basedir}/nsis/upm.nsi"/>
         </exec>
@@ -197,7 +203,10 @@
     </target>
 
 
-    <target name="deb" depends="build">
+    <target name="package-all" depends="package-tgz, package-src, package-osx, package-windows"/>
+
+
+    <target name="deb" depends="package-jar">
         <taskdef name="deb" classname="org.vafer.jdeb.ant.DebAntTask">
             <classpath>
                 <fileset file="${deps.dir}/${jdeb.jar}"/>
