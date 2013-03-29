@@ -52,9 +52,6 @@
     </path>
 
 
-    <taskdef name="jarbundler" classpath="${lib}\jarbundler-2.1.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
-
-
     <target name="retrieve-deps" unless="deps.retrieved">
         <mkdir dir="${deps.dir}"/>
         <get src="${jdeb.url}" dest="${deps.dir}"/>
@@ -171,6 +168,9 @@
         <copy file="${basedir}\server\http\deletefile.php" todir="${dist-mac-dir}\server\http"/>
         <copy file="${basedir}\COPYING.txt" todir="${dist-mac-dir}"/>
         <copy file="${basedir}\README.txt" todir="${dist-mac-dir}"/>
+
+        <taskdef name="jarbundler" classpath="${lib}\jarbundler-2.1.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
+
         <jarbundler dir="${dist-mac-dir}"
               mainclass="com._17od.upm.gui.MainWindow"
                    name="${full.name}"
