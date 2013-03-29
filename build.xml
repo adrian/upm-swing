@@ -97,7 +97,7 @@
     </target>
 
 
-    <target name="package-jar" depends="checkversion, clean, test">
+    <target name="package-jar" depends="checkversion, clean, compile">
         <delete dir="${dist}"/>
 
         <mkdir dir="${dist}\build"/>
