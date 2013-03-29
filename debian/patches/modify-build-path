@@ -1,0 +1,15 @@
+Remove the lib dir from the build path
+Index: upm-src-1.10/build.xml
+===================================================================
+--- upm-src-1.10.orig/build.xml	2013-03-29 09:39:30.000000000 +0000
++++ upm-src-1.10/build.xml	2013-03-29 11:22:39.143943804 +0000
+@@ -46,9 +46,6 @@
+     <path id="project.class.path">
+         <pathelement path="${build}"/>
+         <pathelement path="${test.build}"/>
+-        <fileset dir="${lib}">
+-            <include name="*.jar"/>
+-        </fileset>
+     </path>
+ 
+ 

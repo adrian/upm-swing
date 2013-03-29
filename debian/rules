@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+
+export CLASSPATH=/usr/share/java/commons-logging.jar:/usr/share/java/commons-httpclient.jar:/usr/share/java/csv.jar:/usr/share/java/bcprov.jar:/usr/share/java/commons-codec.jar
+
+DEB_VERSION := $(shell dpkg-parsechangelog | egrep '^Version:' | cut -f 2 -d ' ')
+DEB_NOEPOCH_VERSION := $(shell echo $(DEB_VERSION) | cut -d: -f2-)
+DEB_UPSTREAM_VERSION := $(shell echo $(DEB_NOEPOCH_VERSION) | sed 's/-[^-]*$$//')
+
+%:
+	dh $@ --with javahelper
+
+override_dh_auto_build:
+	dh_auto_build -- -Dversion=$(DEB_UPSTREAM_VERSION)
+
+override_jh_manifest:
+	jh_manifest
+	chmod +x debian/upm/usr/share/upm/upm.jar

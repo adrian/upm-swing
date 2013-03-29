@@ -1,0 +1,4 @@
+dist/build/upm.jar usr/share/upm
+debian/upm.desktop usr/share/applications
+images/48x48/upm.png usr/share/icons/hicolor/48x48/apps
+images/128x128/upm.png usr/share/icons/hicolor/128x128/apps

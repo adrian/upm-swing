@@ -1,10 +1,16 @@
+Source: upm
+Priority: extra
+Maintainer: Adrian Smth <adrian@17od.com>
+Build-Depends: debhelper (>= 7.0.50~), javahelper (>=0.25)
+Build-Depends-Indep: default-jdk, libcommons-logging-java (>=1.1.1-9), libcommons-httpclient-java (>=3.1-10), libcsv-java (>=2.0-11), libbcprov-java (>=1.46+dfsg-2)
+Standards-Version: 3.9.2
+Section: utils
+
 Package: upm
-Version: @version@
 Section: utils
 Priority: optional
 Architecture: all
-Depends: default-jre
-Maintainer: Adrian Smith <adrian@17od.com>
+Depends: ${java:Depends}, ${misc:Depends}
 Homepage: http://upm.sourceforge.net
 Description: Universal Password Manager
  Universal Password Manager (UPM) allows you to store usernames, passwords,
