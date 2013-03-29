@@ -137,22 +137,25 @@
 
 
     <!-- Package the source distribution -->
-    <target name="package-src">
+    <target name="package-src" depends="checkversion">
         <tar destfile="${dist}\${short.name}-src-${version}.tar">
             <tarfileset dir="${basedir}" prefix="${short.name}-src-${version}">
-                <include name="build.xml"/>
-                <include name="build.properties.tmpl"/>
-                <include name="COPYING.txt"/>
-                <include name="README.txt"/>
-                <include name="README_DEV.txt"/>
-                <include name="src\**"/>
-                <include name="images\**"/>
-                <include name="test\**"/>
-                <include name="lib\**"/>
-                <include name="website\**"/>
-                <include name="nsis\upm.nsi"/>
-                <include name="server\**"/>
+                <include name="Authors"/>
                 <include name="bin\**"/>
+                <include name="build.properties.tmpl"/>
+                <include name="build.xml"/>
+                <include name="contrib\**"/>
+                <include name="COPYING.txt"/>
+                <include name="debian\**"/>
+                <include name="images\**"/>
+                <include name="lib\**"/>
+                <include name="nsis\upm.nsi"/>
+                <include name="README_DEV.txt"/>
+                <include name="README.txt"/>
+                <include name="server\**"/>
+                <include name="src\**"/>
+                <include name="test\**"/>
+                <include name="upm.properties.tmpl"/>
             </tarfileset>
         </tar>
         <gzip src="${dist}\${short.name}-src-${version}.tar" destfile="${dist}\${short.name}-src-${version}.tar.gz"/>
