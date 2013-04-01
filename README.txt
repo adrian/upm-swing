@@ -84,6 +84,10 @@ Contents
 
 6. History
    -------
+   30-Mar-2012 : Version 1.10
+     - Added auto locking of database after timeout option
+     - Use platform-specific config file locations for OS X and Linux
+
    28-Oct-2012 : Version 1.9
      - Reload database if it changes on disk
      - Made account password hiding optional
