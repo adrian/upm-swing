@@ -1,8 +1,8 @@
 Source: upm
 Priority: extra
 Maintainer: Adrian Smth <adrian@17od.com>
-Build-Depends: debhelper (>= 7.0.50~), javahelper (>=0.25)
-Build-Depends-Indep: default-jdk, libcommons-logging-java (>=1.1.1-9), libcommons-httpclient-java (>=3.1-10), libcsv-java (>=2.0-11), libbcprov-java (>=1.46+dfsg-2)
+Build-Depends: debhelper (>= 7.0.50~), javahelper (>=0.25), ant (>=1.8.2-4build1)
+Build-Depends-Indep: default-jdk, libcommons-logging-java (>=1.1.1-9), libcommons-httpclient-java (>=3.1-10), libcsv-java (>=2.0-11), libbcprov-java (>=1.46+dfsg-2), junit (>=3.8.2-8)
 Standards-Version: 3.9.2
 Section: utils
 
