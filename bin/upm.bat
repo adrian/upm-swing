@@ -1,7 +1,7 @@
 @echo off
 
 REM Universal Password Manager
-REM Copyright (C) 2005-2011 Adrian Smith
+REM Copyright (C) 2005-2013 Adrian Smith
 REM
 REM This file is part of Universal Password Manager.
 REM

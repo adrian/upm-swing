@@ -1,6 +1,6 @@
 /*
  * Universal Password Manager
- * Copyright (C) 2005-2011 Adrian Smith
+ * Copyright (C) 2005-2013 Adrian Smith
  *
  * This file is part of Universal Password Manager.
  *   
