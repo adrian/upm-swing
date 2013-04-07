@@ -22,8 +22,11 @@ package com._17od.upm.gui;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -34,6 +37,10 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.Timer;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com._17od.upm.crypto.CryptoException;
 import com._17od.upm.crypto.InvalidPasswordException;
@@ -56,6 +63,8 @@ import com._17od.upm.util.Util;
 
 public class DatabaseActions {
 
+    private static Log LOG = LogFactory.getLog(DatabaseActions.class);
+
     private MainWindow mainWindow;
     private PasswordDatabase database;
     private ArrayList accountNames;
@@ -63,6 +72,9 @@ public class DatabaseActions {
     private PasswordDatabasePersistence dbPers;
     private FileMonitor fileMonitor;
     private boolean databaseNeedsReload = false;
+
+    private boolean lockIfInactive;
+    private int msToWaitBeforeClosingDB;
 
 
     public DatabaseActions(MainWindow mainWindow) {
@@ -276,10 +288,41 @@ public class DatabaseActions {
         Thread thread = new Thread(fileMonitor);
         thread.start();
 
+        // If the user asked for the db to close after a period of
+        // inactivity then register a listener to capture window focus
+        // events.
+        configureAutoLock();
+
+        // Give the search field focus.
+        // I'm using requestFocusInWindow() rather than
+        // requestFocus() because the javadocs recommend it.
+        mainWindow.getSearchField().requestFocusInWindow();
+
         mainWindow.getDatabaseFileChangedPanel().setVisible(false);
     }
-    
-    
+
+    private void configureAutoLock() {
+        lockIfInactive = Preferences.get(
+                Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, "false").
+                    equals("true");
+        msToWaitBeforeClosingDB = Preferences.getInt(
+                Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME, 5)
+                    * 60 * 1000;
+
+        if (lockIfInactive) {
+            LOG.debug("Enabling autoclose when focus lost");
+            if (mainWindow.getWindowFocusListeners().length == 0) {
+                mainWindow.addWindowFocusListener(new AutoLockDatabaseListener());
+            }
+        } else {
+            LOG.debug("Disabling autoclose when focus lost");
+            for (int i=0; i<mainWindow.getWindowFocusListeners().length; i++) {
+                mainWindow.removeWindowFocusListener(
+                        mainWindow.getWindowFocusListeners()[i]);
+            }
+        }
+    }
+
     public ArrayList getAccountNames() {
         ArrayList dbAccounts = database.getAccounts();
         ArrayList accountNames = new ArrayList();
@@ -571,7 +614,9 @@ public class DatabaseActions {
         oppDialog.pack();
         oppDialog.setLocationRelativeTo(mainWindow);
         oppDialog.show();
-        
+
+        configureAutoLock();
+
         if (oppDialog.hasLanguageChanged()) {
             mainWindow.initialiseControlsWithDefaultLanguage();
             if (database != null) {
@@ -833,22 +878,6 @@ public class DatabaseActions {
 
     }
 
-    public void closeDatabase() {
-        if (database != null)
-        {
-            doCloseDatabaseActions();
-            database = null;
-        }
-    }
-
-    public String getDatabaseFile()
-    {
-        if (database == null)
-            return "";
-
-        return database.getDatabaseFile().getAbsolutePath();
-    }
-
 
     public void exitApplication() {
         System.exit(0);
@@ -1040,5 +1069,61 @@ public class DatabaseActions {
         mainWindow.getStatusBar().setText(status);
         mainWindow.getStatusBar().setForeground(color);
     }
-    
+
+
+    private class AutoLockDatabaseListener implements WindowFocusListener {
+
+        private String databaseClosedOnTimer;
+        private Timer closeDBTimer;
+
+        public synchronized void windowGainedFocus(WindowEvent we) {
+            if (closeDBTimer != null) {
+                LOG.debug("Stopping closeDBTimer");
+                closeDBTimer.removeActionListener(
+                        closeDBTimer.getActionListeners()[0]);
+                closeDBTimer = null;
+            }
+            if (databaseClosedOnTimer != null) {
+                try {
+                    openDatabase(databaseClosedOnTimer);
+                } catch (Exception e) {
+                    errorHandler(e);
+                }
+                databaseClosedOnTimer = null;
+            }
+        }
+
+        /**
+         * If the app loses focus, there's an open db and there's no closeDBTimer
+         * already registered then start a timer to close the database after the
+         * configured number of minutes.
+         */
+        public synchronized void windowLostFocus(WindowEvent e) {
+            // If the window receiving focus is within this application then the
+            // app isn't not losing focus so no further action is required.
+            if (e.getOppositeWindow() != null &&
+                    e.getOppositeWindow().getOwner() == mainWindow) {
+                LOG.debug("Focus switched to another window within this app");
+                return;
+            }
+
+            if (database != null && closeDBTimer == null){
+                closeDBTimer = new Timer(msToWaitBeforeClosingDB , null);
+                closeDBTimer.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        LOG.debug("Closing database due to inactivity");
+                        databaseClosedOnTimer =
+                                database.getDatabaseFile().getAbsolutePath();
+                        doCloseDatabaseActions();
+                        database = null;
+                        closeDBTimer = null;
+                    }
+                });
+                closeDBTimer.setRepeats(false);
+                closeDBTimer.start();
+                LOG.debug("Started lost focus timer, " + msToWaitBeforeClosingDB);
+            }
+        }
+
+    }
 }

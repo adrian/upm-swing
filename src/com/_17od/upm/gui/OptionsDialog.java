@@ -52,6 +52,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
+import com._17od.upm.util.Util;
 
 
 public class OptionsDialog extends EscapeDialog {
@@ -214,7 +215,10 @@ public class OptionsDialog extends EscapeDialog {
         });
 
         // The "Database auto lock" field row
-        databaseAutoLockTime = new JTextField(Preferences.get(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME), 5);
+        databaseAutoLockTime = new JTextField(
+                Preferences.get(
+                        Preferences.ApplicationOptions.
+                        DATABASE_AUTO_LOCK_TIME), 5);
         c.gridx = 1;
         c.gridy = 5;
         c.anchor = GridBagConstraints.LINE_START;
@@ -428,6 +432,16 @@ public class OptionsDialog extends EscapeDialog {
 
     private void okButtonAction() {
         try {
+            if (databaseAutoLockTime.getText() == null ||
+                    databaseAutoLockTime.getText().trim().equals("") ||
+                    !Util.isNumeric(databaseAutoLockTime.getText())) {
+                JOptionPane.showMessageDialog(OptionsDialog.this,
+                        Translator.translate("invalidValueForDatabaseAutoLockTime"),
+                        Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
+                databaseAutoLockTime.requestFocusInWindow();
+                return;
+            }
+
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, String.valueOf(hideAccountPasswordCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, String.valueOf(databaseAutoLockCheckbox.isSelected()));

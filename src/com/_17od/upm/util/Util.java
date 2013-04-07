@@ -81,4 +81,13 @@ public class Util {
                         new ByteArrayOutputStream()).getEncoding());
     }
 
+    public static boolean isNumeric(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch(NumberFormatException e) {
+            return false;
+        }
+        return true;
+      }
+
 }

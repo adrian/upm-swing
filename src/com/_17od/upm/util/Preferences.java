@@ -73,6 +73,17 @@ public class Preferences {
         return retVal;
     }
 
+    public static int getInt(String name, int defaultValue) {
+        String cfgVal = preferences.getProperty(name);
+        int retVal = defaultValue;
+        if (cfgVal != null && Util.isNumeric(cfgVal)) {
+            retVal = Integer.parseInt(cfgVal);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Returning the property, name=" + name + ", value=" + retVal);
+        }
+        return retVal;
+    }
 
     public static String get(String name) {
         return get(name, null);
