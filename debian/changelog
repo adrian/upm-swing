@@ -1,3 +1,10 @@
+upm (1.11-1~ppa1) quantal; urgency=low
+
+  * Added auto locking of database after timeout option
+  * Use platform-specific config file locations for OS X and Linux
+
+ -- Adrian Smith <adrian@17od.com>  Fri, 12 Apr 2013 21:00:17 +0100
+
 upm (1.10-1~ppa5) quantal; urgency=low
 
   * Added auto locking of database after timeout option

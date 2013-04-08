@@ -1,9 +1,9 @@
 Remove MAC OS X code
-Index: upm-src-1.10/src/com/_17od/upm/gui/MainWindow.java
+Index: upm-src-1.11/src/com/_17od/upm/gui/MainWindow.java
 ===================================================================
---- upm-src-1.10.orig/src/com/_17od/upm/gui/MainWindow.java	2013-01-26 21:57:37.000000000 +0000
-+++ upm-src-1.10/src/com/_17od/upm/gui/MainWindow.java	2013-03-27 19:54:07.000000000 +0000
-@@ -661,18 +661,14 @@
+--- upm-src-1.11.orig/src/com/_17od/upm/gui/MainWindow.java	2013-04-12 20:34:54.000000000 +0100
++++ upm-src-1.11/src/com/_17od/upm/gui/MainWindow.java	2013-04-12 21:05:25.204499259 +0100
+@@ -644,18 +644,14 @@
          aboutMenuItem.addActionListener(this);
          aboutMenuItem.setActionCommand(ABOUT_TXT);
  
@@ -16,21 +16,20 @@ Index: upm-src-1.10/src/com/_17od/upm/gui/MainWindow.java
 -            helpMenu = new JMenu(Translator.translate("helpMenu"));
 -            helpMenu.setMnemonic(KeyEvent.VK_H);
 -            menuBar.add(helpMenu);
--    
--            helpMenu.add(aboutMenuItem);
--        }
 +        databaseMenu.addSeparator();
 +        databaseMenu.add(exitMenuItem);
 +
 +        helpMenu = new JMenu(Translator.translate("helpMenu"));
 +        helpMenu.setMnemonic(KeyEvent.VK_H);
 +        menuBar.add(helpMenu);
-+
+     
+-            helpMenu.add(aboutMenuItem);
+-        }
 +        helpMenu.add(aboutMenuItem);
  
          return menuBar;
          
-@@ -966,11 +962,7 @@
+@@ -888,11 +884,7 @@
          exportMenuItem.setText(Translator.translate(EXPORT_TXT));
          importMenuItem.setText(Translator.translate(IMPORT_TXT));
  
@@ -43,10 +42,10 @@ Index: upm-src-1.10/src/com/_17od/upm/gui/MainWindow.java
  
          addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
          editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
-Index: upm-src-1.10/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java
+Index: upm-src-1.11/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java
 ===================================================================
---- upm-src-1.10.orig/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java	2013-01-26 21:57:37.000000000 +0000
-+++ upm-src-1.10/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java	2013-03-27 19:54:07.000000000 +0000
+--- upm-src-1.11.orig/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java	2013-04-12 20:34:54.000000000 +0100
++++ upm-src-1.11/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java	2013-04-12 21:05:39.748499855 +0100
 @@ -29,18 +29,7 @@
  
  
@@ -67,11 +66,11 @@ Index: upm-src-1.10/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java
      }
      
      
-Index: upm-src-1.10/src/com/_17od/upm/util/Preferences.java
+Index: upm-src-1.11/src/com/_17od/upm/util/Preferences.java
 ===================================================================
---- upm-src-1.10.orig/src/com/_17od/upm/util/Preferences.java	2013-01-26 21:57:37.000000000 +0000
-+++ upm-src-1.10/src/com/_17od/upm/util/Preferences.java	2013-03-27 19:54:07.000000000 +0000
-@@ -103,9 +103,6 @@
+--- upm-src-1.11.orig/src/com/_17od/upm/util/Preferences.java	2013-04-12 20:34:54.000000000 +0100
++++ upm-src-1.11/src/com/_17od/upm/util/Preferences.java	2013-04-12 21:06:38.780502282 +0100
+@@ -114,9 +114,6 @@
  				}
  				System.setProperty(PREF_FILE_SYS_PROP, configBase + System.getProperty("file.separator") + "upm.properties");
  			}
@@ -81,14 +80,14 @@ Index: upm-src-1.10/src/com/_17od/upm/util/Preferences.java
  		}
  
          propertiesFile = System.getProperty(PREF_FILE_SYS_PROP);
-Index: upm-src-1.10/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java
+Index: upm-src-1.11/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java
 ===================================================================
---- upm-src-1.10.orig/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java	2013-03-27 20:02:47.592965977 +0000
+--- upm-src-1.11.orig/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java	2013-04-12 20:34:54.000000000 +0100
 +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
 @@ -1,54 +0,0 @@
 -/*
 - * Universal Password Manager
-- * Copyright (C) 2005-2011 Adrian Smith
+- * Copyright (C) 2005-2013 Adrian Smith
 - *
 - * This file is part of Universal Password Manager.
 - *   
