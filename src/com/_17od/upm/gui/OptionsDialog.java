@@ -69,10 +69,12 @@ public class OptionsDialog extends EscapeDialog {
     private JCheckBox hidePasswordCheckbox;
     private JCheckBox databaseAutoLockCheckbox;
     private JTextField databaseAutoLockTime;
+    private JTextField trustedHostname;
     private JLabel proxyLabel;
     private JLabel proxyPortLabel;
     private JLabel proxyUsernameLabel;
     private JLabel proxyPasswordLabel;
+    private JLabel trustedHostnameLabel;
     private JComboBox localeComboBox;
     private boolean okClicked = false;
     private JFrame parentFrame;
@@ -232,6 +234,39 @@ public class OptionsDialog extends EscapeDialog {
 
         // Some spacing
         emptyBorderPanel.add(Box.createVerticalGlue());
+
+        // ******************
+        // *** The HTTPS Section
+        // ******************
+        // Create a pane with an title etched border
+        Border httpsEtchedTitleBorder = BorderFactory.createTitledBorder(etchedBorder, " HTTPS ");
+        final JPanel httpsPanel = new JPanel(new GridBagLayout());
+        httpsPanel.setBorder(httpsEtchedTitleBorder);
+        emptyBorderPanel.add(httpsPanel);
+
+        // The "Trusted Hostname" label row
+        trustedHostnameLabel = new JLabel(Translator.translate("trustedHostname"));
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 3, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        httpsPanel.add(trustedHostnameLabel, c);
+
+        // The "Trusted Hostname" input box row
+        trustedHostname = new JTextField(Preferences.get(Preferences.ApplicationOptions.HTTPS_TRUSTED_HOSTNAME), 20);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 5);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        httpsPanel.add(trustedHostname, c);
 
         // ******************
         // *** The Proxy Section
@@ -446,6 +481,7 @@ public class OptionsDialog extends EscapeDialog {
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, String.valueOf(hideAccountPasswordCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, String.valueOf(databaseAutoLockCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME, databaseAutoLockTime.getText());
+            Preferences.set(Preferences.ApplicationOptions.HTTPS_TRUSTED_HOSTNAME, trustedHostname.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_HOST, httpProxyHost.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PORT, httpProxyPort.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME, httpProxyUsername.getText());

@@ -39,6 +39,8 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 
 import com._17od.upm.util.Preferences;
 
@@ -51,6 +53,15 @@ public class HTTPTransport extends Transport {
     public HTTPTransport() {
 
         client = new HttpClient();
+
+        String trustedHostname =
+                Preferences.get(Preferences.ApplicationOptions.HTTPS_TRUSTED_HOSTNAME);
+        if (trustedHostname !=  null) {
+            Protocol httpsProtocol = new Protocol("https",
+                    (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(trustedHostname),
+                    443);
+            Protocol.registerProtocol("https", httpsProtocol);
+        }
 
         //Get the proxy settings
         Boolean proxyEnabled = new Boolean(Preferences.get(Preferences.ApplicationOptions.HTTP_PROXY_ENABLED));
