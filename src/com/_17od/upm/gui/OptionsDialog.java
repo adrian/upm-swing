@@ -69,12 +69,11 @@ public class OptionsDialog extends EscapeDialog {
     private JCheckBox hidePasswordCheckbox;
     private JCheckBox databaseAutoLockCheckbox;
     private JTextField databaseAutoLockTime;
-    private JTextField trustedHostname;
+    private JCheckBox acceptSelfSignedCertsCheckbox;
     private JLabel proxyLabel;
     private JLabel proxyPortLabel;
     private JLabel proxyUsernameLabel;
     private JLabel proxyPasswordLabel;
-    private JLabel trustedHostnameLabel;
     private JComboBox localeComboBox;
     private boolean okClicked = false;
     private JFrame parentFrame;
@@ -244,29 +243,21 @@ public class OptionsDialog extends EscapeDialog {
         httpsPanel.setBorder(httpsEtchedTitleBorder);
         emptyBorderPanel.add(httpsPanel);
 
-        // The "Trusted Hostname" label row
-        trustedHostnameLabel = new JLabel(Translator.translate("trustedHostname"));
+        // The "Accept Self Sigend Certificates" checkbox row
+        Boolean acceptSelfSignedCerts = new Boolean(
+                Preferences.get(Preferences.ApplicationOptions.HTTPS_ACCEPT_SELFSIGNED_CERTS, "false"));
+        acceptSelfSignedCertsCheckbox =
+                new JCheckBox(Translator.translate("acceptSelfSignedCerts"),
+                        acceptSelfSignedCerts.booleanValue());
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 5, 3, 0);
-        c.weightx = 1;
-        c.weighty = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        httpsPanel.add(trustedHostnameLabel, c);
-
-        // The "Trusted Hostname" input box row
-        trustedHostname = new JTextField(Preferences.get(Preferences.ApplicationOptions.HTTPS_TRUSTED_HOSTNAME), 20);
-        c.gridx = 0;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(0, 5, 5, 5);
+        c.insets = new Insets(0, 2, 5, 0);
         c.weightx = 1;
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        httpsPanel.add(trustedHostname, c);
+        httpsPanel.add(acceptSelfSignedCertsCheckbox, c);
 
         // ******************
         // *** The Proxy Section
@@ -481,7 +472,7 @@ public class OptionsDialog extends EscapeDialog {
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, String.valueOf(hideAccountPasswordCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, String.valueOf(databaseAutoLockCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME, databaseAutoLockTime.getText());
-            Preferences.set(Preferences.ApplicationOptions.HTTPS_TRUSTED_HOSTNAME, trustedHostname.getText());
+            Preferences.set(Preferences.ApplicationOptions.HTTPS_ACCEPT_SELFSIGNED_CERTS, String.valueOf(acceptSelfSignedCertsCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_HOST, httpProxyHost.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PORT, httpProxyPort.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_USERNAME, httpProxyUsername.getText());

@@ -54,11 +54,14 @@ public class HTTPTransport extends Transport {
 
         client = new HttpClient();
 
-        String trustedHostname =
-                Preferences.get(Preferences.ApplicationOptions.HTTPS_TRUSTED_HOSTNAME);
-        if (trustedHostname !=  null) {
+        Boolean acceptSelfSignedCerts =
+                new Boolean(Preferences.get(
+                        Preferences.ApplicationOptions.HTTPS_ACCEPT_SELFSIGNED_CERTS));
+        if (acceptSelfSignedCerts.booleanValue()) {
+            // Create a Protcol handler which contains a HTTPS socket factory
+            // capable of accepting self signed and otherwise invalid certificates.
             Protocol httpsProtocol = new Protocol("https",
-                    (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(trustedHostname),
+                    (ProtocolSocketFactory) new EasySSLProtocolSocketFactory(),
                     443);
             Protocol.registerProtocol("https", httpsProtocol);
         }
