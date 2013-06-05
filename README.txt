@@ -72,6 +72,7 @@ Contents
      * Italian
      * Spanish
      * French
+     * Polish
    I'd really appreciate help from anyone willing to provide translations for
    UPM's messages. You can find the English resource bundle (upm.properties) in
    the upm.jar file that ships with UPM (Winzip, 7-Zip, or some other zip tool
@@ -84,6 +85,10 @@ Contents
 
 6. History
    -------
+   05-Jun-2013 : Version 1.12
+     - Added Polish translation
+     - Add an option to allow self signed certificates
+
    08-Apr-2013 : Version 1.11
      - Added auto locking of database after timeout option
      - Use platform-specific config file locations for OS X and Linux
