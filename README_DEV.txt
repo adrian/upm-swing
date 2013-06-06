@@ -33,6 +33,10 @@ Required packages,
 
 7. Update the changelog (using dch)
 
+    $ export DEBFULLNAME="Adrian Smith"
+    $ export DEBEMAIL="adrian@17od.com"
+    $ dch -v <version>  # e.g. 1.12-1~ppa1
+   
 8. Build the source tarball and sign,
 
     $ debuild -S -sa -k<key ID>
