@@ -204,7 +204,8 @@ public class AccountDialog extends EscapeDialog {
             public void actionPerformed(ActionEvent actionevent) {
                 SecureRandom random = new SecureRandom();
                 StringBuffer passwordBuffer = new StringBuffer();
-                for(int i=0; i<8; i++) {
+                int pwLength = Preferences.getInt(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, 8);
+                for(int i=0; i< pwLength; i++) {
                     passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
                 }
                 password.setText(passwordBuffer.toString());
