@@ -494,6 +494,14 @@ public class OptionsDialog extends EscapeDialog {
                         Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
                 databaseAutoLockTime.requestFocusInWindow();
                 return;
+            } else if (accountPasswordLength.getText() == null ||
+            		accountPasswordLength.getText().trim().equals("") ||
+                    !Util.isNumeric(accountPasswordLength.getText())) {
+                JOptionPane.showMessageDialog(OptionsDialog.this,
+                        Translator.translate("invalidValueForAccountPasswordLength"),
+                        Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
+                databaseAutoLockTime.requestFocusInWindow();
+                return;
             }
 
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
