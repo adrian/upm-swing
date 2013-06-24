@@ -62,6 +62,8 @@ public class OptionsDialog extends EscapeDialog {
     private JTextField dbToLoadOnStartup;
     private JCheckBox enableProxyCheckbox;
     private JCheckBox hideAccountPasswordCheckbox;
+    private JLabel accountPasswordLengthLabel;
+    private JTextField accountPasswordLength;
     private JTextField httpProxyHost;
     private JTextField httpProxyPort;
     private JTextField httpProxyUsername;
@@ -230,6 +232,32 @@ public class OptionsDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(databaseAutoLockTime, c);
         databaseAutoLockTime.setEnabled(databaseAutoLockCheckbox.isSelected());
+
+        // The "Generated password length" row
+        accountPasswordLengthLabel = new JLabel(Translator.translate("generatedPasswodLength"));
+        c.gridx = 0;
+        c.gridy = 6;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 2, 5, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        mainPanel.add(accountPasswordLengthLabel, c);
+
+        accountPasswordLength = new JTextField(
+                Preferences.get(
+                        Preferences.ApplicationOptions.
+                        ACCOUNT_PASSWORD_LENGTH, "8"), 5);
+        c.gridx = 1;
+        c.gridy = 6;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 5, 5, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(accountPasswordLength, c);
 
         // Some spacing
         emptyBorderPanel.add(Box.createVerticalGlue());
@@ -466,12 +494,21 @@ public class OptionsDialog extends EscapeDialog {
                         Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
                 databaseAutoLockTime.requestFocusInWindow();
                 return;
+            } else if (accountPasswordLength.getText() == null ||
+            		accountPasswordLength.getText().trim().equals("") ||
+                    !Util.isNumeric(accountPasswordLength.getText())) {
+                JOptionPane.showMessageDialog(OptionsDialog.this,
+                        Translator.translate("invalidValueForAccountPasswordLength"),
+                        Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
+                databaseAutoLockTime.requestFocusInWindow();
+                return;
             }
 
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, String.valueOf(hideAccountPasswordCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, String.valueOf(databaseAutoLockCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME, databaseAutoLockTime.getText());
+            Preferences.set(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, accountPasswordLength.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTPS_ACCEPT_SELFSIGNED_CERTS, String.valueOf(acceptSelfSignedCertsCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_HOST, httpProxyHost.getText());
             Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PORT, httpProxyPort.getText());
