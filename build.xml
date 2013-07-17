@@ -233,6 +233,23 @@
             <batchtest unless="test">
                 <fileset dir="${test.build}">
                     <include name="**\*.class"/>
+                    <exclude name="**\TestHTTPTransport.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+
+    <target name="int-test" depends="compile" description="Run integration tests">
+        <junit haltonerror="on" haltonfailure="on" printsummary="on" showoutput="on" fork="yes">
+            <classpath location="${build}"/>
+            <classpath refid="project.class.path"/>
+            <jvmarg value="-Djunit.properties=${basedir}/build.properties"/>
+            <jvmarg value="-Dupm.properties=${basedir}/upm.properties"/>
+            <formatter type="plain"/>
+            <batchtest>
+                <fileset dir="${test.build}">
+                    <include name="**\TestHTTPTransport.class"/>
                 </fileset>
             </batchtest>
         </junit>
