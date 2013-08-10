@@ -486,16 +486,20 @@ public class OptionsDialog extends EscapeDialog {
 
     private void okButtonAction() {
         try {
-            if (databaseAutoLockTime.getText() == null ||
-                    databaseAutoLockTime.getText().trim().equals("") ||
-                    !Util.isNumeric(databaseAutoLockTime.getText())) {
-                JOptionPane.showMessageDialog(OptionsDialog.this,
-                        Translator.translate("invalidValueForDatabaseAutoLockTime"),
-                        Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
-                databaseAutoLockTime.requestFocusInWindow();
-                return;
-            } else if (accountPasswordLength.getText() == null ||
-            		accountPasswordLength.getText().trim().equals("") ||
+            if (databaseAutoLockCheckbox.isSelected()) {
+                if (databaseAutoLockTime.getText() == null ||
+                        databaseAutoLockTime.getText().trim().equals("") ||
+                        !Util.isNumeric(databaseAutoLockTime.getText())) {
+                    JOptionPane.showMessageDialog(OptionsDialog.this,
+                            Translator.translate("invalidValueForDatabaseAutoLockTime"),
+                            Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
+                    databaseAutoLockTime.requestFocusInWindow();
+                    return;
+                }
+            }
+
+            if (accountPasswordLength.getText() == null ||
+                    accountPasswordLength.getText().trim().equals("") ||
                     !Util.isNumeric(accountPasswordLength.getText())) {
                 JOptionPane.showMessageDialog(OptionsDialog.this,
                         Translator.translate("invalidValueForAccountPasswordLength"),
