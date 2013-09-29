@@ -29,7 +29,7 @@ public class Translator {
 
     public static Locale[] SUPPORTED_LOCALES = {
         new Locale("cs"), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN,
-        Locale.ITALIAN, new Locale("es"), new Locale("pl")};
+        Locale.ITALIAN, new Locale("es"), new Locale("pl"), new Locale("nl")};
 
     private static ResourceBundle resourceBundle;
     private static MessageFormat formatter;
