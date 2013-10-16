@@ -68,7 +68,7 @@ public class TestHTTPTransport extends TestCase {
 
     public void tearDown() throws Exception {
         try {
-            transport.delete(httpURL, fileToUpload.getName(), httpUsername, httpPassword);
+            transport.delete(httpURL, httpUsername, httpPassword);
         } catch (Exception e) {
             //Don't worry about errors here
         }
@@ -104,7 +104,7 @@ public class TestHTTPTransport extends TestCase {
         transport.put(httpURL, fileToUpload, httpUsername, httpPassword);
 
         //Get the file back
-        byte[] retrievedFileContents = transport.get(httpURL + fileToUpload.getName(), httpUsername, httpPassword);
+        byte [] retrievedFileContents = transport.get(httpURL, httpUsername, httpPassword);
 
         //Compare before and after file
         if (!Arrays.equals(fileContents, retrievedFileContents)) {
@@ -119,11 +119,11 @@ public class TestHTTPTransport extends TestCase {
         transport.put(httpURL, fileToUpload, httpUsername, httpPassword);
 
         //Delete the file
-        transport.delete(httpURL, fileToUpload.getName(), httpUsername, httpPassword);
+        transport.delete(httpURL, httpUsername, httpPassword);
 
         try {
             //Now try to get the file back
-            transport.get(httpURL + fileToUpload.getName(), httpUsername, httpPassword);
+            transport.get(httpURL, httpUsername, httpPassword);
 
             //Should have got an error here
             fail("Should have got an error when retrieving a non-existant file");

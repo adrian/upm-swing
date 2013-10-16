@@ -207,7 +207,7 @@ public class DatabasePropertiesDialog extends EscapeDialog {
                                 String password = database.getAccount(authEntry).getPassword();
                                 transport.put(remoteLocation, database.getDatabaseFile(), userId, password);
                             } else {
-                                transport.put(remoteLocation, database.getDatabaseFile());
+                                transport.put(remoteLocation, database.getDatabaseFile(), null, null);
                             }
                             canCloseWindow = true;
                         } catch (TransportException e ){
