@@ -23,6 +23,7 @@ package com._17od.upm.transport;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,6 +37,8 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
@@ -91,33 +94,24 @@ public class HTTPTransport extends Transport {
     }
 
 
-    public void put(String targetLocation, File file) throws TransportException {
-        put(targetLocation, file, null, null);
-    }
     
-    
-    public void put(String targetLocation, File file, String username, String password) throws TransportException {
+    public void put(String url, File file, String username, String password) throws TransportException {
 
-        targetLocation = addTrailingSlash(targetLocation) + "upload.php";
-        
-        PostMethod post = new PostMethod(targetLocation);
+        PutMethod post = new PutMethod(url);
 
         //This part is wrapped in a try/finally so that we can ensure
         //the connection to the HTTP server is always closed cleanly 
         try {
             
-            Part[] parts = {
-                    new FilePart("userfile", file)
-            };
-            post.setRequestEntity(
-                    new MultipartRequestEntity(parts, post.getParams())
+            post.setRequestBody(
+                    new FileInputStream(file)
             );
 
             //Set the HTTP authentication details
             if (username != null) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
-                URL url = new URL(targetLocation);
-                AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
+                URL _url = new URL(url);
+                AuthScope authScope = new AuthScope(_url.getHost(), _url.getPort());
                 client.getState().setCredentials(authScope, creds);
                 client.getParams().setAuthenticationPreemptive(true);
             }
@@ -125,18 +119,8 @@ public class HTTPTransport extends Transport {
             // This line makes the HTTP call
             int status = client.executeMethod(post);
             
-            // I've noticed on Windows (at least) that PHP seems to fail when moving files on the first attempt
-            // The second attempt works so lets just do that
-            if (status == HttpStatus.SC_OK && post.getResponseBodyAsString().equals("FILE_WASNT_MOVED")) {
-                status = client.executeMethod(post);                
-            }
-
-            if (status != HttpStatus.SC_OK) {
-                throw new TransportException("There's been some kind of problem uploading a file to the HTTP server.\n\nThe HTTP error message is [" + HttpStatus.getStatusText(status) + "]");
-            }
-            
-            if (!post.getResponseBodyAsString().equals("OK") ) {
-                throw new TransportException("There's been some kind of problem uploading a file to the HTTP server.\n\nThe error message is [" + post.getResponseBodyAsString() + "]");
+            if ((status != HttpStatus.SC_OK) && (status != HttpStatus.SC_NO_CONTENT)) {
+                throw new TransportException("There's been some kind of problem uploading a file to the HTTP server.\n\nThe HTTP error message is " + status +" [" + HttpStatus.getStatusText(status) + "]");
             }
             
         } catch (FileNotFoundException e) {
@@ -154,17 +138,6 @@ public class HTTPTransport extends Transport {
     }
 
 
-    public byte[] get(String url, String fileName) throws TransportException {
-        return get(url, fileName, null, null);
-    }
-    
-    
-    public byte[] get(String url, String fileName, String username, String password) throws TransportException {
-        url = addTrailingSlash(url);
-        return get(url + fileName, username, password);
-    }
-    
-    
     public byte[] get(String url, String username, String password) throws TransportException {
 
         byte[] retVal = null;
@@ -192,6 +165,7 @@ public class HTTPTransport extends Transport {
 
             retVal = method.getResponseBody();
 
+
         } catch (MalformedURLException e) {
             throw new TransportException(e);
         } catch (HttpException e) {
@@ -201,48 +175,14 @@ public class HTTPTransport extends Transport {
         } finally {
             method.releaseConnection();
         }
-        
+
         return retVal;
 
     }
 
-    
-    public File getRemoteFile(String remoteLocation, String fileName) throws TransportException {
-        return getRemoteFile(remoteLocation, fileName, null, null);
-    }
+    public void delete(String url, String username, String password) throws TransportException {
 
-    
-    public File getRemoteFile(String remoteLocation) throws TransportException {
-        return getRemoteFile(remoteLocation, null, null);
-    }
-
-    
-    public File getRemoteFile(String remoteLocation, String fileName, String httpUsername, String httpPassword) throws TransportException {
-        remoteLocation = addTrailingSlash(remoteLocation);
-        return getRemoteFile(remoteLocation + fileName, httpUsername, httpPassword);
-    }
-
-
-    public File getRemoteFile(String remoteLocation, String httpUsername, String httpPassword) throws TransportException {
-        try {
-            byte[] remoteFile = get(remoteLocation, httpUsername, httpPassword);
-            File downloadedFile = File.createTempFile("upm", null);
-            FileOutputStream fos = new FileOutputStream(downloadedFile);
-            fos.write(remoteFile);
-            fos.close();
-            return downloadedFile;
-        } catch (IOException e) {
-            throw new TransportException(e);
-        }
-    }
-
-    
-    public void delete(String targetLocation, String name, String username, String password) throws TransportException {
-
-        targetLocation = addTrailingSlash(targetLocation) + "deletefile.php";
-
-        PostMethod post = new PostMethod(targetLocation);
-        post.addParameter("fileToDelete", name);
+        DeleteMethod post = new DeleteMethod(url);
 
         //This part is wrapped in a try/finally so that we can ensure
         //the connection to the HTTP server is always closed cleanly 
@@ -251,8 +191,8 @@ public class HTTPTransport extends Transport {
             //Set the authentication details
             if (username != null) {
                 Credentials creds = new UsernamePasswordCredentials(new String(username), new String(password));
-                URL url = new URL(targetLocation);
-                AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
+                URL _url = new URL(url);
+                AuthScope authScope = new AuthScope(_url.getHost(), _url.getPort());
                 client.getState().setCredentials(authScope, creds);
                 client.getParams().setAuthenticationPreemptive(true);
             }
@@ -261,11 +201,6 @@ public class HTTPTransport extends Transport {
             if (status != HttpStatus.SC_OK) {
                 throw new TransportException("There's been some kind of problem deleting a file on the HTTP server.\n\nThe HTTP error message is [" + HttpStatus.getStatusText(status) + "]");
             }
-            
-            if (!post.getResponseBodyAsString().equals("OK") ) {
-                throw new TransportException("There's been some kind of problem deleting a file to the HTTP server.\n\nThe error message is [" + post.getResponseBodyAsString() + "]");
-            }
-
         } catch (MalformedURLException e) {
             throw new TransportException(e);
         } catch (HttpException e) {
@@ -276,11 +211,6 @@ public class HTTPTransport extends Transport {
             post.releaseConnection();
         }
 
-    }
-
-
-    public void delete(String targetLocation, String name) throws TransportException {
-        delete(targetLocation, name, null, null);
     }
 
     

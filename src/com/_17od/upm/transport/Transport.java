@@ -22,6 +22,9 @@ package com._17od.upm.transport;
 
 import java.io.File;
 import java.net.URL;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 
 /**
@@ -30,27 +33,24 @@ import java.net.URL;
  */
 public abstract class Transport {
 
-    public abstract void put(String targetLocation, File file, String username, String password) throws TransportException;
-    
-    public abstract void put(String targetLocation, File file) throws TransportException;
+    public abstract void put(String url, File file, String username, String password) throws TransportException;
 
-    public abstract byte[] get(String url, String fileName) throws TransportException;
-
-    public abstract byte[] get(String url, String fileName, String username, String password) throws TransportException;
+    public abstract void delete(String url, String username, String password) throws TransportException;
 
     public abstract byte[] get(String url, String username, String password) throws TransportException;
-
-    public abstract void delete(String targetLocation, String name, String username, String password) throws TransportException;
-
-    public abstract void delete(String targetLocation, String name) throws TransportException;
-
-    public abstract File getRemoteFile(String remoteLocation, String fileName) throws TransportException;
-
-    public abstract File getRemoteFile(String remoteLocation) throws TransportException;
-
-    public abstract File getRemoteFile(String remoteLocation, String fileName, String username, String password) throws TransportException;
     
-    public abstract File getRemoteFile(String remoteLocation, String username, String password) throws TransportException;
+	public File download(String url, String username, String password) throws TransportException {
+        try {
+            byte[] remoteFile = get(url, username, password);
+            File downloadedFile = File.createTempFile("upm", null);
+            FileOutputStream fos = new FileOutputStream(downloadedFile);
+            fos.write(remoteFile);
+            fos.close();
+            return downloadedFile;
+        } catch (IOException e) {
+            throw new TransportException(e);
+        }
+	}
 
     public static Transport getTransportForURL(URL url) {
         Transport retVal = null;

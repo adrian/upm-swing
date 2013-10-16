@@ -682,7 +682,7 @@ public class DatabaseActions {
                 
                 // Download the database
                 Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
-                File downloadedDatabaseFile = transport.getRemoteFile(remoteLocation, username, password);
+                File downloadedDatabaseFile = transport.download(remoteLocation, username, password);
                 
                 // Delete the file is it already exists
                 if (saveDatabaseTo.exists()) {
@@ -814,7 +814,7 @@ public class DatabaseActions {
     
             // Download the database that's already at the remote location
             Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
-            File remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
+            File remoteDatabaseFile = transport.download(remoteLocation, httpUsername, httpPassword);
             
             // Attempt to decrypt the database using the password the user entered
             PasswordDatabase remoteDatabase = null;
@@ -848,7 +848,7 @@ public class DatabaseActions {
                If the local database revision = remote database version => do nothing */
             if (successfullyDecryptedDb) {
                 if (database.getRevision() > remoteDatabase.getRevision()) {
-                    transport.delete(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
+                    //transport.delete(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
                     transport.put(remoteLocation, database.getDatabaseFile(), httpUsername, httpPassword);
                     syncSuccessful = true;
                 } else if (database.getRevision() < remoteDatabase.getRevision()) {
