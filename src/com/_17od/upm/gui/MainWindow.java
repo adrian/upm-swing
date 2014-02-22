@@ -166,13 +166,25 @@ public class MainWindow extends JFrame implements ActionListener {
 
         try {
             //Load the startup database if it's configured
+        	String url = Preferences.get(Preferences.ApplicationOptions.HTTP_DATABASE_URL);
+        	String username = Preferences.get(Preferences.ApplicationOptions.HTTP_DATABASE_USER);
+        	String password = Preferences.get(Preferences.ApplicationOptions.HTTP_DATABASE_PASSWORD);
             String db = Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP);
+ 
             if (db != null && !db.equals("")) {
-                File dbFile = new File(db);
-                if (!dbFile.exists()) {
-                    dbActions.errorHandler(new Exception(Translator.translate("dbDoesNotExist", db)));
-                } else {
-                    dbActions.openDatabase(db);
+            	
+            	if (url != null && !url.equals(""))
+            	{
+                    dbActions.openDatabaseFromURL(url, username, password, db);
+            	}
+            	else
+            	{
+                    File dbFile = new File(db);
+                    if (!dbFile.exists()) {
+                        dbActions.errorHandler(new Exception(Translator.translate("dbDoesNotExist", db)));
+                    } else {
+                        dbActions.openDatabase(db);
+                    }
                 }
             }
         } catch (Exception e) {

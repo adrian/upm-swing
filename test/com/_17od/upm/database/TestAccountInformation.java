@@ -72,7 +72,7 @@ public class TestAccountInformation extends TestCase {
     public void testAssembleCharsInFieldLength() throws IOException {
         ByteArrayInputStream is = new ByteArrayInputStream("bad input".getBytes());
         try {
-            AccountInformation ai = new AccountInformation(is);
+            new AccountInformation(is);
             fail("Should have got an ProblemReadingDatabaseFile exception now");
         } catch (ProblemReadingDatabaseFile e ) {
             //ok to get here
@@ -83,7 +83,7 @@ public class TestAccountInformation extends TestCase {
     public void testAssembleBadFieldLength() throws IOException, ProblemReadingDatabaseFile {
         ByteArrayInputStream is = new ByteArrayInputStream("0".getBytes());
         try {
-            AccountInformation ai = new AccountInformation(is);
+            new AccountInformation(is);
             fail("Should have got an EOFException exception now");
         } catch (EOFException e ) {
             //ok to get here
@@ -94,7 +94,7 @@ public class TestAccountInformation extends TestCase {
     public void testAssembleBadFieldContents() throws IOException, ProblemReadingDatabaseFile {
         ByteArrayInputStream is = new ByteArrayInputStream("0004".getBytes());
         try {
-            AccountInformation ai = new AccountInformation(is);
+            new AccountInformation(is);
             fail("Should have got an EOFException exception now");
         } catch (EOFException e ) {
             //ok to get here
