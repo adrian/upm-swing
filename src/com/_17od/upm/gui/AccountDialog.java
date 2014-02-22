@@ -398,7 +398,7 @@ public class AccountDialog extends EscapeDialog {
             if (!pAccount.getUserId().equals(userId.getText())) {
                 accountChanged = true;
             }
-            if (!pAccount.getPassword().equals(password.getText())) {
+            if (!pAccount.getPassword().equals(password.getPassword())) {
                 accountChanged = true;
             }
             if (!pAccount.getUrl().equals(url.getText())) {
@@ -410,7 +410,7 @@ public class AccountDialog extends EscapeDialog {
 
             pAccount.setAccountName(accountName.getText().trim());
             pAccount.setUserId(userId.getText());
-            pAccount.setPassword(password.getText());
+            pAccount.setPassword(new String(password.getPassword()));
             pAccount.setUrl(url.getText());
             pAccount.setNotes(notes.getText());
             

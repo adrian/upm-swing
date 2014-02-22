@@ -109,7 +109,7 @@ public class DatabaseActions {
                     masterPassword.requestFocusInWindow();
                 }
             });
-            dialog.show();
+            dialog.setVisible(true);
             
             if (pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
                 if (!Arrays.equals(masterPassword.getPassword(), confirmedMasterPassword.getPassword())) {
@@ -191,7 +191,7 @@ public class DatabaseActions {
                                 masterPassword.requestFocusInWindow();
                             }
                         });
-                        dialog.show();
+                        dialog.setVisible(true);
                         
                         buttonClicked = pane.getValue();
                         if (buttonClicked.equals(new Integer(JOptionPane.OK_OPTION))) {
@@ -351,7 +351,7 @@ public class DatabaseActions {
                 masterPassword.requestFocusInWindow();
             }
         });
-        dialog.show();
+        dialog.setVisible(true);
 
         if (pane.getValue() != null && pane.getValue().equals(new Integer(JOptionPane.OK_OPTION))) {
             password = masterPassword.getPassword();
@@ -448,7 +448,7 @@ public class DatabaseActions {
             AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, false, accountNames);
             accDialog.pack();
             accDialog.setLocationRelativeTo(mainWindow);
-            accDialog.show();
+            accDialog.setVisible(true);
     
             //If the user press OK then save the new account to the database
             if (accDialog.okClicked()) {
@@ -502,7 +502,7 @@ public class DatabaseActions {
         AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, true, accountNames);
         accDialog.pack();
         accDialog.setLocationRelativeTo(mainWindow);
-        accDialog.show();
+        accDialog.setVisible(true);
     }
 
 
@@ -521,7 +521,7 @@ public class DatabaseActions {
             AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, false, accountNames);
             accDialog.pack();
             accDialog.setLocationRelativeTo(mainWindow);
-            accDialog.show();
+            accDialog.setVisible(true);
 
             //If the ok button was clicked then save the account to the database and update the
             //listview with the new account name (if it's changed) 
@@ -613,7 +613,7 @@ public class DatabaseActions {
         OptionsDialog oppDialog = new OptionsDialog(mainWindow);
         oppDialog.pack();
         oppDialog.setLocationRelativeTo(mainWindow);
-        oppDialog.show();
+        oppDialog.setVisible(true);
 
         configureAutoLock();
 
@@ -630,7 +630,7 @@ public class DatabaseActions {
         AboutDialog aboutDialog = new AboutDialog(mainWindow);
         aboutDialog.pack();
         aboutDialog.setLocationRelativeTo(mainWindow);
-        aboutDialog.show();
+        aboutDialog.setVisible(true);
     }
 
     
@@ -645,7 +645,7 @@ public class DatabaseActions {
                 DatabasePropertiesDialog dbPropsDialog = new DatabasePropertiesDialog(mainWindow, getAccountNames(), database);
                 dbPropsDialog.pack();
                 dbPropsDialog.setLocationRelativeTo(mainWindow);
-                dbPropsDialog.show();
+                dbPropsDialog.setVisible(true);
                 if (dbPropsDialog.getDatabaseNeedsSaving()) {
                     saveDatabase();
                 }
@@ -661,14 +661,47 @@ public class DatabaseActions {
     }
 
 
+    public void openDatabaseFromURL(String remoteLocation,
+    		String username, String password, String saveDatabaseTo) throws TransportException, IOException, ProblemReadingDatabaseFile, CryptoException
+    {
+    	openDatabaseFromURL(remoteLocation, username, password, new File(saveDatabaseTo));
+    }
+
+    public void openDatabaseFromURL(String remoteLocation,
+    		String username, String password, File saveDatabaseTo) throws TransportException, IOException, ProblemReadingDatabaseFile, CryptoException
+    {
+        // Download the database
+        Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
+        File downloadedDatabaseFile = transport.getRemoteFile(remoteLocation, username, password);
+
+        // Delete the file is it already exists
+        if (saveDatabaseTo.exists()) {
+            saveDatabaseTo.delete();
+        }
+
+        // Save the downloaded database file to the new location
+        Util.copyFile(downloadedDatabaseFile, saveDatabaseTo);
+
+        // Persist the URL options
+        Preferences.set(Preferences.ApplicationOptions.HTTP_DATABASE_URL, remoteLocation);
+        Preferences.set(Preferences.ApplicationOptions.HTTP_DATABASE_USER, username);
+        Preferences.set(Preferences.ApplicationOptions.HTTP_DATABASE_PASSWORD, password);
+        Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, saveDatabaseTo.getAbsolutePath());
+        Preferences.save();
+
+        // Now open the downloaded database
+        openDatabase(saveDatabaseTo.getAbsolutePath());
+
+    }
+
     public void openDatabaseFromURL() throws TransportException, IOException, ProblemReadingDatabaseFile, CryptoException {
         
         // Ask the user for the remote database location
         OpenDatabaseFromURLDialog openDBDialog = new OpenDatabaseFromURLDialog(mainWindow);
         openDBDialog.pack();
         openDBDialog.setLocationRelativeTo(mainWindow);
-        openDBDialog.show();
-        
+        openDBDialog.setVisible(true);
+
         if (openDBDialog.getOkClicked()) {
             // Get the remote database options
             String remoteLocation = openDBDialog.getUrlTextField().getText();
@@ -677,24 +710,9 @@ public class DatabaseActions {
 
             // Ask the user for a location to save the database file to
             File saveDatabaseTo = getSaveAsFile(Translator.translate("saveDatabaseAs"));
-            
+
             if (saveDatabaseTo != null) {
-                
-                // Download the database
-                Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
-                File downloadedDatabaseFile = transport.getRemoteFile(remoteLocation, username, password);
-                
-                // Delete the file is it already exists
-                if (saveDatabaseTo.exists()) {
-                    saveDatabaseTo.delete();
-                }
-
-                // Save the downloaded database file to the new location
-                Util.copyFile(downloadedDatabaseFile, saveDatabaseTo);
-                
-                // Now open the downloaded database 
-                openDatabase(saveDatabaseTo.getAbsolutePath());
-
+                openDatabaseFromURL(remoteLocation, username, password, saveDatabaseTo);
             }
         }
         

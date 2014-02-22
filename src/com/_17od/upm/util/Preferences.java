@@ -53,6 +53,9 @@ public class Preferences {
         public static final String HTTP_PROXY_USERNAME="http.proxy.username";
         public static final String HTTP_PROXY_PASSWORD="http.proxy.password";
         public static final String HTTPS_ACCEPT_SELFSIGNED_CERTS="https.accept.selfsigned.certs";
+        public static final String HTTP_DATABASE_USER="http.database.user";
+        public static final String HTTP_DATABASE_PASSWORD="http.database.password";
+        public static final String HTTP_DATABASE_URL="http.database.url";
         
         public static final String LOCALE="locale";
     }
