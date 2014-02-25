@@ -85,6 +85,11 @@ Contents
 
 6. History
    -------
+   25-Feb-2014 : Version 1.13
+     - Added Dutch translation
+     - Bug Fix: don't validate db lock time unnecessarily
+     - Added configurable generated password length
+
    05-Jun-2013 : Version 1.12
      - Added Polish translation
      - Add an option to allow self signed certificates
