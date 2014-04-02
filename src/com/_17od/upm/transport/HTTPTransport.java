@@ -300,4 +300,10 @@ public class HTTPTransport extends Transport {
         return retVal;
     }
 
+
+    public byte[] get(String url) throws TransportException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
