@@ -76,6 +76,8 @@ public class DatabaseActions {
     private boolean lockIfInactive;
     private int msToWaitBeforeClosingDB;
 
+    private boolean runSetDBDirtyThread = true;
+
 
     public DatabaseActions(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
@@ -413,6 +415,9 @@ public class DatabaseActions {
                 JOptionPane.showMessageDialog(mainWindow, Translator.translate("fileDoesntExistWithName", databaseFile.getAbsolutePath()), Translator.translate("fileDoesntExist"), JOptionPane.ERROR_MESSAGE);
             }
         }
+
+        // Stop any "SetDBDirtyThread"s that are running
+        runSetDBDirtyThread = false;
     }
     
 
@@ -866,6 +871,34 @@ public class DatabaseActions {
 
                 if (syncSuccessful) {
                     setLocalDatabaseDirty(false);
+
+                    // Create a thread that will mark the database dirty after
+                    // a short period. Without this the database would remain
+                    // in a synced state until the user makes a change. The
+                    // longer we wait before syncing up the greater chance there
+                    // is that we'll miss changes made elsewhere and end up
+                    // with a conflicting version of the database.
+                    final long dirtyThreadStartTime = System.currentTimeMillis();
+                    runSetDBDirtyThread = true;
+                    Thread setDBDirtyThread = new Thread(new Runnable() {
+                        public void run() {
+                            while (runSetDBDirtyThread) {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e1) {}
+                                long currentTime = System.currentTimeMillis();
+                                if (currentTime - dirtyThreadStartTime > 5 * 60 * 1000) {
+                                    LOG.info("SetDBDirtyThread setting database dirty");
+                                    setLocalDatabaseDirty(true);
+                                    runSetDBDirtyThread = false;
+                                }
+                            }
+                        }
+                    });
+                    setDBDirtyThread.setName("SetDBDirty");
+                    setDBDirtyThread.start();
+                    LOG.info("Started SetDBDirtyThread thread");
+
                 }
             }
 
