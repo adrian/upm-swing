@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Adrian Smith
  *
  * This file is part of Universal Password Manager.
- *   
+ *
  * Universal Password Manager is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,6 +20,10 @@
  */
 package com._17od.upm.gui;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -37,7 +41,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import javax.crypto.IllegalBlockSizeException;
@@ -95,6 +98,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String VIEW_ACCOUNT_TXT = "viewAccountMenuItem";
     public static final String COPY_USERNAME_TXT = "copyUsernameMenuItem";
     public static final String COPY_PASSWORD_TXT = "copyPasswordMenuItem";
+    public static final String LAUNCH_URL_TXT = "launchURLMenuItem";
     public static final String OPTIONS_TXT = "optionsMenuItem";
     public static final String ABOUT_TXT = "aboutMenuItem";
     public static final String RESET_SEARCH_TXT = "resetSearchMenuItem";
@@ -108,12 +112,13 @@ public class MainWindow extends JFrame implements ActionListener {
     private JButton deleteAccountButton;
     private JButton copyUsernameButton;
     private JButton copyPasswordButton;
+    private JButton launchURLButton;
     private JButton optionsButton;
     private JButton syncDatabaseButton;
     private JTextField searchField;
     private JButton resetSearchButton;
     private JLabel searchIcon;
-    
+
     private JMenu databaseMenu;
     private JMenuItem newDatabaseMenuItem;
     private JMenuItem openDatabaseMenuItem;
@@ -131,6 +136,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem viewAccountMenuItem;
     private JMenuItem copyUsernameMenuItem;
     private JMenuItem copyPasswordMenuItem;
+    private JMenuItem launchURLMenuItem;
     private JMenuItem exportMenuItem;
     private JMenuItem importMenuItem;
 
@@ -145,9 +151,9 @@ public class MainWindow extends JFrame implements ActionListener {
         super(title);
 
         Preferences.load();
-        
+
         Translator.initialise();
-        
+
         setIconImage(Util.loadImage("upm.gif").getImage());
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -178,14 +184,14 @@ public class MainWindow extends JFrame implements ActionListener {
         } catch (Exception e) {
             dbActions.errorHandler(e);
         }
-        
+
         //Give the search field focus
         // I'm using requestFocusInWindow() rathar than requestFocus()
         // because the javadocs recommend it
         searchField.requestFocusInWindow();
-        
+
     }
-   
+
 
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -218,7 +224,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         //Create the menubar
         setJMenuBar(createMenuBar());
-        
+
         GridBagConstraints c = new GridBagConstraints();
 
         //The toolbar Row
@@ -235,7 +241,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         //Keep the frame background color consistent
         getContentPane().setBackground(toolbar.getBackground());
-        
+
         //The seperator Row
         c.gridx = 0;
         c.gridy = 1;
@@ -246,7 +252,7 @@ public class MainWindow extends JFrame implements ActionListener {
         c.gridwidth = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
         getContentPane().add(new JSeparator(), c);
-        
+
         //The search field row
         searchIcon = new JLabel(Util.loadImage("search.gif"));
         searchIcon.setDisabledIcon(Util.loadImage("search_d.gif"));
@@ -260,7 +266,7 @@ public class MainWindow extends JFrame implements ActionListener {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         getContentPane().add(searchIcon, c);
-        
+
         searchField = new JTextField(15);
         searchField.setEnabled(false);
         searchField.setMinimumSize(searchField.getPreferredSize());
@@ -280,9 +286,9 @@ public class MainWindow extends JFrame implements ActionListener {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     dbActions.resetSearch();
                 } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    //If the user hits the enter key in the search field and there's only one item 
-                    //in the listview then open that item (this code assumes that the one item in 
-                    //the listview has already been selected. this is done automatically in the 
+                    //If the user hits the enter key in the search field and there's only one item
+                    //in the listview then open that item (this code assumes that the one item in
+                    //the listview has already been selected. this is done automatically in the
                     //DatabaseActions.filter() method)
                     if (accountsListview.getModel().getSize() == 1) {
                         viewAccountMenuItem.doClick();
@@ -414,11 +420,11 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
     private JToolBar createToolBar() {
-        
+
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
-        
+
         // The "Add Account" button
         addAccountButton = new JButton();
         addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
@@ -477,6 +483,21 @@ public class MainWindow extends JFrame implements ActionListener {
         copyPasswordButton.setEnabled(false);
         toolbar.add(copyPasswordButton);
 
+
+
+        // The "Launch URL" button
+        launchURLButton = new JButton();
+        launchURLButton.setToolTipText(Translator.translate(LAUNCH_URL_TXT));
+        launchURLButton.setIcon(Util.loadImage("launch_URL.gif"));
+        launchURLButton.setDisabledIcon(Util.loadImage("launch_URL_d.gif"));;
+        launchURLButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        LaunchSelectedURL();
+		    }
+        });
+        launchURLButton.setEnabled(false);
+        toolbar.add(launchURLButton);
+
         toolbar.addSeparator();
 
         // The "Option" button
@@ -508,7 +529,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuBar createMenuBar() {
 
         JMenuBar menuBar = new JMenuBar();
-        
+
         databaseMenu = new JMenu(Translator.translate("databaseMenu"));
         databaseMenu.setMnemonic(KeyEvent.VK_D);
         menuBar.add(databaseMenu);
@@ -519,7 +540,7 @@ public class MainWindow extends JFrame implements ActionListener {
         databaseMenu.add(newDatabaseMenuItem);
         newDatabaseMenuItem.addActionListener(this);
         newDatabaseMenuItem.setActionCommand(NEW_DATABASE_TXT);
- 
+
         openDatabaseMenuItem = new JMenuItem(Translator.translate(OPEN_DATABASE_TXT), KeyEvent.VK_O);
         openDatabaseMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -543,7 +564,7 @@ public class MainWindow extends JFrame implements ActionListener {
         syncWithRemoteDatabaseMenuItem.addActionListener(this);
         syncWithRemoteDatabaseMenuItem.setEnabled(false);
         syncWithRemoteDatabaseMenuItem.setActionCommand(SYNC_DATABASE_TXT);
-        
+
         changeMasterPasswordMenuItem = new JMenuItem(Translator.translate(CHANGE_MASTER_PASSWORD_TXT), KeyEvent.VK_G);
         changeMasterPasswordMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -577,7 +598,7 @@ public class MainWindow extends JFrame implements ActionListener {
         accountMenu = new JMenu(Translator.translate("accountMenu"));
         accountMenu.setMnemonic(KeyEvent.VK_A);
         menuBar.add(accountMenu);
-        
+
         addAccountMenuItem = new JMenuItem(Translator.translate(ADD_ACCOUNT_TXT), KeyEvent.VK_A);
         addAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -585,7 +606,7 @@ public class MainWindow extends JFrame implements ActionListener {
         addAccountMenuItem.addActionListener(this);
         addAccountMenuItem.setEnabled(false);
         addAccountMenuItem.setActionCommand(ADD_ACCOUNT_TXT);
-        
+
         editAccountMenuItem = new JMenuItem(Translator.translate(EDIT_ACCOUNT_TXT), KeyEvent.VK_E);
         editAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -601,7 +622,7 @@ public class MainWindow extends JFrame implements ActionListener {
         deleteAccountMenuItem.addActionListener(this);
         deleteAccountMenuItem.setEnabled(false);
         deleteAccountMenuItem.setActionCommand(DELETE_ACCOUNT_TXT);
-        
+
         viewAccountMenuItem = new JMenuItem(Translator.translate(VIEW_ACCOUNT_TXT), KeyEvent.VK_V);
         viewAccountMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -609,7 +630,7 @@ public class MainWindow extends JFrame implements ActionListener {
         viewAccountMenuItem.addActionListener(this);
         viewAccountMenuItem.setEnabled(false);
         viewAccountMenuItem.setActionCommand(VIEW_ACCOUNT_TXT);
-        
+
         copyUsernameMenuItem = new JMenuItem(Translator.translate(COPY_USERNAME_TXT), KeyEvent.VK_U);
         copyUsernameMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -631,8 +652,22 @@ public class MainWindow extends JFrame implements ActionListener {
                 copyPasswordToClipboard();
             }
         });
+
         copyPasswordMenuItem.setEnabled(false);
         copyPasswordMenuItem.setActionCommand(COPY_PASSWORD_TXT);
+
+         launchURLMenuItem = new JMenuItem(Translator.translate(LAUNCH_URL_TXT), KeyEvent.VK_B);
+		 launchURLMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B,
+		                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		 accountMenu.add(launchURLMenuItem);
+		 launchURLMenuItem.addActionListener(new ActionListener() {
+				            public void actionPerformed(ActionEvent e) {
+				                LaunchSelectedURL();
+				            }
+        });
+
+		launchURLMenuItem.setEnabled(false);
+        launchURLMenuItem.setActionCommand(LAUNCH_URL_TXT);
 
         exitMenuItem = new JMenuItem(Translator.translate(EXIT_TXT), KeyEvent.VK_X);
         exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
@@ -653,15 +688,15 @@ public class MainWindow extends JFrame implements ActionListener {
             helpMenu = new JMenu(Translator.translate("helpMenu"));
             helpMenu.setMnemonic(KeyEvent.VK_H);
             menuBar.add(helpMenu);
-    
+
             helpMenu.add(aboutMenuItem);
         }
 
         return menuBar;
-        
+
     }
-    
-    
+
+
     public JList getAccountsListview() {
         return accountsListview;
     }
@@ -685,11 +720,54 @@ public class MainWindow extends JFrame implements ActionListener {
         clipboard.setContents(stringSelection, stringSelection);
     }
 
+//Method that get the selected Account URL and open this URL via the defaiult browser of our platform
 
+    private void LaunchSelectedURL() {
+
+	        AccountInformation accInfo = dbActions.getSelectedAccount();
+			String url = accInfo.getUrl();
+			if (url.isEmpty()){
+				url="http://www.dmst.aueb.gr/index.php/el/";
+			}
+
+			 if(Desktop.isDesktopSupported()){
+			 Desktop desktop = Desktop.getDesktop();
+
+			            try {
+                            desktop.browse(new URI(url));
+
+			            } catch (IOException  e) {
+						 // TODO Auto-generated catch block
+						    e.printStackTrace();
+						} catch (URISyntaxException e) {
+                         // TODO Auto-generated catch block
+                            e.printStackTrace();
+
+			}
+			        }else{
+			            Runtime runtime = Runtime.getRuntime();
+
+			            try {
+			                runtime.exec("xdg-open " + url);
+
+			                } catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+                            }
+
+        }
+
+
+
+
+}
     public JButton getCopyPasswordButton() {
         return copyPasswordButton;
     }
 
+    public JButton getLaunchURLButton() {
+        return launchURLButton;
+    }
 
     public JButton getCopyUsernameButton() {
         return copyUsernameButton;
@@ -745,6 +823,9 @@ public class MainWindow extends JFrame implements ActionListener {
         return copyPasswordMenuItem;
     }
 
+   public JMenuItem getLaunchURLMenuItem() {
+           return launchURLMenuItem;
+       }
 
     public JMenuItem getCopyUsernameMenuItem() {
         return copyUsernameMenuItem;
@@ -760,7 +841,7 @@ public class MainWindow extends JFrame implements ActionListener {
         return viewAccountMenuItem;
     }
 
-    
+
     public JMenuItem getEditAccountMenuItem() {
         return editAccountMenuItem;
     }
@@ -864,7 +945,7 @@ public class MainWindow extends JFrame implements ActionListener {
         return databaseFileChangedPanel;
     }
 
-    
+
     /**
      * Initialise all the menus, buttons, etc to take account of the language selected by the user
      */
@@ -883,6 +964,7 @@ public class MainWindow extends JFrame implements ActionListener {
         viewAccountMenuItem.setText(Translator.translate(VIEW_ACCOUNT_TXT));
         copyUsernameMenuItem.setText(Translator.translate(COPY_USERNAME_TXT));
         copyPasswordMenuItem.setText(Translator.translate(COPY_PASSWORD_TXT));
+        launchURLMenuItem.setText(Translator.translate(LAUNCH_URL_TXT));
         exitMenuItem.setText(Translator.translate(EXIT_TXT));
         aboutMenuItem.setText(Translator.translate(ABOUT_TXT));
         exportMenuItem.setText(Translator.translate(EXPORT_TXT));
@@ -899,6 +981,7 @@ public class MainWindow extends JFrame implements ActionListener {
         deleteAccountButton.setToolTipText(Translator.translate(DELETE_ACCOUNT_TXT));
         copyUsernameButton.setToolTipText(Translator.translate(COPY_USERNAME_TXT));
         copyPasswordButton.setToolTipText(Translator.translate(COPY_PASSWORD_TXT));
+        launchURLButton.setToolTipText(Translator.translate(LAUNCH_URL_TXT));
         optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
         syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
         optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
