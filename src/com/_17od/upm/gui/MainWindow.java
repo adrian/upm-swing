@@ -69,6 +69,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.validator.UrlValidator;
 
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
@@ -491,9 +492,26 @@ public class MainWindow extends JFrame implements ActionListener {
         launchURLButton.setIcon(Util.loadImage("launch_URL.gif"));
         launchURLButton.setDisabledIcon(Util.loadImage("launch_URL_d.gif"));;
         launchURLButton.addActionListener(new ActionListener() {
+
 		    public void actionPerformed(ActionEvent e) {
-		        LaunchSelectedURL();
+
+				  AccountInformation accInfo = dbActions.getSelectedAccount();
+			      String uRl = accInfo.getUrl();
+
+            //Check if the selected  url is null or emty and inform the user via JoptioPane message
+            if ((uRl == null) || (uRl.length() == 0)) {
+			   JOptionPane.showMessageDialog(null,Translator.translate("EmptyUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+
+           //Check if the selected  url is a valid formated url(via urlIsValid() method)   and inform the user via JoptioPane message
+		  }	else if (!(urlIsValid(uRl))) {
+							JOptionPane.showMessageDialog(null,Translator.translate("InvalidUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+
+           //Call the method LaunchSelectedURL() using the selected url as input
+		  } else {
+			  LaunchSelectedURL(uRl);
+
 		    }
+		}
         });
         launchURLButton.setEnabled(false);
         toolbar.add(launchURLButton);
@@ -661,9 +679,26 @@ public class MainWindow extends JFrame implements ActionListener {
 		                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		 accountMenu.add(launchURLMenuItem);
 		 launchURLMenuItem.addActionListener(new ActionListener() {
-				            public void actionPerformed(ActionEvent e) {
-				                LaunchSelectedURL();
-				            }
+
+		 		 		    public void actionPerformed(ActionEvent e) {
+
+		 		 				  AccountInformation accInfo = dbActions.getSelectedAccount();
+		 		 			      String uRl = accInfo.getUrl();
+
+          //Check if the selected  url is null or emty and inform the user via JoptioPane message
+		             if ((uRl == null) || (uRl.length() == 0)) {
+		 			   JOptionPane.showMessageDialog(null,Translator.translate("EmptyUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+
+		  //Check if the selected  url is a valid formated url(via urlIsValid() method)   and inform the user via JoptioPane message
+		 		  }	else if (!(urlIsValid(uRl))) {
+		 							JOptionPane.showMessageDialog(null,Translator.translate("InvalidUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+
+		  //Call the method LaunchSelectedURL() using the selected url as input
+		 		  } else {
+		 			  LaunchSelectedURL(uRl);
+
+		    }
+		 	}
         });
 
 		launchURLMenuItem.setEnabled(false);
@@ -720,17 +755,24 @@ public class MainWindow extends JFrame implements ActionListener {
         clipboard.setContents(stringSelection, stringSelection);
     }
 
-//Method that get the selected Account URL and open this URL via the defaiult browser of our platform
+// Use com.apache.commons.validator library in order to check the validity(proper formating, e.x http://www.url.com) of the given url
+     private boolean urlIsValid(String urL) {
 
-    private void LaunchSelectedURL() {
+		     UrlValidator urlValidator = new UrlValidator();
+		     if (urlValidator.isValid(urL)) {
+		        return true;
+		     } else {
+		        return false;
+		     }
 
-	        AccountInformation accInfo = dbActions.getSelectedAccount();
-			String url = accInfo.getUrl();
-			if (url.isEmpty()){
-				url="http://www.dmst.aueb.gr/index.php/el/";
-			}
+}
 
-			 if(Desktop.isDesktopSupported()){
+
+//Method that get(as input) the selected Account URL and open this URL via the default browser of our platform
+
+    private void LaunchSelectedURL(String url) {
+
+	         if(Desktop.isDesktopSupported()){
 			 Desktop desktop = Desktop.getDesktop();
 
 			            try {
@@ -744,6 +786,7 @@ public class MainWindow extends JFrame implements ActionListener {
                             e.printStackTrace();
 
 			}
+// Linux and Mac specific code in order to launch url
 			        }else{
 			            Runtime runtime = Runtime.getRuntime();
 
@@ -756,8 +799,6 @@ public class MainWindow extends JFrame implements ActionListener {
                             }
 
         }
-
-
 
 
 }
@@ -984,7 +1025,6 @@ public class MainWindow extends JFrame implements ActionListener {
         launchURLButton.setToolTipText(Translator.translate(LAUNCH_URL_TXT));
         optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
         syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
-        optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
         resetSearchButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
     }
 
