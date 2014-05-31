@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Adrian Smith
  *
  * This file is part of Universal Password Manager.
- *   
+ *
  * Universal Password Manager is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -29,7 +29,7 @@ public class Translator {
 
     public static Locale[] SUPPORTED_LOCALES = {
         new Locale("cs"), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN,
-        Locale.ITALIAN, new Locale("es"), new Locale("pl"), new Locale("nl")};
+        Locale.ITALIAN, new Locale("es"), new Locale("pl"), new Locale("nl"), new Locale("el")};
 
     private static ResourceBundle resourceBundle;
     private static MessageFormat formatter;
@@ -66,7 +66,7 @@ public class Translator {
         loadBundle(locale);
     }
 
-    
+
     public static void loadBundle(Locale locale) {
         resourceBundle = ResourceBundle.getBundle("upm", locale);
         formatter = new MessageFormat("");

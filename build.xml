@@ -36,6 +36,7 @@
     <property name="full.name" value="UPM"/>
     <property name="lib" value="lib"/>
     <property name="coveragereport.dir" value="coveragereport.dir"/>
+    <property name="version" value="1.13" />
 
 
     <!-- Define a classpath for use later on -->
@@ -95,7 +96,7 @@
             <manifest>
                 <attribute name="Implementation-Title" value="${short.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
-                <attribute name="Class-Path" value="commons-codec-1.3.jar commons-httpclient-3.0.jar commons-logging-1.1.jar bcprov-jdk14-145.jar javacsv.jar"/>
+                <attribute name="Class-Path" value="commons-codec-1.3.jar commons-httpclient-3.0.jar commons-logging-1.1.jar bcprov-jdk14-145.jar javacsv.jar commons-validator-1.4.0.jar"/>
                 <attribute name="Main-Class" value="com._17od.upm.gui.MainWindow"/>
             </manifest>
         </jar>
@@ -111,6 +112,7 @@
         <copy file="${basedir}\lib\commons-logging-1.1.jar" todir="${dist}\build"/>
         <copy file="${basedir}\lib\bcprov-jdk14-145.jar" todir="${dist}\build"/>
         <copy file="${basedir}\lib\javacsv.jar" todir="${dist}\build"/>
+        <copy file="${basedir}\lib\commons-validator-1.4.0.jar" todir="${dist}\build"/>
         <copy file="${basedir}\images\128x128\upm.png" tofile="${dist}\build\upm.png"/>
         <copy file="${basedir}\COPYING.txt" todir="${dist}\build"/>
         <copy file="${basedir}\README.txt" todir="${dist}\build"/>
@@ -168,7 +170,7 @@
              jvmversion="1.4+"
                 version="${version}"
              screenmenu="true">
-            <jarfilelist dir="${basedir}\lib" files="commons-codec-1.3.jar, commons-httpclient-3.0.jar, commons-logging-1.1.jar bcprov-jdk14-145.jar javacsv.jar"/>
+            <jarfilelist dir="${basedir}\lib" files="commons-codec-1.3.jar, commons-httpclient-3.0.jar, commons-logging-1.1.jar bcprov-jdk14-145.jar javacsv.jar commons-validator-1.4.0.jar"/>
             <jarfilelist dir="${dist}\build" files="${short.name}.jar"/>
         </jarbundler>
         <!-- Sym link to JavaApplicationStub rather than including it in the
