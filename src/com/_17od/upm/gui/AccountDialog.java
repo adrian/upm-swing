@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Adrian Smith
  *
  * This file is part of Universal Password Manager.
- *   
+ *
  * Universal Password Manager is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -54,11 +54,43 @@ public class AccountDialog extends EscapeDialog {
 
     private static final long serialVersionUID = 1L;
     private static final char[] ALLOWED_CHARS = {
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
-   
+// Extended CharArray list which include also 24  Escape characters for stronger password generation
+    private static final char[] EXTRA_ALLOWED_CHARS = {
+           'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+           'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+           '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ',', ')', '_',
+           '-', '+', '=', '|', '/', '<', '>', '.', '?', ';', ':'
+    };
+
+	/*We will use the (4)four above CharArray lists(UPPERCASE_CHARS, LOWERCASE_CHARS, NUMBER_CHARS, ESCAPE_CHARS) to ensure that the generated
+	passwords will be more complex. If the user has selected to include escape characters to generated passwords and the length of the passwords is 4 or
+	above, then we will use some methods in order to  generate  passwords that will have at least 1 lower case + 1 upper case + 1 number +
+	1 escape character. On the other hand, if the user has not selected to include escape characters to generated passwords and the length of the passwords is at
+	least 3, then we will use methods in order to  generate  passwords that will have at least 1 lower case + 1 upper case + 1 number.
+	*/
+   private static final char[] UPPERCASE_CHARS = {
+	           'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+
+    };
+
+   private static final char[] LOWERCASE_CHARS = {
+	           'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+
+    };
+
+   private static final char[] NUMBER_CHARS = {
+	           '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+    };
+
+   private static final char[] ESCAPE_CHARS = {
+	           '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ',', ')', '_',
+	           '-', '+', '=', '|', '/', '<', '>', '.', '?', ';', ':'
+    };
+
     private AccountInformation pAccount;
     private JTextField userId;
     private JPasswordField password;
@@ -70,8 +102,8 @@ public class AccountDialog extends EscapeDialog {
     private JFrame parentWindow;
     private boolean accountChanged = false;
     private char defaultEchoChar;
-    
-    
+
+
     public AccountDialog(AccountInformation account, JFrame parentWindow, boolean readOnly, ArrayList existingAccounts) {
         super(parentWindow, true);
 
@@ -89,12 +121,12 @@ public class AccountDialog extends EscapeDialog {
             title = Translator.translate("editAccount");
         }
         setTitle(title);
-        
-            
+
+
         this.pAccount = account;
         this.existingAccounts = existingAccounts;
         this.parentWindow = parentWindow;
-        
+
         getContentPane().setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
@@ -202,14 +234,32 @@ public class AccountDialog extends EscapeDialog {
         }
         generateRandomPasswordButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionevent) {
-                SecureRandom random = new SecureRandom();
-                StringBuffer passwordBuffer = new StringBuffer();
+        // Get the user's preference about including or not Escape Characters to generated passwords
+                Boolean includeEscapeChars = new Boolean(
+				                Preferences
+                        .get(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, "true"));
                 int pwLength = Preferences.getInt(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, 8);
-                for(int i=0; i< pwLength; i++) {
-                    passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
-                }
-                password.setText(passwordBuffer.toString());
-            }
+                String Password;
+
+                if ((includeEscapeChars.booleanValue()) &&(pwLength>3)) {
+       // Verify that the generated password satisfies the criteria for strong passwords(including Escape Characters)
+				    do{
+						Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
+					}while (!(CheckPassStrong(Password,includeEscapeChars.booleanValue())));
+
+                } else if (!(includeEscapeChars.booleanValue()) &&(pwLength>2)) {
+	 // Verify that the generated password satisfies the criteria for strong passwords(excluding Escape Characters)
+					do{
+						Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
+					}while (!(CheckPassStrong(Password,includeEscapeChars.booleanValue())));
+
+			    } else {
+	 //	Else a weak password of 3 or less chars will be produced
+			    Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
+			}
+
+                password.setText(Password);
+         }
         });
         if (addingAccount) {
             generateRandomPasswordButton.doClick();
@@ -240,7 +290,7 @@ public class AccountDialog extends EscapeDialog {
                 Preferences
                         .get(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, "true"));
         hidePasswordCheckbox.setSelected(hideAccountPassword.booleanValue());
-        
+
         c.gridx = 2;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
@@ -272,7 +322,7 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(urlLabel, c);
-        
+
         url = new JTextField(new String(pAccount.getUrl()), 20);
         if (readOnly) {
             url.setEditable(false);
@@ -291,8 +341,8 @@ public class AccountDialog extends EscapeDialog {
                 url.selectAll();
             }
         });
-        
-        
+
+
         //Notes Row
         JLabel notesLabel = new JLabel(Translator.translate("notes"));
         c.gridx = 0;
@@ -304,7 +354,7 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(notesLabel, c);
-        
+
         notes = new JTextArea(new String(pAccount.getNotes()), 10, 20);
         if (readOnly) {
             notes.setEditable(false);
@@ -324,8 +374,8 @@ public class AccountDialog extends EscapeDialog {
                 notes.selectAll();
             }
         });
-        
-        
+
+
         //Seperator Row
         JSeparator sep = new JSeparator();
         c.gridx = 0;
@@ -366,20 +416,20 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 3;
         c.fill = GridBagConstraints.NONE;
         container.add(buttonPanel, c);
-        
+
     }
-    
+
 
     public boolean okClicked() {
         return okClicked;
     }
-    
-    
+
+
     public AccountInformation getAccount() {
         return pAccount;
     }
-    
-    
+
+
     private void okButtonAction() {
 
         // Check if the account name has changed.
@@ -413,23 +463,144 @@ public class AccountDialog extends EscapeDialog {
             pAccount.setPassword(password.getText());
             pAccount.setUrl(url.getText());
             pAccount.setNotes(notes.getText());
-            
+
             setVisible(false);
             dispose();
             okClicked = true;
         }
     }
 
-    
+
     public boolean getAccountChanged() {
         return accountChanged;
     }
-    
-    
+
+
     private void closeButtonAction() {
         okClicked = false;
         setVisible(false);
         dispose();
+    }
+  /* The above method takes as input  the user's preferences about password length and including or excluding Escape Characters and radomly generates
+  a password. Then, the method returns the above password as a String.
+   */
+    private String GeneratePassword(int PassLength, boolean InclEscChars) {
+
+	    SecureRandom random = new SecureRandom();
+		StringBuffer passwordBuffer = new StringBuffer();
+
+		if (InclEscChars) {
+		for(int i=0; i< PassLength; i++) {
+			passwordBuffer.append(EXTRA_ALLOWED_CHARS[random.nextInt(EXTRA_ALLOWED_CHARS.length)]);
+		}
+		return passwordBuffer.toString();
+
+	}else {
+		for(int i=0; i< PassLength; i++) {
+			passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
+             }
+       return passwordBuffer.toString();
+}
+}
+/*The above method returns true if the generated password satisfies the criteria of a strong password
+including or excluding Escape Characters. If not, then returns false.
+*/
+    private boolean CheckPassStrong(String Pass, boolean InclEscChars){
+		if (InclEscChars){
+			if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) && (InclEscape(Pass))) {
+				    return true;
+		    } else {
+				    return false;
+		    }
+	    } else {
+			if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) ) {
+				   return true;
+		    } else {
+				   return false;
+		    }
+		   }
+	}
+
+
+// The above method rerurns true if the generated password contains at least one Upper Case character. If not, then the method returns false.
+	private boolean  InclUpperCase(String GeneratedPass) {
+       char[] PassWordArray = GeneratedPass.toCharArray();
+       boolean find = false;
+       outerloop:
+	       for (int i=0; i < PassWordArray.length; i++) {
+	         for (int j=0; j < UPPERCASE_CHARS.length; j++) {
+	           if (PassWordArray[i] == UPPERCASE_CHARS[j]) {
+	             find = true;
+	             break outerloop;
+	           }
+	         }
+		   }
+	         if (find) {
+				 return true;
+		  }  else {
+			  return false;
+		  }
+
+    }
+// The above method rerurns true if the generated password contains at least one Lower Case character. If not, then the method returns false.
+  private boolean  InclLowerCase(String GeneratedPass) {
+       char[] PassWordArray = GeneratedPass.toCharArray();
+       boolean find = false;
+       outerloop:
+	       for (int i=0; i < PassWordArray.length; i++) {
+	         for (int j=0; j < LOWERCASE_CHARS.length; j++) {
+	           if (PassWordArray[i] == LOWERCASE_CHARS[j]) {
+	             find = true;
+	             break outerloop;
+	           }
+		      }
+	         }
+	         if (find) {
+				 return true;
+		  }  else {
+			  return false;
+		  }
+
+    }
+// The above method rerurns true if the generated password contains at least one Number. If not, then the method returns false.
+private boolean  InclNumber(String GeneratedPass) {
+       char[] PassWordArray = GeneratedPass.toCharArray();
+       boolean find = false;
+       outerloop:
+	       for (int i=0; i < PassWordArray.length; i++) {
+	         for (int j=0; j < NUMBER_CHARS.length; j++) {
+	           if (PassWordArray[i] == NUMBER_CHARS[j]) {
+	             find = true;
+	             break outerloop;
+	           }
+              }
+	         }
+	         if (find) {
+				 return true;
+		  }  else {
+			  return false;
+		  }
+
+    }
+// The above method rerurns true if the generated password contains at least one Escape character. If not, then the method returns false.
+    private boolean  InclEscape(String GeneratedPass) {
+	       char[] PassWordArray = GeneratedPass.toCharArray();
+	       boolean find = false;
+	       outerloop:
+		       for (int i=0; i < PassWordArray.length; i++) {
+		         for (int j=0; j < ESCAPE_CHARS.length; j++) {
+		           if (PassWordArray[i] == ESCAPE_CHARS[j]) {
+		             find = true;
+		             break outerloop;
+		           }
+			      }
+		         }
+		         if (find) {
+					 return true;
+			  }  else {
+				  return false;
+			  }
+
     }
 
 }

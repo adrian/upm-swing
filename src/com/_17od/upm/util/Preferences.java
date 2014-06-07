@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Adrian Smith
  *
  * This file is part of Universal Password Manager.
- *   
+ *
  * Universal Password Manager is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,13 +37,14 @@ import com._17od.upm.platformspecific.PlatformSpecificCode;
  */
 public class Preferences {
 
-    private static Log log = LogFactory.getLog(Preferences.class); 
-    
+    private static Log log = LogFactory.getLog(Preferences.class);
+
     public class ApplicationOptions {
         public static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
 
         public static final String ACCOUNT_HIDE_PASSWORD="account.hidePassword";
         public static final String ACCOUNT_PASSWORD_LENGTH="account.passwordLenght";
+        public static final String INCLUDE_ESCAPE_CHARACTERS="account.inclescapechars";
         public static final String DATABASE_AUTO_LOCK="database.auto_lock";
         public static final String DATABASE_AUTO_LOCK_TIME = "database.auto_lock_time";
 
@@ -53,7 +54,7 @@ public class Preferences {
         public static final String HTTP_PROXY_USERNAME="http.proxy.username";
         public static final String HTTP_PROXY_PASSWORD="http.proxy.password";
         public static final String HTTPS_ACCEPT_SELFSIGNED_CERTS="https.accept.selfsigned.certs";
-        
+
         public static final String LOCALE="locale";
     }
 
@@ -63,12 +64,12 @@ public class Preferences {
 
     private static final String PREF_FILE = System.getProperty("user.home") + System.getProperty("file.separator") + "upm.properties";
     private static final String PREF_FILE_SYS_PROP = "upm.properties";
-    private static Properties preferences; 
+    private static Properties preferences;
     private static String propertiesFile;
 
 
     public static String get(String name, String defaultValue) {
-        String retVal = preferences.getProperty(name, defaultValue); 
+        String retVal = preferences.getProperty(name, defaultValue);
         if (log.isDebugEnabled()) {
             log.debug("Returning the property, name=" + name + ", value=" + retVal);
         }
@@ -91,7 +92,7 @@ public class Preferences {
         return get(name, null);
     }
 
-    
+
     public static void set(String name, String value) {
         if (log.isDebugEnabled()) {
             log.debug("Setting the property, name=" + name + ", value=" + value);
@@ -99,13 +100,13 @@ public class Preferences {
         preferences.setProperty(name, value);
     }
 
-    
+
     public static void load() throws FileNotFoundException, IOException {
 
         //Check for the system property PREF_FILE_SYS_PROP. If supplied it will give the name
         //of the properties file to use. If it's not given then use the properties file in the
         //user's home directory (which may or may not exist)
-		
+
 		// Mac and Linux have different places to store configuration files -
 		// set PREF_FILE_SYS_PROP appropriately.
 		if(!System.getProperties().containsKey(PREF_FILE_SYS_PROP)) {
@@ -151,5 +152,5 @@ public class Preferences {
         }
         preferences.store(new FileOutputStream(propertiesFile), "Universal Password Manager Preferences");
     }
-    
+
 }
