@@ -484,7 +484,7 @@ public class AccountDialog extends EscapeDialog {
   /* The above method takes as input  the user's preferences about password length and including or excluding Escape Characters and radomly generates
   a password. Then, the method returns the above password as a String.
    */
-    private String GeneratePassword(int PassLength, boolean InclEscChars) {
+   private static String GeneratePassword(int PassLength, boolean InclEscChars) {
 
 	    SecureRandom random = new SecureRandom();
 		StringBuffer passwordBuffer = new StringBuffer();
@@ -505,7 +505,7 @@ public class AccountDialog extends EscapeDialog {
 /*The above method returns true if the generated password satisfies the criteria of a strong password
 including or excluding Escape Characters. If not, then returns false.
 */
-    private boolean CheckPassStrong(String Pass, boolean InclEscChars){
+    private static boolean CheckPassStrong(String Pass, boolean InclEscChars){
 		if (InclEscChars){
 			if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) && (InclEscape(Pass))) {
 				    return true;
@@ -523,7 +523,7 @@ including or excluding Escape Characters. If not, then returns false.
 
 
 // The above method rerurns true if the generated password contains at least one Upper Case character. If not, then the method returns false.
-	private boolean  InclUpperCase(String GeneratedPass) {
+	private static boolean  InclUpperCase(String GeneratedPass) {
        char[] PassWordArray = GeneratedPass.toCharArray();
        boolean find = false;
        outerloop:
@@ -543,7 +543,7 @@ including or excluding Escape Characters. If not, then returns false.
 
     }
 // The above method rerurns true if the generated password contains at least one Lower Case character. If not, then the method returns false.
-  private boolean  InclLowerCase(String GeneratedPass) {
+  private static boolean  InclLowerCase(String GeneratedPass) {
        char[] PassWordArray = GeneratedPass.toCharArray();
        boolean find = false;
        outerloop:
@@ -563,7 +563,7 @@ including or excluding Escape Characters. If not, then returns false.
 
     }
 // The above method rerurns true if the generated password contains at least one Number. If not, then the method returns false.
-private boolean  InclNumber(String GeneratedPass) {
+private static boolean  InclNumber(String GeneratedPass) {
        char[] PassWordArray = GeneratedPass.toCharArray();
        boolean find = false;
        outerloop:
@@ -583,7 +583,7 @@ private boolean  InclNumber(String GeneratedPass) {
 
     }
 // The above method rerurns true if the generated password contains at least one Escape character. If not, then the method returns false.
-    private boolean  InclEscape(String GeneratedPass) {
+    private static boolean  InclEscape(String GeneratedPass) {
 	       char[] PassWordArray = GeneratedPass.toCharArray();
 	       boolean find = false;
 	       outerloop:
