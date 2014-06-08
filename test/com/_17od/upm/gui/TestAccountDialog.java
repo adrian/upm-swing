@@ -20,6 +20,7 @@
  */
 package com._17od.upm.gui;
 
+import org.junit.*;
 import junit.framework.TestCase;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,6 +32,7 @@ public  class TestAccountDialog extends TestCase {
  String InclLowerCaseMethod = "InclLowerCase";
  String InclNumberMethod = "InclNumber";
  String InclEscapeMethod = "InclEscape";
+ String GeneratePasswordMethod = "GeneratePassword";
 
  public void testInclUpperCaseTrue() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
 
@@ -169,4 +171,39 @@ public void testInclEscapeFalse() throws SecurityException, NoSuchMethodExceptio
 
  }
 
+public void testGeneratePassword() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+
+     //Using reflection to test private method
+     Class myTarget = AccountDialog.class;
+     Class params[] = new Class[1];
+     params[0] = String.class;
+
+
+
+     Method method = myTarget.getDeclaredMethod(GeneratePasswordMethod, int.class, boolean.class);
+     method.setAccessible(true);
+
+     int Length= 10;
+     int Length2 = 7;
+     String result = (String)method.invoke(method, Length, true);
+     String result2 = (String)method.invoke(method, Length, false);
+     String result3 = (String)method.invoke(method, Length2, true);
+     String result4 = (String)method.invoke(method, Length2, false);
+
+     assertEquals(10,result.length(), 0.1);
+     assertEquals(10,result2.length(), 0.1);
+     assertNotSame(12,result.length());
+	 assertNotSame(12,result2.length());
+	 assertNotSame(9,result.length());
+	 assertNotSame(9,result2.length());
+
+	 assertEquals(7,result3.length(), 0.1);
+	 assertEquals(7,result4.length(), 0.1);
+	 assertNotSame(12,result3.length());
+	 assertNotSame(12,result4.length());
+	 assertNotSame(9,result3.length());
+	 assertNotSame(9,result4.length());
+
+
+ }
 }
