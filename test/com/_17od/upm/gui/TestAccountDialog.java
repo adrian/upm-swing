@@ -20,7 +20,7 @@
  */
 package com._17od.upm.gui;
 
-import org.junit.*;
+
 import junit.framework.TestCase;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
