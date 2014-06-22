@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2013 Adrian Smith
  *
  * This file is part of Universal Password Manager.
- *   
+ *
  * Universal Password Manager is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -58,10 +58,11 @@ import com._17od.upm.util.Util;
 public class OptionsDialog extends EscapeDialog {
 
     private static final long serialVersionUID = 1L;
-    
+
     private JTextField dbToLoadOnStartup;
     private JCheckBox enableProxyCheckbox;
     private JCheckBox hideAccountPasswordCheckbox;
+    private JCheckBox inclEscCharstoPassCheckbox;
     private JLabel accountPasswordLengthLabel;
     private JTextField accountPasswordLength;
     private JTextField httpProxyHost;
@@ -85,7 +86,7 @@ public class OptionsDialog extends EscapeDialog {
 
     public OptionsDialog(JFrame frame) {
         super(frame, Translator.translate("options"), true);
-        
+
         Container container = getContentPane();
 
         // Create a pane with an empty border for spacing
@@ -170,7 +171,7 @@ public class OptionsDialog extends EscapeDialog {
             if (currentLanguage.equals("")) {
                 currentLanguage = "en";
             }
-            
+
             if (currentLanguage.equals(Translator.SUPPORTED_LOCALES[i].getLanguage())) {
                 localeComboBox.setSelectedIndex(i);
                 break;
@@ -259,6 +260,20 @@ public class OptionsDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(accountPasswordLength, c);
 
+        // The "Include Escape Characters to Generated Passwords" row
+		Boolean inclEscCharstoPass = new Boolean(Preferences.get(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, "true"));
+		inclEscCharstoPassCheckbox = new JCheckBox((Translator.translate("includePunctuationCharacters")), inclEscCharstoPass.booleanValue());
+		c.gridx = 0;
+		c.gridy = 7;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.insets = new Insets(0, 2, 5, 0);
+		c.weightx = 1;
+		c.weighty = 0;
+		c.gridwidth = 1;
+		c.fill = GridBagConstraints.NONE;
+		mainPanel.add(inclEscCharstoPassCheckbox, c);
+
+
         // Some spacing
         emptyBorderPanel.add(Box.createVerticalGlue());
 
@@ -317,7 +332,7 @@ public class OptionsDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         proxyPanel.add(enableProxyCheckbox, c);
-        
+
         // The "HTTP Proxy" label row
         proxyLabel = new JLabel(Translator.translate("httpProxy"));
         c.gridx = 0;
@@ -452,7 +467,7 @@ public class OptionsDialog extends EscapeDialog {
             }
         });
         buttonPanel.add(okButton);
-        
+
         JButton cancelButton = new JButton(Translator.translate("cancel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -464,7 +479,7 @@ public class OptionsDialog extends EscapeDialog {
 
         enableProxyComponents(proxyEnabled.booleanValue());
     }
-    
+
 
     private void enableProxyComponents(boolean enable) {
         httpProxyHost.setEnabled(enable);
@@ -510,6 +525,7 @@ public class OptionsDialog extends EscapeDialog {
 
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, String.valueOf(hideAccountPasswordCheckbox.isSelected()));
+            Preferences.set(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, String.valueOf(inclEscCharstoPassCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, String.valueOf(databaseAutoLockCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME, databaseAutoLockTime.getText());
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, accountPasswordLength.getText());
@@ -540,21 +556,21 @@ public class OptionsDialog extends EscapeDialog {
         }
     }
 
-    
+
     private void getDBToLoadOnStartup() {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle(Translator.translate("dbToOpenOnStartup"));
         int returnVal = fc.showOpenDialog(parentFrame);
-        
+
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File databaseFile = fc.getSelectedFile();
             dbToLoadOnStartup.setText(databaseFile.getAbsoluteFile().toString());
         }
     }
 
-    
+
     private Object[] getSupportedLocaleNames() {
-        Object[] names = new Object[Translator.SUPPORTED_LOCALES.length]; 
+        Object[] names = new Object[Translator.SUPPORTED_LOCALES.length];
 
         for (int i=0; i<Translator.SUPPORTED_LOCALES.length; i++) {
             names[i] = Translator.SUPPORTED_LOCALES[i].getDisplayName() +
@@ -565,7 +581,7 @@ public class OptionsDialog extends EscapeDialog {
         return names;
     }
 
-    
+
     public boolean hasLanguageChanged() {
         return languageChanged;
     }
