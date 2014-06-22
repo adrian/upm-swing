@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/bcprov-jdk14-145.jar"/>
 	<classpathentry kind="lib" path="lib/javacsv.jar"/>
 	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="lib/commons-validator-1.4.0.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

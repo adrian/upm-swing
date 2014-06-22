@@ -86,7 +86,7 @@ public class AccountDialog extends EscapeDialog {
 	           '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
 
-   private static final char[] ESCAPE_CHARS = {
+   private static final char[] PUNCTUATION_CHARS = {
 	           '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ',', ')', '_',
 	           '-', '+', '=', '|', '/', '<', '>', '.', '?', ';', ':'
     };
@@ -588,8 +588,8 @@ private static boolean  InclNumber(String GeneratedPass) {
 	       boolean find = false;
 	       outerloop:
 		       for (int i=0; i < PassWordArray.length; i++) {
-		         for (int j=0; j < ESCAPE_CHARS.length; j++) {
-		           if (PassWordArray[i] == ESCAPE_CHARS[j]) {
+		         for (int j=0; j < PUNCTUATION_CHARS.length; j++) {
+		           if (PassWordArray[i] == PUNCTUATION_CHARS[j]) {
 		             find = true;
 		             break outerloop;
 		           }

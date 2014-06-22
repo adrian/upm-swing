@@ -41,13 +41,13 @@ public  class TestAccountDialog extends TestCase {
    Class params[] = new Class[1];
    params[0] = boolean.class;
 
-   Method method = myTarget.getDeclaredMethod(InclUpperCaseMethod, String.class);
+   Method method = myTarget.getDeclaredMethod(InclUpperCaseMethod, new Class[] {String.class});
    method.setAccessible(true);
 
    String Password = "Klfjjru!234";
-   Boolean result = (Boolean)method.invoke(method, Password);
+   Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-   assertTrue(result);
+   assertTrue(result.booleanValue());
 
  }
 
@@ -58,13 +58,13 @@ public  class TestAccountDialog extends TestCase {
     Class params[] = new Class[1];
     params[0] = boolean.class;
 
-    Method method = myTarget.getDeclaredMethod(InclUpperCaseMethod, String.class);
+    Method method = myTarget.getDeclaredMethod(InclUpperCaseMethod, new Class[] {String.class});
     method.setAccessible(true);
 
     String Password = "kllfmjiugiwug@#$%%^k856";
-    Boolean result = (Boolean)method.invoke(method, Password);
+    Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-    assertFalse(result);
+    assertFalse(result.booleanValue());
 
  }
 
@@ -75,13 +75,13 @@ public void testInclLowerCaseTrue() throws SecurityException, NoSuchMethodExcept
    Class params[] = new Class[1];
    params[0] = boolean.class;
 
-   Method method = myTarget.getDeclaredMethod(InclLowerCaseMethod, String.class);
+   Method method = myTarget.getDeclaredMethod(InclLowerCaseMethod, new Class[] {String.class});
    method.setAccessible(true);
 
    String Password = "hghtkghjKLLP123%^&";
-   Boolean result = (Boolean)method.invoke(method, Password);
+   Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-   assertTrue(result);
+   assertTrue(result.booleanValue());
 
  }
 
@@ -93,13 +93,13 @@ public void testInclLowerCaseFalse() throws SecurityException, NoSuchMethodExcep
    Class params[] = new Class[1];
    params[0] = boolean.class;
 
-   Method method = myTarget.getDeclaredMethod(InclLowerCaseMethod, String.class);
+   Method method = myTarget.getDeclaredMethod(InclLowerCaseMethod, new Class[] {String.class});
    method.setAccessible(true);
 
    String Password = "KGHJLMBCX78990^&**";
-   Boolean result = (Boolean)method.invoke(method, Password);
+   Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-   assertFalse(result);
+   assertFalse(result.booleanValue());
 
  }
 
@@ -110,13 +110,13 @@ public void testInclLowerCaseFalse() throws SecurityException, NoSuchMethodExcep
     Class params[] = new Class[1];
     params[0] = boolean.class;
 
-    Method method = myTarget.getDeclaredMethod(InclNumberMethod, String.class);
+    Method method = myTarget.getDeclaredMethod(InclNumberMethod, new Class[] {String.class});
     method.setAccessible(true);
 
     String Password = "Kghkfrjgir*&^$%4523";
-    Boolean result = (Boolean)method.invoke(method, Password);
+    Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-    assertTrue(result);
+    assertTrue(result.booleanValue());
 
  }
 
@@ -127,13 +127,13 @@ public void testInclLowerCaseFalse() throws SecurityException, NoSuchMethodExcep
      Class params[] = new Class[1];
      params[0] = boolean.class;
 
-     Method method = myTarget.getDeclaredMethod(InclNumberMethod, String.class);
+     Method method = myTarget.getDeclaredMethod(InclNumberMethod, new Class[] {String.class});
      method.setAccessible(true);
 
      String Password = "KJHHGhnnfhhshd&*()hghg";
-     Boolean result = (Boolean)method.invoke(method, Password);
+     Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-     assertFalse(result);
+     assertFalse(result.booleanValue());
 
  }
 
@@ -144,13 +144,13 @@ public void testInclLowerCaseFalse() throws SecurityException, NoSuchMethodExcep
      Class params[] = new Class[1];
      params[0] = boolean.class;
 
-     Method method = myTarget.getDeclaredMethod(InclEscapeMethod, String.class);
+     Method method = myTarget.getDeclaredMethod(InclEscapeMethod, new Class[] {String.class});
      method.setAccessible(true);
 
      String Password = "Jajjggj*hgjf12364";
-     Boolean result = (Boolean)method.invoke(method, Password);
+     Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-     assertTrue(result);
+     assertTrue(result.booleanValue());
 
  }
 
@@ -161,13 +161,13 @@ public void testInclEscapeFalse() throws SecurityException, NoSuchMethodExceptio
      Class params[] = new Class[1];
      params[0] = boolean.class;
 
-     Method method = myTarget.getDeclaredMethod(InclEscapeMethod, String.class);
+     Method method = myTarget.getDeclaredMethod(InclEscapeMethod, new Class[] {String.class});
      method.setAccessible(true);
 
      String Password = "JKhghgloeor159645";
-     Boolean result = (Boolean)method.invoke(method, Password);
+     Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-     assertFalse(result);
+     assertFalse(result.booleanValue());
 
  }
 
@@ -180,30 +180,29 @@ public void testGeneratePassword() throws SecurityException, NoSuchMethodExcepti
 
 
 
-     Method method = myTarget.getDeclaredMethod(GeneratePasswordMethod, int.class, boolean.class);
+     Method method = myTarget.getDeclaredMethod(GeneratePasswordMethod, new Class[] {int.class, boolean.class});
      method.setAccessible(true);
 
-     int Length= 10;
-     int Length2 = 7;
-     String result = (String)method.invoke(method, Length, true);
-     String result2 = (String)method.invoke(method, Length, false);
-     String result3 = (String)method.invoke(method, Length2, true);
-     String result4 = (String)method.invoke(method, Length2, false);
+     Integer Length = new Integer(10);
+     Integer Length2 = new Integer(7);
+     String result = (String)method.invoke(method, new Object[] {Length, Boolean.TRUE});
+     String result2 = (String)method.invoke(method, new Object[] {Length, Boolean.FALSE});
+     String result3 = (String)method.invoke(method, new Object[] {Length2, Boolean.TRUE});
+     String result4 = (String)method.invoke(method, new Object[] {Length2, Boolean.FALSE});
 
      assertEquals(10,result.length(), 0.1);
      assertEquals(10,result2.length(), 0.1);
-     assertNotSame(12,result.length());
-	 assertNotSame(12,result2.length());
-	 assertNotSame(9,result.length());
-	 assertNotSame(9,result2.length());
+     assertNotSame(new Integer(12), new Integer(result.length()));
+     assertNotSame(new Integer(12), new Integer(result2.length()));
+     assertNotSame(new Integer(9), new Integer(result.length()));
+     assertNotSame(new Integer(9), new Integer(result2.length()));
 
-	 assertEquals(7,result3.length(), 0.1);
-	 assertEquals(7,result4.length(), 0.1);
-	 assertNotSame(12,result3.length());
-	 assertNotSame(12,result4.length());
-	 assertNotSame(9,result3.length());
-	 assertNotSame(9,result4.length());
-
+     assertEquals(7,result3.length(), 0.1);
+     assertEquals(7,result4.length(), 0.1);
+     assertNotSame(new Integer(12), new Integer(result3.length()));
+     assertNotSame(new Integer(12), new Integer(result4.length()));
+     assertNotSame(new Integer(9), new Integer(result3.length()));
+     assertNotSame(new Integer(9), new Integer(result4.length()));
 
  }
 }

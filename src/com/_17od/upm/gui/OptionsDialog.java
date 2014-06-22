@@ -262,7 +262,7 @@ public class OptionsDialog extends EscapeDialog {
 
         // The "Include Escape Characters to Generated Passwords" row
 		Boolean inclEscCharstoPass = new Boolean(Preferences.get(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, "true"));
-		inclEscCharstoPassCheckbox = new JCheckBox((Translator.translate("includeEscapeCharacters")), inclEscCharstoPass.booleanValue());
+		inclEscCharstoPassCheckbox = new JCheckBox((Translator.translate("includePunctuationCharacters")), inclEscCharstoPass.booleanValue());
 		c.gridx = 0;
 		c.gridy = 7;
 		c.anchor = GridBagConstraints.LINE_START;
