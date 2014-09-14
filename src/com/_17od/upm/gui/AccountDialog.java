@@ -359,6 +359,8 @@ public class AccountDialog extends EscapeDialog {
         if (readOnly) {
             notes.setEditable(false);
         }
+        notes.setLineWrap(true); // Enable line wrapping.
+        notes.setWrapStyleWord(true); // Line wrap at whitespace.
         JScrollPane notesScrollPane = new JScrollPane(notes);
         c.gridx = 1;
         c.gridy = 4;
