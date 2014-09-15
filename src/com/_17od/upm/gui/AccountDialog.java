@@ -24,43 +24,36 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
+import java.awt.event.KeyEvent;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.DefaultEditorKit;
 
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
-
 
 public class AccountDialog extends EscapeDialog {
 
@@ -114,7 +107,9 @@ public class AccountDialog extends EscapeDialog {
     private JFrame parentWindow;
     private boolean accountChanged = false;
     private char defaultEchoChar;
-
+    private JMenu editMenu;
+    private Action[] editMenuActions = { new DefaultEditorKit.CutAction(),
+            new DefaultEditorKit.CopyAction(), new DefaultEditorKit.PasteAction(), };
 
     public AccountDialog(AccountInformation account, JFrame parentWindow, boolean readOnly, ArrayList existingAccounts) {
         super(parentWindow, true);
@@ -134,7 +129,6 @@ public class AccountDialog extends EscapeDialog {
         }
         setTitle(title);
 
-
         this.pAccount = account;
         this.existingAccounts = existingAccounts;
         this.parentWindow = parentWindow;
@@ -143,6 +137,8 @@ public class AccountDialog extends EscapeDialog {
         GridBagConstraints c = new GridBagConstraints();
 
         Container container = getContentPane();
+        
+        setJMenuBar(createMenuBar());
 
         //The AccountName Row
         JLabel accountLabel = new JLabel(Translator.translate("account"));
@@ -245,36 +241,36 @@ public class AccountDialog extends EscapeDialog {
             generateRandomPasswordButton.setEnabled(false);
         }
         generateRandomPasswordButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionevent) {
-        // Get the user's preference about including or not Escape Characters to generated passwords
-                Boolean includeEscapeChars = new Boolean(
-				                Preferences
-                        .get(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, "true"));
-                int pwLength = Preferences.getInt(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, 8);
-                String Password;
+        	public void actionPerformed(ActionEvent actionevent) {
+        		// Get the user's preference about including or not Escape Characters to generated passwords
+        		Boolean includeEscapeChars = new Boolean(
+        				Preferences
+        				.get(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, "true"));
+        		int pwLength = Preferences.getInt(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, 8);
+        		String Password;
 
-                if ((includeEscapeChars.booleanValue()) &&(pwLength>3)) {
-       // Verify that the generated password satisfies the criteria for strong passwords(including Escape Characters)
-				    do{
-						Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
-					}while (!(CheckPassStrong(Password,includeEscapeChars.booleanValue())));
+        		if ((includeEscapeChars.booleanValue()) &&(pwLength>3)) {
+        			// Verify that the generated password satisfies the criteria for strong passwords(including Escape Characters)
+        			do {
+        				Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
+        			} while (!(CheckPassStrong(Password,includeEscapeChars.booleanValue())));
 
-                } else if (!(includeEscapeChars.booleanValue()) &&(pwLength>2)) {
-	 // Verify that the generated password satisfies the criteria for strong passwords(excluding Escape Characters)
-					do{
-						Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
-					}while (!(CheckPassStrong(Password,includeEscapeChars.booleanValue())));
+        		} else if (!(includeEscapeChars.booleanValue()) &&(pwLength>2)) {
+        			// Verify that the generated password satisfies the criteria for strong passwords(excluding Escape Characters)
+        			do {
+        				Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
+        			}while (!(CheckPassStrong(Password,includeEscapeChars.booleanValue())));
 
-			    } else {
-	 //	Else a weak password of 3 or less chars will be produced
-			    Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
-			}
+        		} else {
+        			//	Else a weak password of 3 or less chars will be produced
+        			Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
+        		}
 
-                password.setText(Password);
-         }
+        		password.setText(Password);
+        	}
         });
         if (addingAccount) {
-            generateRandomPasswordButton.doClick();
+        	generateRandomPasswordButton.doClick();
         }
         c.gridx = 1;
         c.gridy = 0;
@@ -354,7 +350,6 @@ public class AccountDialog extends EscapeDialog {
             }
         });
 
-
         //Notes Row
         JLabel notesLabel = new JLabel(Translator.translate("notes"));
         c.gridx = 0;
@@ -373,35 +368,6 @@ public class AccountDialog extends EscapeDialog {
         }
         notes.setLineWrap(true); // Enable line wrapping.
         notes.setWrapStyleWord(true); // Line wrap at whitespace.
-        //Add a right-click popup menu to the notes textarea.
-        notes.addMouseListener(new MouseAdapter() {
-        	public void mousePressed(MouseEvent evt) {
-        		if (evt.isPopupTrigger()) {
-        			JPopupMenu popup = new JPopupMenu();
-        			JMenuItem copy = new JMenuItem("Copy");
-        			copy.addMouseListener(new MouseAdapter() {
-        				public void mousePressed(MouseEvent ecp) {
-        					// Copy selected text to the clipboard.
-        					setClipboard(notes.getSelectedText());
-        				}
-        			});
-        			popup.add(copy);
-        			JMenuItem paste = new JMenuItem("Paste");
-        			paste.addMouseListener(new MouseAdapter() {
-        				public void mousePressed(MouseEvent eps) {
-        					/*
-        					 *  Paste clipboard contents to the textarea, if valid,
-        					 *  at the cursor position.
-        					 */
-        					notes.insert(getClipboard(), notes.getCaretPosition());
-        				}
-        			});
-        			popup.add(paste);
-        			// Show the popup menu where the right-click occurred.
-        			popup.show(evt.getComponent(), evt.getX(), evt.getY());
-        		}
-        	}
-        });
         JScrollPane notesScrollPane = new JScrollPane(notes);
         c.gridx = 1;
         c.gridy = 4;
@@ -417,7 +383,6 @@ public class AccountDialog extends EscapeDialog {
                 notes.selectAll();
             }
         });
-
 
         //Seperator Row
         JSeparator sep = new JSeparator();
@@ -462,16 +427,13 @@ public class AccountDialog extends EscapeDialog {
 
     }
 
-
     public boolean okClicked() {
         return okClicked;
     }
 
-
     public AccountInformation getAccount() {
         return pAccount;
     }
-
 
     private void okButtonAction() {
 
@@ -513,7 +475,6 @@ public class AccountDialog extends EscapeDialog {
         }
     }
 
-
     public boolean getAccountChanged() {
         return accountChanged;
     }
@@ -524,30 +485,40 @@ public class AccountDialog extends EscapeDialog {
         setVisible(false);
         dispose();
     }
-  /* The above method takes as input  the user's preferences about password length and including or excluding Escape Characters and radomly generates
-  a password. Then, the method returns the above password as a String.
-   */
-   private static String GeneratePassword(int PassLength, boolean InclEscChars) {
+    
+    /**
+     * This method takes as input the user's preferences about password length,
+     * including or excluding Escape Characters, and randomly generates a password.
+     * Then, the method returns the generated password as a String.
+     * @param PassLength
+     * @param InclEscChars
+     * @return passwordBuffer.toString()
+     */
+    private static String GeneratePassword(int PassLength, boolean InclEscChars) {
 
-	    SecureRandom random = new SecureRandom();
-		StringBuffer passwordBuffer = new StringBuffer();
+    	SecureRandom random = new SecureRandom();
+    	StringBuffer passwordBuffer = new StringBuffer();
 
-		if (InclEscChars) {
-		for(int i=0; i< PassLength; i++) {
-			passwordBuffer.append(EXTRA_ALLOWED_CHARS[random.nextInt(EXTRA_ALLOWED_CHARS.length)]);
-		}
-		return passwordBuffer.toString();
+    	if (InclEscChars) {
+    		for(int i=0; i< PassLength; i++) {
+    			passwordBuffer.append(EXTRA_ALLOWED_CHARS[random.nextInt(EXTRA_ALLOWED_CHARS.length)]);
+    		}
+    		return passwordBuffer.toString();
 
-	}else {
-		for(int i=0; i< PassLength; i++) {
-			passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
-             }
-       return passwordBuffer.toString();
-}
-}
-/*The above method returns true if the generated password satisfies the criteria of a strong password
-including or excluding Escape Characters. If not, then returns false.
-*/
+    	} else {
+    		for(int i=0; i< PassLength; i++) {
+    			passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
+    		}
+    		return passwordBuffer.toString();
+    	}
+    }
+   	/**
+   	 * This method returns true if the generated password satisfies the criteria of a strong password,
+   	 * including or excluding Escape Characters. If not, then returns false.
+   	 * @param Pass
+   	 * @param InclEscChars
+   	 * @return true or false, depending on strength criteria.
+   	 */
     private static boolean CheckPassStrong(String Pass, boolean InclEscChars){
 		if (InclEscChars){
 			if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) && (InclEscape(Pass))) {
@@ -564,9 +535,13 @@ including or excluding Escape Characters. If not, then returns false.
 		   }
 	}
 
-
-// The above method rerurns true if the generated password contains at least one Upper Case character. If not, then the method returns false.
-	private static boolean  InclUpperCase(String GeneratedPass) {
+	/**
+	 * This method returns true if the generated password contains at least one Upper Case
+	 * character. If not, then the method returns false.
+	 * @param GeneratedPass
+	 * @return true or false, depending on existence of one upper case letter.
+	 */
+    private static boolean  InclUpperCase(String GeneratedPass) {
        char[] PassWordArray = GeneratedPass.toCharArray();
        boolean find = false;
        outerloop:
@@ -585,8 +560,14 @@ including or excluding Escape Characters. If not, then returns false.
 		  }
 
     }
-// The above method rerurns true if the generated password contains at least one Lower Case character. If not, then the method returns false.
-  private static boolean  InclLowerCase(String GeneratedPass) {
+    
+    /**
+     * This method returns true if the generated password contains at least one Lower Case
+     * character. If not, then the method returns false.
+     * @param GeneratedPass
+     * @return true or false, depending on existence of one lower case letter.
+     */
+    private static boolean  InclLowerCase(String GeneratedPass) {
        char[] PassWordArray = GeneratedPass.toCharArray();
        boolean find = false;
        outerloop:
@@ -605,8 +586,14 @@ including or excluding Escape Characters. If not, then returns false.
 		  }
 
     }
-// The above method rerurns true if the generated password contains at least one Number. If not, then the method returns false.
-private static boolean  InclNumber(String GeneratedPass) {
+    
+    /**
+     * This method returns true if the generated password contains at least one Number.
+     * If not, then the method returns false.
+     * @param GeneratedPass
+     * @return true or false, depending on existence of one number.
+     */
+    private static boolean  InclNumber(String GeneratedPass) {
        char[] PassWordArray = GeneratedPass.toCharArray();
        boolean find = false;
        outerloop:
@@ -625,7 +612,14 @@ private static boolean  InclNumber(String GeneratedPass) {
 		  }
 
     }
-// The above method rerurns true if the generated password contains at least one Escape character. If not, then the method returns false.
+    
+    /**
+     * 
+     * The above method returns true if the generated password contains at least one Escape
+     * character. If not, then the method returns false.
+     * @param GeneratedPass
+     * @return true or false, depending on existence of one escape character.
+     */
     private static boolean  InclEscape(String GeneratedPass) {
 	       char[] PassWordArray = GeneratedPass.toCharArray();
 	       boolean find = false;
@@ -645,47 +639,30 @@ private static boolean  InclNumber(String GeneratedPass) {
 			  }
 
     }
-    /**
-     * This method gets the contents of the system clipboard and returns that
-     * value.
-     * @return clipboardText This is the contents of the clipboard as a string, or if the
-     * clipboard contents are not valid, it is an empty string.
-     */
-    private String getClipboard() {
-    	String clipboardText = ""; // This will be the contents of the clipboard as a string.
-    	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    	Transferable contents = clipboard.getContents(null);
-    	boolean textCanTransfer = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
-    	if (textCanTransfer) {
-    		try {
-				// If the clipboard contents are transferable, set the value of clipboardText.
-    			clipboardText = (String)contents.getTransferData(DataFlavor.stringFlavor);
-			} catch (UnsupportedFlavorException e) {
-				// This is not likely to happen since we are checking for the correct flavor.
-				JOptionPane.showMessageDialog(null, "Unsupported data flavor");
-				e.printStackTrace();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, e);
-				e.printStackTrace();
-			}
-    	}
-    	/*
-    	 * Return the contents of the clipboard as a string, or if the clipboard
-    	 * contents are not valid, return an empty string.
-    	 */
-    	return clipboardText;
-    }
     
     /**
-     * This method sets the contents of the system clipboard to the value
-     * of the text selected in the notes textarea.
-     * @param s This is the string value of the selected text in the notes
-     * textarea.
+     * This method creates the Edit menu and populates it with cut, copy, and paste
+     * functionality. The functionality provided by this menu will work for any
+     * text area or text field in the window. This allows the user to cut, copy,
+     * and paste to/from UPM. This is helpful when manually migrating to/from
+     * another password manager.
+     * @return menuBar This is the complete menu bar with menus.
      */
-    private void setClipboard(String s) {
-    	StringSelection selected = new StringSelection(s);
-    	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    	clipboard.setContents(selected, selected);
+    private JMenuBar createMenuBar() {
+    	JMenuBar menuBar = new JMenuBar();
+    	
+    	editMenu = new JMenu("Edit"); // Instantiate the Edit menu object.
+    	editMenu.setMnemonic(KeyEvent.VK_E); // Activate the menu with Alt+E.
+    	/*
+    	 * Step through each Action in the editMenuActions array and assign the
+    	 * action at index i to a new JMenuItem and add it to the Edit menu.
+    	 */
+    	for (int i = 0; i < editMenuActions.length; i++) {
+    		editMenu.add(new JMenuItem(editMenuActions[i]));
+    	}
+    	menuBar.add(editMenu); // Add the Edit menu to the menu bar.
+    	
+    	return menuBar; // Return the menu bar.
     }
-
+    
 }
