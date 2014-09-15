@@ -24,12 +24,22 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 
@@ -37,9 +47,11 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
@@ -359,6 +371,37 @@ public class AccountDialog extends EscapeDialog {
         if (readOnly) {
             notes.setEditable(false);
         }
+        notes.setLineWrap(true); // Enable line wrapping.
+        notes.setWrapStyleWord(true); // Line wrap at whitespace.
+        //Add a right-click popup menu to the notes textarea.
+        notes.addMouseListener(new MouseAdapter() {
+        	public void mousePressed(MouseEvent evt) {
+        		if (evt.isPopupTrigger()) {
+        			JPopupMenu popup = new JPopupMenu();
+        			JMenuItem copy = new JMenuItem("Copy");
+        			copy.addMouseListener(new MouseAdapter() {
+        				public void mousePressed(MouseEvent ecp) {
+        					// Copy selected text to the clipboard.
+        					setClipboard(notes.getSelectedText());
+        				}
+        			});
+        			popup.add(copy);
+        			JMenuItem paste = new JMenuItem("Paste");
+        			paste.addMouseListener(new MouseAdapter() {
+        				public void mousePressed(MouseEvent eps) {
+        					/*
+        					 *  Paste clipboard contents to the textarea, if valid,
+        					 *  at the cursor position.
+        					 */
+        					notes.insert(getClipboard(), notes.getCaretPosition());
+        				}
+        			});
+        			popup.add(paste);
+        			// Show the popup menu where the right-click occurred.
+        			popup.show(evt.getComponent(), evt.getX(), evt.getY());
+        		}
+        	}
+        });
         JScrollPane notesScrollPane = new JScrollPane(notes);
         c.gridx = 1;
         c.gridy = 4;
@@ -601,6 +644,48 @@ private static boolean  InclNumber(String GeneratedPass) {
 				  return false;
 			  }
 
+    }
+    /**
+     * This method gets the contents of the system clipboard and returns that
+     * value.
+     * @return clipboardText This is the contents of the clipboard as a string, or if the
+     * clipboard contents are not valid, it is an empty string.
+     */
+    private String getClipboard() {
+    	String clipboardText = ""; // This will be the contents of the clipboard as a string.
+    	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    	Transferable contents = clipboard.getContents(null);
+    	boolean textCanTransfer = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+    	if (textCanTransfer) {
+    		try {
+				// If the clipboard contents are transferable, set the value of clipboardText.
+    			clipboardText = (String)contents.getTransferData(DataFlavor.stringFlavor);
+			} catch (UnsupportedFlavorException e) {
+				// This is not likely to happen since we are checking for the correct flavor.
+				JOptionPane.showMessageDialog(null, "Unsupported data flavor");
+				e.printStackTrace();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, e);
+				e.printStackTrace();
+			}
+    	}
+    	/*
+    	 * Return the contents of the clipboard as a string, or if the clipboard
+    	 * contents are not valid, return an empty string.
+    	 */
+    	return clipboardText;
+    }
+    
+    /**
+     * This method sets the contents of the system clipboard to the value
+     * of the text selected in the notes textarea.
+     * @param s This is the string value of the selected text in the notes
+     * textarea.
+     */
+    private void setClipboard(String s) {
+    	StringSelection selected = new StringSelection(s);
+    	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    	clipboard.setContents(selected, selected);
     }
 
 }
