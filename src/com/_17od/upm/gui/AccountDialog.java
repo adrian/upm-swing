@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -49,6 +50,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 
 import com._17od.upm.database.AccountInformation;
@@ -520,20 +522,20 @@ public class AccountDialog extends EscapeDialog {
    	 * @return true or false, depending on strength criteria.
    	 */
     private static boolean CheckPassStrong(String Pass, boolean InclEscChars){
-		if (InclEscChars){
-			if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) && (InclEscape(Pass))) {
-				    return true;
-		    } else {
-				    return false;
-		    }
-	    } else {
-			if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) ) {
-				   return true;
-		    } else {
-				   return false;
-		    }
-		   }
-	}
+    	if (InclEscChars){
+    		if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) && (InclEscape(Pass))) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	} else {
+    		if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) ) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	}
+    }
 
 	/**
 	 * This method returns true if the generated password contains at least one Upper Case
@@ -542,22 +544,22 @@ public class AccountDialog extends EscapeDialog {
 	 * @return true or false, depending on existence of one upper case letter.
 	 */
     private static boolean  InclUpperCase(String GeneratedPass) {
-       char[] PassWordArray = GeneratedPass.toCharArray();
-       boolean find = false;
-       outerloop:
-	       for (int i=0; i < PassWordArray.length; i++) {
-	         for (int j=0; j < UPPERCASE_CHARS.length; j++) {
-	           if (PassWordArray[i] == UPPERCASE_CHARS[j]) {
-	             find = true;
-	             break outerloop;
-	           }
-	         }
-		   }
-	         if (find) {
-				 return true;
-		  }  else {
-			  return false;
-		  }
+    	char[] PassWordArray = GeneratedPass.toCharArray();
+    	boolean find = false;
+    	outerloop:
+    		for (int i=0; i < PassWordArray.length; i++) {
+    			for (int j=0; j < UPPERCASE_CHARS.length; j++) {
+    				if (PassWordArray[i] == UPPERCASE_CHARS[j]) {
+    					find = true;
+    					break outerloop;
+    				}
+    			}
+    		}
+    	if (find) {
+    		return true;
+    	}  else {
+    		return false;
+    	}
 
     }
     
@@ -568,22 +570,22 @@ public class AccountDialog extends EscapeDialog {
      * @return true or false, depending on existence of one lower case letter.
      */
     private static boolean  InclLowerCase(String GeneratedPass) {
-       char[] PassWordArray = GeneratedPass.toCharArray();
-       boolean find = false;
-       outerloop:
-	       for (int i=0; i < PassWordArray.length; i++) {
-	         for (int j=0; j < LOWERCASE_CHARS.length; j++) {
-	           if (PassWordArray[i] == LOWERCASE_CHARS[j]) {
-	             find = true;
-	             break outerloop;
-	           }
-		      }
-	         }
-	         if (find) {
-				 return true;
-		  }  else {
-			  return false;
-		  }
+    	char[] PassWordArray = GeneratedPass.toCharArray();
+    	boolean find = false;
+    	outerloop:
+    		for (int i=0; i < PassWordArray.length; i++) {
+    			for (int j=0; j < LOWERCASE_CHARS.length; j++) {
+    				if (PassWordArray[i] == LOWERCASE_CHARS[j]) {
+    					find = true;
+    					break outerloop;
+    				}
+    			}
+    		}
+    	if (find) {
+    		return true;
+    	}  else {
+    		return false;
+    	}
 
     }
     
@@ -594,22 +596,22 @@ public class AccountDialog extends EscapeDialog {
      * @return true or false, depending on existence of one number.
      */
     private static boolean  InclNumber(String GeneratedPass) {
-       char[] PassWordArray = GeneratedPass.toCharArray();
-       boolean find = false;
-       outerloop:
-	       for (int i=0; i < PassWordArray.length; i++) {
-	         for (int j=0; j < NUMBER_CHARS.length; j++) {
-	           if (PassWordArray[i] == NUMBER_CHARS[j]) {
-	             find = true;
-	             break outerloop;
-	           }
-              }
-	         }
-	         if (find) {
-				 return true;
-		  }  else {
-			  return false;
-		  }
+    	char[] PassWordArray = GeneratedPass.toCharArray();
+    	boolean find = false;
+    	outerloop:
+    		for (int i=0; i < PassWordArray.length; i++) {
+    			for (int j=0; j < NUMBER_CHARS.length; j++) {
+    				if (PassWordArray[i] == NUMBER_CHARS[j]) {
+    					find = true;
+    					break outerloop;
+    				}
+    			}
+    		}
+    	if (find) {
+    		return true;
+    	}  else {
+    		return false;
+    	}
 
     }
     
@@ -621,22 +623,22 @@ public class AccountDialog extends EscapeDialog {
      * @return true or false, depending on existence of one escape character.
      */
     private static boolean  InclEscape(String GeneratedPass) {
-	       char[] PassWordArray = GeneratedPass.toCharArray();
-	       boolean find = false;
-	       outerloop:
-		       for (int i=0; i < PassWordArray.length; i++) {
-		         for (int j=0; j < PUNCTUATION_CHARS.length; j++) {
-		           if (PassWordArray[i] == PUNCTUATION_CHARS[j]) {
-		             find = true;
-		             break outerloop;
-		           }
-			      }
-		         }
-		         if (find) {
-					 return true;
-			  }  else {
-				  return false;
-			  }
+    	char[] PassWordArray = GeneratedPass.toCharArray();
+    	boolean find = false;
+    	outerloop:
+    		for (int i=0; i < PassWordArray.length; i++) {
+    			for (int j=0; j < PUNCTUATION_CHARS.length; j++) {
+    				if (PassWordArray[i] == PUNCTUATION_CHARS[j]) {
+    					find = true;
+    					break outerloop;
+    				}
+    			}
+    		}
+    	if (find) {
+    		return true;
+    	}  else {
+    		return false;
+    	}
 
     }
     
@@ -660,6 +662,15 @@ public class AccountDialog extends EscapeDialog {
     	for (int i = 0; i < editMenuActions.length; i++) {
     		editMenu.add(new JMenuItem(editMenuActions[i]));
     	}
+    	editMenuActions[0].putValue(Action.NAME, "Cut");
+    	editMenuActions[0].putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    	editMenuActions[1].putValue(Action.NAME, "Copy");
+    	editMenuActions[1].putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    	editMenuActions[2].putValue(Action.NAME, "Paste");
+    	editMenuActions[2].putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     	menuBar.add(editMenu); // Add the Edit menu to the menu bar.
     	
     	return menuBar; // Return the menu bar.
