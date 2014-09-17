@@ -371,12 +371,6 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 2;
         c.fill = GridBagConstraints.BOTH;
         container.add(notesScrollPane, c);
-        notes.addFocusListener(new FocusAdapter() {
-            public void focusGained(FocusEvent e) {
-                notes.selectAll();
-            }
-        });
-
 
         //Seperator Row
         JSeparator sep = new JSeparator();
