@@ -31,18 +31,13 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 
-import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -50,12 +45,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.text.DefaultEditorKit;
 
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
+import com._17od.upm.util.Util;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 
 public class AccountDialog extends EscapeDialog {
 
@@ -109,9 +109,6 @@ public class AccountDialog extends EscapeDialog {
     private JFrame parentWindow;
     private boolean accountChanged = false;
     private char defaultEchoChar;
-    private JMenu editMenu;
-    private Action[] editMenuActions = { new DefaultEditorKit.CutAction(),
-            new DefaultEditorKit.CopyAction(), new DefaultEditorKit.PasteAction(), };
 
     public AccountDialog(AccountInformation account, JFrame parentWindow, boolean readOnly, ArrayList existingAccounts) {
         super(parentWindow, true);
@@ -140,8 +137,6 @@ public class AccountDialog extends EscapeDialog {
 
         Container container = getContentPane();
         
-        setJMenuBar(createMenuBar());
-
         //The AccountName Row
         JLabel accountLabel = new JLabel(Translator.translate("account"));
         c.gridx = 0;
@@ -153,25 +148,84 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(accountLabel, c);
+        
+        // This panel will hold the Account field and the copy and paste buttons.
+        JPanel accountPanel = new JPanel(new GridBagLayout());
 
         accountName = new JTextField(new String(pAccount.getAccountName()), 20);
         if (readOnly) {
             accountName.setEditable(false);
         }
-        c.gridx = 1;
+        c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 2;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(accountName, c);
+        accountPanel.add(accountName, c);
         accountName.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
                 accountName.selectAll();
             }
         });
+        
+        JButton acctCopyButton = new JButton(Util.loadImage("copy-icon.png"));
+        acctCopyButton.setText("");
+        acctCopyButton.setToolTipText("Copy");
+        acctCopyButton.setEnabled(true);
+        acctCopyButton.setOpaque(false);
+        acctCopyButton.setContentAreaFilled(false);
+        acctCopyButton.setMargin(new Insets(0, 0, 0, 0));
+        acctCopyButton.setFocusPainted(false);
+        acctCopyButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                copyTextField(accountName);
+            }
+        });
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        accountPanel.add(acctCopyButton, c);
+        
+        JButton acctPasteButton = new JButton(Util.loadImage("paste-icon.png"));
+        acctPasteButton.setText("");
+        acctPasteButton.setToolTipText("Paste");
+        acctPasteButton.setEnabled(!readOnly);
+        acctPasteButton.setOpaque(false);
+        acctPasteButton.setContentAreaFilled(false);
+        acctPasteButton.setMargin(new Insets(0, 0, 0, 0));
+        acctPasteButton.setFocusPainted(false);
+        acctPasteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                pasteToTextField(accountName);
+            }
+        });
+        c.gridx = 2;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        accountPanel.add(acctPasteButton, c);
+        
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(10, 10, 10, 10);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        container.add(accountPanel, c);
 
         //Userid Row
         JLabel useridLabel = new JLabel(Translator.translate("userid"));
@@ -184,39 +238,98 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(useridLabel, c);
+        
+        // This panel will hold the User ID field and the copy and paste buttons.
+        JPanel idPanel = new JPanel(new GridBagLayout());
 
         userId = new JTextField(new String(pAccount.getUserId()), 20);
         if (readOnly) {
             userId.setEditable(false);
         }
-        c.gridx = 1;
-        c.gridy = 1;
+        c.gridx = 0;
+        c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 0;
-        c.weighty = 0;
-        c.gridwidth = 2;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(userId, c);
+        idPanel.add(userId, c);
         userId.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
                 userId.selectAll();
             }
         });
+        
+        JButton idCopyButton = new JButton(Util.loadImage("copy-icon.png"));
+        idCopyButton.setText("");
+        idCopyButton.setToolTipText("Copy");
+        idCopyButton.setEnabled(true);
+        idCopyButton.setOpaque(false);
+        idCopyButton.setContentAreaFilled(false);
+        idCopyButton.setMargin(new Insets(0, 0, 0, 0));
+        idCopyButton.setFocusPainted(false);
+        idCopyButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                copyTextField(userId);
+            }
+        });
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        idPanel.add(idCopyButton, c);
+        
+        JButton idPasteButton = new JButton(Util.loadImage("paste-icon.png"));
+        idPasteButton.setText("");
+        idPasteButton.setToolTipText("Paste");
+        idPasteButton.setEnabled(!readOnly);
+        idPasteButton.setOpaque(false);
+        idPasteButton.setContentAreaFilled(false);
+        idPasteButton.setMargin(new Insets(0, 0, 0, 0));
+        idPasteButton.setFocusPainted(false);
+        idPasteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                pasteToTextField(userId);
+            }
+        });
+        c.gridx = 2;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        idPanel.add(idPasteButton, c);
+        
+        c.gridx = 1;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(10, 10, 10, 10);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        container.add(idPanel, c);
 
         //Password Row
         JLabel passwordLabel = new JLabel(Translator.translate("password"));
         c.gridx = 0;
         c.gridy = 2;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(15, 10, 10, 10);
         c.weightx = 0;
         c.weighty = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(passwordLabel, c);
 
-        // This panel will hold the password, generate password button and hide password checkbox
+        // This panel will hold the password, generate password button, copy and paste buttons, and hide password checkbox
         JPanel passwordPanel = new JPanel(new GridBagLayout());
 
         password = new JPasswordField(new String(pAccount.getPassword()), 20);
@@ -237,39 +350,38 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         passwordPanel.add(password, c);
-
+        
         JButton generateRandomPasswordButton = new JButton(Translator.translate("generate"));
         if (readOnly) {
             generateRandomPasswordButton.setEnabled(false);
         }
         generateRandomPasswordButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent actionevent) {
-        		// Get the user's preference about including or not Escape Characters to generated passwords
-        		Boolean includeEscapeChars = new Boolean(
-        				Preferences
-        				.get(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, "true"));
-        		int pwLength = Preferences.getInt(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, 8);
-        		String Password;
+            public void actionPerformed(ActionEvent actionevent) {
+                // Get the user's preference about including or not Escape Characters to generated passwords
+                Boolean includeEscapeChars = new Boolean(
+                        Preferences
+                        .get(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, "true"));
+                int pwLength = Preferences.getInt(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, 8);
+                String Password;
 
-        		if ((includeEscapeChars.booleanValue()) &&(pwLength>3)) {
-        			// Verify that the generated password satisfies the criteria for strong passwords(including Escape Characters)
-        			do {
-        				Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
-        			} while (!(CheckPassStrong(Password,includeEscapeChars.booleanValue())));
+                if ((includeEscapeChars.booleanValue()) && (pwLength > 3)) {
+                    // Verify that the generated password satisfies the criteria for strong passwords(including Escape Characters)
+                    do {
+                        Password = GeneratePassword(pwLength, includeEscapeChars.booleanValue());
+                    } while (!(CheckPassStrong(Password, includeEscapeChars.booleanValue())));
 
-        		} else if (!(includeEscapeChars.booleanValue()) &&(pwLength>2)) {
-        			// Verify that the generated password satisfies the criteria for strong passwords(excluding Escape Characters)
-        			do {
-        				Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
-        			}while (!(CheckPassStrong(Password,includeEscapeChars.booleanValue())));
+                } else if (!(includeEscapeChars.booleanValue()) && (pwLength > 2)) {
+                    // Verify that the generated password satisfies the criteria for strong passwords(excluding Escape Characters)
+                    do {
+                        Password = GeneratePassword(pwLength, includeEscapeChars.booleanValue());
+                    } while (!(CheckPassStrong(Password, includeEscapeChars.booleanValue())));
 
-        		} else {
-        			//	Else a weak password of 3 or less chars will be produced
-        			Password = GeneratePassword(pwLength,includeEscapeChars.booleanValue());
-        		}
-
-        		password.setText(Password);
-        	}
+                } else {
+                    //	Else a weak password of 3 or less chars will be produced
+                    Password = GeneratePassword(pwLength, includeEscapeChars.booleanValue());
+                }
+                password.setText(Password);
+            }
         });
         if (addingAccount) {
         	generateRandomPasswordButton.doClick();
@@ -283,9 +395,56 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         passwordPanel.add(generateRandomPasswordButton, c);
-
+        
+        JButton pwCopyButton = new JButton(Util.loadImage("copy-icon.png"));
+        pwCopyButton.setText("");
+        pwCopyButton.setToolTipText("Copy");
+        pwCopyButton.setEnabled(true);
+        pwCopyButton.setOpaque(false);
+        pwCopyButton.setContentAreaFilled(false);
+        pwCopyButton.setMargin(new Insets(0, 0, 0, 0));
+        pwCopyButton.setFocusPainted(false);
+        pwCopyButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                copyTextField(password);
+            }
+        });
+        c.gridx = 2;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        passwordPanel.add(pwCopyButton, c);
+        
+        JButton pwPasteButton = new JButton(Util.loadImage("paste-icon.png"));
+        pwPasteButton.setText("");
+        pwPasteButton.setToolTipText("Paste");
+        pwPasteButton.setEnabled(!readOnly);
+        pwPasteButton.setOpaque(false);
+        pwPasteButton.setContentAreaFilled(false);
+        pwPasteButton.setMargin(new Insets(0, 0, 0, 0));
+        pwPasteButton.setFocusPainted(false);
+        pwPasteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                pasteToTextField(password);
+            }
+        });
+        c.gridx = 3;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        passwordPanel.add(pwPasteButton, c);
+        
         JCheckBox hidePasswordCheckbox = new JCheckBox(Translator.translate("hide"), true);
         defaultEchoChar = password.getEchoChar();
+        hidePasswordCheckbox.setMargin(new Insets(5, 0, 5, 0));
         hidePasswordCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -301,8 +460,8 @@ public class AccountDialog extends EscapeDialog {
                         .get(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, "true"));
         hidePasswordCheckbox.setSelected(hideAccountPassword.booleanValue());
 
-        c.gridx = 2;
-        c.gridy = 0;
+        c.gridx = 0;
+        c.gridy = 1;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(0, 0, 0, 0);
         c.weightx = 0;
@@ -332,25 +491,84 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(urlLabel, c);
+        
+        // This panel will hold the URL field and the copy and paste buttons.
+        JPanel urlPanel = new JPanel(new GridBagLayout());
 
         url = new JTextField(new String(pAccount.getUrl()), 20);
         if (readOnly) {
             url.setEditable(false);
         }
-        c.gridx = 1;
-        c.gridy = 3;
+        c.gridx = 0;
+        c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);
+        c.insets = new Insets(0, 0, 0, 5);
         c.weightx = 1;
-        c.weighty = 0;
-        c.gridwidth = 2;
+        c.weighty = 1;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(url, c);
+        urlPanel.add(url, c);
         url.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
                 url.selectAll();
             }
         });
+        
+        JButton urlCopyButton = new JButton(Util.loadImage("copy-icon.png"));
+        urlCopyButton.setText("");
+        urlCopyButton.setToolTipText("Copy");
+        urlCopyButton.setEnabled(true);
+        urlCopyButton.setOpaque(false);
+        urlCopyButton.setContentAreaFilled(false);
+        urlCopyButton.setMargin(new Insets(0, 0, 0, 0));
+        urlCopyButton.setFocusPainted(false);
+        urlCopyButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                copyTextField(url);
+            }
+        });
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        urlPanel.add(urlCopyButton, c);
+        
+        JButton urlPasteButton = new JButton(Util.loadImage("paste-icon.png"));
+        urlPasteButton.setText("");
+        urlPasteButton.setToolTipText("Paste");
+        urlPasteButton.setEnabled(!readOnly);
+        urlPasteButton.setOpaque(false);
+        urlPasteButton.setContentAreaFilled(false);
+        urlPasteButton.setMargin(new Insets(0, 0, 0, 0));
+        urlPasteButton.setFocusPainted(false);
+        urlPasteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                pasteToTextField(url);
+            }
+        });
+        c.gridx = 2;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        urlPanel.add(urlPasteButton, c);
+        
+        c.gridx = 1;
+        c.gridy = 3;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(10, 10, 10, 10);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        container.add(urlPanel, c);
 
         //Notes Row
         JLabel notesLabel = new JLabel(Translator.translate("notes"));
@@ -363,6 +581,9 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         container.add(notesLabel, c);
+        
+        // This panel will hold the Notes text area and the copy and paste buttons.
+        JPanel notesPanel = new JPanel(new GridBagLayout());
 
         notes = new JTextArea(new String(pAccount.getNotes()), 10, 20);
         if (readOnly) {
@@ -371,20 +592,71 @@ public class AccountDialog extends EscapeDialog {
         notes.setLineWrap(true); // Enable line wrapping.
         notes.setWrapStyleWord(true); // Line wrap at whitespace.
         JScrollPane notesScrollPane = new JScrollPane(notes);
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.BOTH;
+        notesPanel.add(notesScrollPane, c);
+        
+        JButton notesCopyButton = new JButton(Util.loadImage("copy-icon.png"));
+        notesCopyButton.setText("");
+        notesCopyButton.setToolTipText("Copy");
+        notesCopyButton.setEnabled(true);
+        notesCopyButton.setOpaque(false);
+        notesCopyButton.setContentAreaFilled(false);
+        notesCopyButton.setMargin(new Insets(0, 0, 0, 0));
+        notesCopyButton.setFocusPainted(false);
+        notesCopyButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                copyTextArea(notes);
+            }
+        });
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        notesPanel.add(notesCopyButton, c);
+        
+        JButton notesPasteButton = new JButton(Util.loadImage("paste-icon.png"));
+        notesPasteButton.setText("");
+        notesPasteButton.setToolTipText("Paste");
+        notesPasteButton.setEnabled(!readOnly);
+        notesPasteButton.setOpaque(false);
+        notesPasteButton.setContentAreaFilled(false);
+        notesPasteButton.setMargin(new Insets(0, 0, 0, 0));
+        notesPasteButton.setFocusPainted(false);
+        notesPasteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                pasteToTextArea(notes);
+            }
+        });
+        c.gridx = 2;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        notesPanel.add(notesPasteButton, c);
+        
         c.gridx = 1;
         c.gridy = 4;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 0;
+        c.weightx = 1;
         c.weighty = 1;
-        c.gridwidth = 2;
-        c.fill = GridBagConstraints.BOTH;
-        container.add(notesScrollPane, c);
-        notes.addFocusListener(new FocusAdapter() {
-            public void focusGained(FocusEvent e) {
-                notes.selectAll();
-            }
-        });
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        container.add(notesPanel, c);
 
         //Seperator Row
         JSeparator sep = new JSeparator();
@@ -397,7 +669,6 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
         container.add(sep, c);
-
 
         //Button Row
         JPanel buttonPanel = new JPanel();
@@ -426,16 +697,15 @@ public class AccountDialog extends EscapeDialog {
         c.gridwidth = 3;
         c.fill = GridBagConstraints.NONE;
         container.add(buttonPanel, c);
-
-    }
-
+    } // End AccountDialog constructor
+    
     public boolean okClicked() {
         return okClicked;
-    }
+    } // End okClicked()
 
     public AccountInformation getAccount() {
         return pAccount;
-    }
+    } // End getAccount()
 
     private void okButtonAction() {
 
@@ -475,205 +745,240 @@ public class AccountDialog extends EscapeDialog {
             dispose();
             okClicked = true;
         }
-    }
+    } // End okButtonAction()
 
     public boolean getAccountChanged() {
         return accountChanged;
-    }
-
+    } // End getAccountChanged()
 
     private void closeButtonAction() {
         okClicked = false;
         setVisible(false);
         dispose();
-    }
+    } // End closeButtonAction()
     
     /**
      * This method takes as input the user's preferences about password length,
-     * including or excluding Escape Characters, and randomly generates a password.
-     * Then, the method returns the generated password as a String.
+     * including or excluding Escape Characters, and randomly generates a
+     * password. Then, the method returns the generated password as a String.
+     *
      * @param PassLength
      * @param InclEscChars
      * @return passwordBuffer.toString()
      */
     private static String GeneratePassword(int PassLength, boolean InclEscChars) {
+        SecureRandom random = new SecureRandom();
+        StringBuffer passwordBuffer = new StringBuffer();
 
-    	SecureRandom random = new SecureRandom();
-    	StringBuffer passwordBuffer = new StringBuffer();
+        if (InclEscChars) {
+            for (int i = 0; i < PassLength; i++) {
+                passwordBuffer.append(EXTRA_ALLOWED_CHARS[random.nextInt(EXTRA_ALLOWED_CHARS.length)]);
+            }
+            return passwordBuffer.toString();
 
-    	if (InclEscChars) {
-    		for(int i=0; i< PassLength; i++) {
-    			passwordBuffer.append(EXTRA_ALLOWED_CHARS[random.nextInt(EXTRA_ALLOWED_CHARS.length)]);
-    		}
-    		return passwordBuffer.toString();
-
-    	} else {
-    		for(int i=0; i< PassLength; i++) {
-    			passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
-    		}
-    		return passwordBuffer.toString();
-    	}
-    }
-   	/**
-   	 * This method returns true if the generated password satisfies the criteria of a strong password,
-   	 * including or excluding Escape Characters. If not, then returns false.
-   	 * @param Pass
-   	 * @param InclEscChars
-   	 * @return true or false, depending on strength criteria.
-   	 */
-    private static boolean CheckPassStrong(String Pass, boolean InclEscChars){
-    	if (InclEscChars){
-    		if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) && (InclEscape(Pass))) {
-    			return true;
-    		} else {
-    			return false;
-    		}
-    	} else {
-    		if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) ) {
-    			return true;
-    		} else {
-    			return false;
-    		}
-    	}
-    }
-
-	/**
-	 * This method returns true if the generated password contains at least one Upper Case
-	 * character. If not, then the method returns false.
-	 * @param GeneratedPass
-	 * @return true or false, depending on existence of one upper case letter.
-	 */
-    private static boolean  InclUpperCase(String GeneratedPass) {
-    	char[] PassWordArray = GeneratedPass.toCharArray();
-    	boolean find = false;
-    	outerloop:
-    		for (int i=0; i < PassWordArray.length; i++) {
-    			for (int j=0; j < UPPERCASE_CHARS.length; j++) {
-    				if (PassWordArray[i] == UPPERCASE_CHARS[j]) {
-    					find = true;
-    					break outerloop;
-    				}
-    			}
-    		}
-    	if (find) {
-    		return true;
-    	}  else {
-    		return false;
-    	}
-
-    }
+        } else {
+            for (int i = 0; i < PassLength; i++) {
+                passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
+            }
+            return passwordBuffer.toString();
+        }
+    } // End GeneratePassword()
     
     /**
-     * This method returns true if the generated password contains at least one Lower Case
-     * character. If not, then the method returns false.
+     * This method returns true if the generated password satisfies the criteria
+     * of a strong password, including or excluding Escape Characters. If not,
+     * then returns false.
+     *
+     * @param Pass
+     * @param InclEscChars
+     * @return true or false, depending on strength criteria.
+     */
+    private static boolean CheckPassStrong(String Pass, boolean InclEscChars) {
+        if (InclEscChars) {
+            if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass)) && (InclEscape(Pass))) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if ((InclUpperCase(Pass)) && (InclLowerCase(Pass)) && (InclNumber(Pass))) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    } // End CheckPassStrong()
+
+    /**
+     * This method returns true if the generated password contains at least one
+     * Upper Case character. If not, then the method returns false.
+     *
+     * @param GeneratedPass
+     * @return true or false, depending on existence of one upper case letter.
+     */
+    private static boolean InclUpperCase(String GeneratedPass) {
+        char[] PassWordArray = GeneratedPass.toCharArray();
+        boolean find = false;
+        outerloop:
+        for (int i = 0; i < PassWordArray.length; i++) {
+            for (int j = 0; j < UPPERCASE_CHARS.length; j++) {
+                if (PassWordArray[i] == UPPERCASE_CHARS[j]) {
+                    find = true;
+                    break outerloop;
+                }
+            }
+        }
+        if (find) {
+            return true;
+        } else {
+            return false;
+        }
+    } // End InclUpperCase()
+    
+    /**
+     * This method returns true if the generated password contains at least one
+     * Lower Case character. If not, then the method returns false.
+     *
      * @param GeneratedPass
      * @return true or false, depending on existence of one lower case letter.
      */
-    private static boolean  InclLowerCase(String GeneratedPass) {
-    	char[] PassWordArray = GeneratedPass.toCharArray();
-    	boolean find = false;
-    	outerloop:
-    		for (int i=0; i < PassWordArray.length; i++) {
-    			for (int j=0; j < LOWERCASE_CHARS.length; j++) {
-    				if (PassWordArray[i] == LOWERCASE_CHARS[j]) {
-    					find = true;
-    					break outerloop;
-    				}
-    			}
-    		}
-    	if (find) {
-    		return true;
-    	}  else {
-    		return false;
-    	}
-
-    }
+    private static boolean InclLowerCase(String GeneratedPass) {
+        char[] PassWordArray = GeneratedPass.toCharArray();
+        boolean find = false;
+        outerloop:
+        for (int i = 0; i < PassWordArray.length; i++) {
+            for (int j = 0; j < LOWERCASE_CHARS.length; j++) {
+                if (PassWordArray[i] == LOWERCASE_CHARS[j]) {
+                    find = true;
+                    break outerloop;
+                }
+            }
+        }
+        if (find) {
+            return true;
+        } else {
+            return false;
+        }
+    } // End InclLowerCase()
     
     /**
-     * This method returns true if the generated password contains at least one Number.
-     * If not, then the method returns false.
+     * This method returns true if the generated password contains at least one
+     * Number. If not, then the method returns false.
+     *
      * @param GeneratedPass
      * @return true or false, depending on existence of one number.
      */
-    private static boolean  InclNumber(String GeneratedPass) {
-    	char[] PassWordArray = GeneratedPass.toCharArray();
-    	boolean find = false;
-    	outerloop:
-    		for (int i=0; i < PassWordArray.length; i++) {
-    			for (int j=0; j < NUMBER_CHARS.length; j++) {
-    				if (PassWordArray[i] == NUMBER_CHARS[j]) {
-    					find = true;
-    					break outerloop;
-    				}
-    			}
-    		}
-    	if (find) {
-    		return true;
-    	}  else {
-    		return false;
-    	}
-
-    }
+    private static boolean InclNumber(String GeneratedPass) {
+        char[] PassWordArray = GeneratedPass.toCharArray();
+        boolean find = false;
+        outerloop:
+        for (int i = 0; i < PassWordArray.length; i++) {
+            for (int j = 0; j < NUMBER_CHARS.length; j++) {
+                if (PassWordArray[i] == NUMBER_CHARS[j]) {
+                    find = true;
+                    break outerloop;
+                }
+            }
+        }
+        if (find) {
+            return true;
+        } else {
+            return false;
+        }
+    } // End InclNumber()
     
     /**
-     * 
-     * The above method returns true if the generated password contains at least one Escape
-     * character. If not, then the method returns false.
+     * The above method returns true if the generated password contains at least
+     * one Escape character. If not, then the method returns false.
+     *
      * @param GeneratedPass
      * @return true or false, depending on existence of one escape character.
      */
-    private static boolean  InclEscape(String GeneratedPass) {
-    	char[] PassWordArray = GeneratedPass.toCharArray();
-    	boolean find = false;
-    	outerloop:
-    		for (int i=0; i < PassWordArray.length; i++) {
-    			for (int j=0; j < PUNCTUATION_CHARS.length; j++) {
-    				if (PassWordArray[i] == PUNCTUATION_CHARS[j]) {
-    					find = true;
-    					break outerloop;
-    				}
-    			}
-    		}
-    	if (find) {
-    		return true;
-    	}  else {
-    		return false;
-    	}
-
+    private static boolean InclEscape(String GeneratedPass) {
+        char[] PassWordArray = GeneratedPass.toCharArray();
+        boolean find = false;
+        outerloop:
+        for (int i = 0; i < PassWordArray.length; i++) {
+            for (int j = 0; j < PUNCTUATION_CHARS.length; j++) {
+                if (PassWordArray[i] == PUNCTUATION_CHARS[j]) {
+                    find = true;
+                    break outerloop;
+                }
+            }
+        }
+        if (find) {
+            return true;
+        } else {
+            return false;
+        }
+    } // End InclEscape()
+    
+    /**
+     * This method takes in a JTextField object and then copies the text of
+     * that text field to the system clipboard.
+     * 
+     * @param textField 
+     */
+    public void copyTextField(JTextField textField) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection selected = new StringSelection(textField.getText());
+        clipboard.setContents(selected, selected);
     }
     
     /**
-     * This method creates the Edit menu and populates it with cut, copy, and paste
-     * functionality. The functionality provided by this menu will work for any
-     * text area or text field in the window. This allows the user to cut, copy,
-     * and paste to/from UPM. This is helpful when manually migrating to/from
-     * another password manager.
-     * @return menuBar This is the complete menu bar with menus.
+     * This method takes in a JTextArea object and then copies the selected text
+     * in that text area to the system clipboard.
+     * 
+     * @param textArea 
      */
-    private JMenuBar createMenuBar() {
-    	JMenuBar menuBar = new JMenuBar();
-    	
-    	editMenu = new JMenu("Edit"); // Instantiate the Edit menu object.
-    	editMenu.setMnemonic(KeyEvent.VK_E); // Activate the menu with Alt+E.
-    	/*
-    	 * Step through each Action in the editMenuActions array and assign the
-    	 * action at index i to a new JMenuItem and add it to the Edit menu.
-    	 */
-    	for (int i = 0; i < editMenuActions.length; i++) {
-    		editMenu.add(new JMenuItem(editMenuActions[i]));
-    	}
-    	editMenuActions[0].putValue(Action.NAME, "Cut");
-    	editMenuActions[0].putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-    	editMenuActions[1].putValue(Action.NAME, "Copy");
-    	editMenuActions[1].putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-    	editMenuActions[2].putValue(Action.NAME, "Paste");
-    	editMenuActions[2].putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-    	menuBar.add(editMenu); // Add the Edit menu to the menu bar.
-    	
-    	return menuBar; // Return the menu bar.
+    public void copyTextArea(JTextArea textArea) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection selected = new StringSelection(textArea.getSelectedText());
+        clipboard.setContents(selected, selected);
     }
     
+    /**
+     * This method takes in a JTextField object and then sets the text of that
+     * text field to the contents of the system clipboard.
+     * 
+     * @param textField 
+     */
+    public void pasteToTextField(JTextField textField) {
+        String text = "";
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable clipText = clipboard.getContents(null);
+        if ((clipText != null) && clipText.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            try {
+                text = (String) clipText.getTransferData(DataFlavor.stringFlavor);
+            } catch (UnsupportedFlavorException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        textField.setText(text);
+    }
+    
+    /**
+     * This method takes in a JTextArea object and then inserts the contents of
+     * the system clipboard into that text area at the cursor position.
+     * 
+     * @param textArea 
+     */
+    public void pasteToTextArea(JTextArea textArea) {
+        String text = "";
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable clipText = clipboard.getContents(null);
+        if ((clipText != null) && clipText.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            try {
+                text = (String) clipText.getTransferData(DataFlavor.stringFlavor);
+            } catch (UnsupportedFlavorException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        textArea.insert(text, textArea.getCaretPosition());
+        textArea.requestFocus();
+    }
 }
