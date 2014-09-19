@@ -286,4 +286,12 @@
         <native2ascii encoding="UTF-16BE" src="${src}" dest="${src}" includes="**/*.unicode" ext=".properties"/>
     </target>
 
+
+    <target name="run" depends="compile">
+        <java classname="com._17od.upm.gui.MainWindow"
+              classpathref="project.class.path"
+              fork="true"
+              spawn="true"/>
+    </target>
+
 </project>
