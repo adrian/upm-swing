@@ -114,8 +114,6 @@ public class AccountDialog extends EscapeDialog {
     private boolean accountChanged = false;
     private char defaultEchoChar;
     
-    private DatabaseActions dbActions;
-
     public AccountDialog(AccountInformation account, JFrame parentWindow, boolean readOnly, ArrayList existingAccounts) {
         super(parentWindow, true);
 
@@ -509,18 +507,17 @@ public class AccountDialog extends EscapeDialog {
         urlLaunchButton.setMargin(new Insets(0, 0, 0, 0));
         urlLaunchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                //AccountInformation accInfo = dbActions.getSelectedAccount();
                 String urlText = url.getText();
 
                 //Check if the selected  url is null or emty and inform the user via JoptioPane message
                 if ((urlText == null) || (urlText.length() == 0)) {
                     JOptionPane.showMessageDialog(null, Translator.translate("EmptyUrlJoptionpaneMsg"), 
                             Translator.translate("UrlErrorJoptionpaneTitle"), JOptionPane.WARNING_MESSAGE);
-                    //Check if the selected  url is a valid formated url(via urlIsValid() method)   and inform the user via JoptioPane message
+                //Check if the selected  url is a valid formated url(via urlIsValid() method) and inform the user via JoptioPane message
                 } else if (!(urlIsValid(urlText))) {
                     JOptionPane.showMessageDialog(null, Translator.translate("InvalidUrlJoptionpaneMsg"), 
                             Translator.translate("UrlErrorJoptionpaneTitle"), JOptionPane.WARNING_MESSAGE);
-                    //Call the method LaunchSelectedURL() using the selected url as input
+                //Call the method LaunchSelectedURL() using the selected url as input
                 } else {
                     LaunchSelectedURL(urlText);
                 }
