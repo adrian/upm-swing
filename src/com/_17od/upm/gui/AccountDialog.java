@@ -50,12 +50,16 @@ import com._17od.upm.database.AccountInformation;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
+import java.awt.Desktop;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import org.apache.commons.validator.routines.UrlValidator;
 
 public class AccountDialog extends EscapeDialog {
 
@@ -109,6 +113,8 @@ public class AccountDialog extends EscapeDialog {
     private JFrame parentWindow;
     private boolean accountChanged = false;
     private char defaultEchoChar;
+    
+    private DatabaseActions dbActions;
 
     public AccountDialog(AccountInformation account, JFrame parentWindow, boolean readOnly, ArrayList existingAccounts) {
         super(parentWindow, true);
@@ -496,6 +502,40 @@ public class AccountDialog extends EscapeDialog {
             }
         });
         
+        JButton urlLaunchButton = new JButton();
+        urlLaunchButton.setIcon(Util.loadImage("launch-url-sm.png"));
+        urlLaunchButton.setToolTipText("Launch URL");
+        urlLaunchButton.setEnabled(true);
+        urlLaunchButton.setMargin(new Insets(0, 0, 0, 0));
+        urlLaunchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                //AccountInformation accInfo = dbActions.getSelectedAccount();
+                String urlText = url.getText();
+
+                //Check if the selected  url is null or emty and inform the user via JoptioPane message
+                if ((urlText == null) || (urlText.length() == 0)) {
+                    JOptionPane.showMessageDialog(null, Translator.translate("EmptyUrlJoptionpaneMsg"), 
+                            Translator.translate("UrlErrorJoptionpaneTitle"), JOptionPane.WARNING_MESSAGE);
+                    //Check if the selected  url is a valid formated url(via urlIsValid() method)   and inform the user via JoptioPane message
+                } else if (!(urlIsValid(urlText))) {
+                    JOptionPane.showMessageDialog(null, Translator.translate("InvalidUrlJoptionpaneMsg"), 
+                            Translator.translate("UrlErrorJoptionpaneTitle"), JOptionPane.WARNING_MESSAGE);
+                    //Call the method LaunchSelectedURL() using the selected url as input
+                } else {
+                    LaunchSelectedURL(urlText);
+                }
+            }
+        });
+        c.gridx = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 5);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        urlPanel.add(urlLaunchButton, c);
+        
         JButton urlCopyButton = new JButton();
         urlCopyButton.setIcon(Util.loadImage("copy-icon.png"));
         urlCopyButton.setToolTipText("Copy");
@@ -506,7 +546,7 @@ public class AccountDialog extends EscapeDialog {
                 copyTextField(url);
             }
         });
-        c.gridx = 1;
+        c.gridx = 2;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(0, 0, 0, 5);
@@ -526,7 +566,7 @@ public class AccountDialog extends EscapeDialog {
                 pasteToTextField(url);
             }
         });
-        c.gridx = 2;
+        c.gridx = 3;
         c.gridy = 0;
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(0, 0, 0, 5);
@@ -950,5 +990,52 @@ public class AccountDialog extends EscapeDialog {
         }
         textArea.insert(text, textArea.getCaretPosition());
         textArea.requestFocus();
+    }
+    
+    /**
+     * Use com.apache.commons.validator library in order to check the validity (proper
+     * formating, e.x http://www.url.com) of the given URL.
+     * 
+     * @param urL
+     * @return 
+     */
+     private boolean urlIsValid(String urL) {
+
+        UrlValidator urlValidator = new UrlValidator();
+        if (urlValidator.isValid(urL)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+     
+    /**
+     * Method that get(as input) the selected Account URL and open this URL via
+     * the default browser of our platform.
+     * 
+     * @param url 
+     */
+    private void LaunchSelectedURL(String url) {
+
+        if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+
+            try {
+                desktop.browse(new URI(url));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        } else { // Linux and Mac specific code in order to launch url
+            Runtime runtime = Runtime.getRuntime();
+
+            try {
+                runtime.exec("xdg-open " + url);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
