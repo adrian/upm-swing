@@ -171,14 +171,11 @@ public class AccountDialog extends EscapeDialog {
             }
         });
         
-        JButton acctCopyButton = new JButton(Util.loadImage("copy-icon.png"));
-        acctCopyButton.setText("");
+        JButton acctCopyButton = new JButton();
+        acctCopyButton.setIcon(Util.loadImage("copy-icon.png"));
         acctCopyButton.setToolTipText("Copy");
         acctCopyButton.setEnabled(true);
-        acctCopyButton.setOpaque(false);
-        acctCopyButton.setContentAreaFilled(false);
         acctCopyButton.setMargin(new Insets(0, 0, 0, 0));
-        acctCopyButton.setFocusPainted(false);
         acctCopyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 copyTextField(accountName);
@@ -194,14 +191,11 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.NONE;
         accountPanel.add(acctCopyButton, c);
         
-        JButton acctPasteButton = new JButton(Util.loadImage("paste-icon.png"));
-        acctPasteButton.setText("");
+        JButton acctPasteButton = new JButton();
+        acctPasteButton.setIcon(Util.loadImage("paste-icon.png"));
         acctPasteButton.setToolTipText("Paste");
         acctPasteButton.setEnabled(!readOnly);
-        acctPasteButton.setOpaque(false);
-        acctPasteButton.setContentAreaFilled(false);
         acctPasteButton.setMargin(new Insets(0, 0, 0, 0));
-        acctPasteButton.setFocusPainted(false);
         acctPasteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 pasteToTextField(accountName);
@@ -261,14 +255,11 @@ public class AccountDialog extends EscapeDialog {
             }
         });
         
-        JButton idCopyButton = new JButton(Util.loadImage("copy-icon.png"));
-        idCopyButton.setText("");
+        JButton idCopyButton = new JButton();
+        idCopyButton.setIcon(Util.loadImage("copy-icon.png"));
         idCopyButton.setToolTipText("Copy");
         idCopyButton.setEnabled(true);
-        idCopyButton.setOpaque(false);
-        idCopyButton.setContentAreaFilled(false);
         idCopyButton.setMargin(new Insets(0, 0, 0, 0));
-        idCopyButton.setFocusPainted(false);
         idCopyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 copyTextField(userId);
@@ -284,14 +275,11 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.NONE;
         idPanel.add(idCopyButton, c);
         
-        JButton idPasteButton = new JButton(Util.loadImage("paste-icon.png"));
-        idPasteButton.setText("");
+        JButton idPasteButton = new JButton();
+        idPasteButton.setIcon(Util.loadImage("paste-icon.png"));
         idPasteButton.setToolTipText("Paste");
         idPasteButton.setEnabled(!readOnly);
-        idPasteButton.setOpaque(false);
-        idPasteButton.setContentAreaFilled(false);
         idPasteButton.setMargin(new Insets(0, 0, 0, 0));
-        idPasteButton.setFocusPainted(false);
         idPasteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 pasteToTextField(userId);
@@ -396,14 +384,11 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         passwordPanel.add(generateRandomPasswordButton, c);
         
-        JButton pwCopyButton = new JButton(Util.loadImage("copy-icon.png"));
-        pwCopyButton.setText("");
+        JButton pwCopyButton = new JButton();
+        pwCopyButton.setIcon(Util.loadImage("copy-icon.png"));
         pwCopyButton.setToolTipText("Copy");
         pwCopyButton.setEnabled(true);
-        pwCopyButton.setOpaque(false);
-        pwCopyButton.setContentAreaFilled(false);
         pwCopyButton.setMargin(new Insets(0, 0, 0, 0));
-        pwCopyButton.setFocusPainted(false);
         pwCopyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 copyTextField(password);
@@ -419,14 +404,11 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.HORIZONTAL;
         passwordPanel.add(pwCopyButton, c);
         
-        JButton pwPasteButton = new JButton(Util.loadImage("paste-icon.png"));
-        pwPasteButton.setText("");
+        JButton pwPasteButton = new JButton();
+        pwPasteButton.setIcon(Util.loadImage("paste-icon.png"));
         pwPasteButton.setToolTipText("Paste");
         pwPasteButton.setEnabled(!readOnly);
-        pwPasteButton.setOpaque(false);
-        pwPasteButton.setContentAreaFilled(false);
         pwPasteButton.setMargin(new Insets(0, 0, 0, 0));
-        pwPasteButton.setFocusPainted(false);
         pwPasteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 pasteToTextField(password);
@@ -514,14 +496,11 @@ public class AccountDialog extends EscapeDialog {
             }
         });
         
-        JButton urlCopyButton = new JButton(Util.loadImage("copy-icon.png"));
-        urlCopyButton.setText("");
+        JButton urlCopyButton = new JButton();
+        urlCopyButton.setIcon(Util.loadImage("copy-icon.png"));
         urlCopyButton.setToolTipText("Copy");
         urlCopyButton.setEnabled(true);
-        urlCopyButton.setOpaque(false);
-        urlCopyButton.setContentAreaFilled(false);
         urlCopyButton.setMargin(new Insets(0, 0, 0, 0));
-        urlCopyButton.setFocusPainted(false);
         urlCopyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 copyTextField(url);
@@ -537,14 +516,11 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.NONE;
         urlPanel.add(urlCopyButton, c);
         
-        JButton urlPasteButton = new JButton(Util.loadImage("paste-icon.png"));
-        urlPasteButton.setText("");
+        JButton urlPasteButton = new JButton();
+        urlPasteButton.setIcon(Util.loadImage("paste-icon.png"));
         urlPasteButton.setToolTipText("Paste");
         urlPasteButton.setEnabled(!readOnly);
-        urlPasteButton.setOpaque(false);
-        urlPasteButton.setContentAreaFilled(false);
         urlPasteButton.setMargin(new Insets(0, 0, 0, 0));
-        urlPasteButton.setFocusPainted(false);
         urlPasteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 pasteToTextField(url);
@@ -602,14 +578,11 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.BOTH;
         notesPanel.add(notesScrollPane, c);
         
-        JButton notesCopyButton = new JButton(Util.loadImage("copy-icon.png"));
-        notesCopyButton.setText("");
+        JButton notesCopyButton = new JButton();
+        notesCopyButton.setIcon(Util.loadImage("copy-icon.png"));
         notesCopyButton.setToolTipText("Copy");
         notesCopyButton.setEnabled(true);
-        notesCopyButton.setOpaque(false);
-        notesCopyButton.setContentAreaFilled(false);
         notesCopyButton.setMargin(new Insets(0, 0, 0, 0));
-        notesCopyButton.setFocusPainted(false);
         notesCopyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 copyTextArea(notes);
@@ -625,14 +598,11 @@ public class AccountDialog extends EscapeDialog {
         c.fill = GridBagConstraints.NONE;
         notesPanel.add(notesCopyButton, c);
         
-        JButton notesPasteButton = new JButton(Util.loadImage("paste-icon.png"));
-        notesPasteButton.setText("");
+        JButton notesPasteButton = new JButton();
+        notesPasteButton.setIcon(Util.loadImage("paste-icon.png"));
         notesPasteButton.setToolTipText("Paste");
         notesPasteButton.setEnabled(!readOnly);
-        notesPasteButton.setOpaque(false);
-        notesPasteButton.setContentAreaFilled(false);
         notesPasteButton.setMargin(new Insets(0, 0, 0, 0));
-        notesPasteButton.setFocusPainted(false);
         notesPasteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 pasteToTextArea(notes);
@@ -888,7 +858,7 @@ public class AccountDialog extends EscapeDialog {
     } // End InclNumber()
     
     /**
-     * The above method returns true if the generated password contains at least
+     * This method returns true if the generated password contains at least
      * one Escape character. If not, then the method returns false.
      *
      * @param GeneratedPass
