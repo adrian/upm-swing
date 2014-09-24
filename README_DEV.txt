@@ -7,6 +7,15 @@ These instructions assume the upstream source tarball has been created (ant pack
 Required packages,
  * javahelper
 
+Config ~/.dput.cf,
+[adriansmith]
+fqdn = ppa.launchpad.net
+method = ftp
+incoming = ~adriansmith/upm/ubuntu/
+login = anonymous
+allow_unsigned_uploads = 0
+
+
 1. Create a working directory,
 
     $ mkdir /tmp/upm-swing-deb-package
@@ -45,7 +54,7 @@ Required packages,
 
 9. Upload the PPA to Launchpad,
 
-    $ dput ppa:adriansmith/upm ../upm_<version>_source.changes
+    $ dput adriansmith ../upm_<version>_source.changes
 
 
 --------------------------------------------------------------------------------
