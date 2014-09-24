@@ -686,9 +686,11 @@ public class DatabaseActions {
             String username = openDBDialog.getUsernameTextField().getText();
             String password = openDBDialog.getPasswordTextField().getText();
 
-            // Ask the user for a location to save the database file to
-            File saveDatabaseTo = getSaveAsFile(Translator.translate("saveDatabaseAs"));
+            // find the filename in the url
+            String file = new URL(remoteLocation).getFile();
 
+            // Ask the user for a location to save the database file to
+            File saveDatabaseTo = getSaveAsFile(Translator.translate("saveDatabaseAs"), new File(file));
             if (saveDatabaseTo != null) {
 
                 // Download the database
@@ -1017,12 +1019,19 @@ public class DatabaseActions {
      * @return The file to save to or null
      */
     private File getSaveAsFile(String title) {
+        return getSaveAsFile(title, null);
+    }
+
+    private File getSaveAsFile(String title, File preselectedFile) {
         File selectedFile;
 
         boolean gotValidFile = false;
         do {
             JFileChooser fc = new JFileChooser();
             fc.setDialogTitle(title);
+            if (preselectedFile!=null) {
+                fc.setSelectedFile(preselectedFile);
+            }
             int returnVal = fc.showSaveDialog(mainWindow);
 
             if (returnVal != JFileChooser.APPROVE_OPTION) {
