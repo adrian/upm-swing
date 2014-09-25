@@ -255,8 +255,8 @@ public class MainWindow extends JFrame implements ActionListener {
         getContentPane().add(new JSeparator(), c);
 
         //The search field row
-        searchIcon = new JLabel(Util.loadImage("search.gif"));
-        searchIcon.setDisabledIcon(Util.loadImage("search_d.gif"));
+        searchIcon = new JLabel(Util.loadImage("search.png"));
+        searchIcon.setDisabledIcon(Util.loadImage("search-d.png"));
         searchIcon.setEnabled(false);
         c.gridx = 0;
         c.gridy = 2;
@@ -307,8 +307,8 @@ public class MainWindow extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.NONE;
         getContentPane().add(searchField, c);
 
-        resetSearchButton = new JButton(Util.loadImage("stop.gif"));
-        resetSearchButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
+        resetSearchButton = new JButton(Util.loadImage("stop.png"));
+        resetSearchButton.setDisabledIcon(Util.loadImage("stop-d.png"));
         resetSearchButton.setEnabled(false);
         resetSearchButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
         resetSearchButton.setActionCommand(RESET_SEARCH_TXT);
@@ -429,8 +429,8 @@ public class MainWindow extends JFrame implements ActionListener {
         // The "Add Account" button
         addAccountButton = new JButton();
         addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
-        addAccountButton.setIcon(Util.loadImage("add_account.gif"));
-        addAccountButton.setDisabledIcon(Util.loadImage("add_account_d.gif"));;
+        addAccountButton.setIcon(Util.loadImage("add-account.png"));
+        addAccountButton.setDisabledIcon(Util.loadImage("add-account-d.png"));
         addAccountButton.addActionListener(this);
         addAccountButton.setEnabled(false);
         addAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
@@ -439,8 +439,8 @@ public class MainWindow extends JFrame implements ActionListener {
         // The "Edit Account" button
         editAccountButton = new JButton();
         editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
-        editAccountButton.setIcon(Util.loadImage("edit_account.gif"));
-        editAccountButton.setDisabledIcon(Util.loadImage("edit_account_d.gif"));;
+        editAccountButton.setIcon(Util.loadImage("edit-account.png"));
+        editAccountButton.setDisabledIcon(Util.loadImage("edit-account-d.png"));
         editAccountButton.addActionListener(this);
         editAccountButton.setEnabled(false);
         editAccountButton.setActionCommand(EDIT_ACCOUNT_TXT);
@@ -449,8 +449,8 @@ public class MainWindow extends JFrame implements ActionListener {
         // The "Delete Account" button
         deleteAccountButton = new JButton();
         deleteAccountButton.setToolTipText(Translator.translate(DELETE_ACCOUNT_TXT));
-        deleteAccountButton.setIcon(Util.loadImage("delete_account.gif"));
-        deleteAccountButton.setDisabledIcon(Util.loadImage("delete_account_d.gif"));;
+        deleteAccountButton.setIcon(Util.loadImage("delete-account.png"));
+        deleteAccountButton.setDisabledIcon(Util.loadImage("delete-account-d.png"));
         deleteAccountButton.addActionListener(this);
         deleteAccountButton.setEnabled(false);
         deleteAccountButton.setActionCommand(DELETE_ACCOUNT_TXT);
@@ -461,8 +461,8 @@ public class MainWindow extends JFrame implements ActionListener {
         // The "Copy Username" button
         copyUsernameButton = new JButton();
         copyUsernameButton.setToolTipText(Translator.translate(COPY_USERNAME_TXT));
-        copyUsernameButton.setIcon(Util.loadImage("copy_username.gif"));
-        copyUsernameButton.setDisabledIcon(Util.loadImage("copy_username_d.gif"));;
+        copyUsernameButton.setIcon(Util.loadImage("copy-username.png"));
+        copyUsernameButton.setDisabledIcon(Util.loadImage("copy-username-d.png"));
         copyUsernameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 copyUsernameToClipboard();
@@ -474,8 +474,8 @@ public class MainWindow extends JFrame implements ActionListener {
         // The "Copy Password" button
         copyPasswordButton = new JButton();
         copyPasswordButton.setToolTipText(Translator.translate(COPY_PASSWORD_TXT));
-        copyPasswordButton.setIcon(Util.loadImage("copy_password.gif"));
-        copyPasswordButton.setDisabledIcon(Util.loadImage("copy_password_d.gif"));;
+        copyPasswordButton.setIcon(Util.loadImage("copy-password.png"));
+        copyPasswordButton.setDisabledIcon(Util.loadImage("copy-password-d.png"));
         copyPasswordButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 copyPasswordToClipboard();
@@ -489,8 +489,8 @@ public class MainWindow extends JFrame implements ActionListener {
         // The "Launch URL" button
         launchURLButton = new JButton();
         launchURLButton.setToolTipText(Translator.translate(LAUNCH_URL_TXT));
-        launchURLButton.setIcon(Util.loadImage("launch_URL.gif"));
-        launchURLButton.setDisabledIcon(Util.loadImage("launch_URL_d.gif"));;
+        launchURLButton.setIcon(Util.loadImage("launch-url.png"));
+        launchURLButton.setDisabledIcon(Util.loadImage("launch-url-d.png"));
         launchURLButton.addActionListener(new ActionListener() {
 
 		    public void actionPerformed(ActionEvent e) {
@@ -521,8 +521,8 @@ public class MainWindow extends JFrame implements ActionListener {
         // The "Option" button
         optionsButton = new JButton();
         optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
-        optionsButton.setIcon(Util.loadImage("options.gif"));
-        optionsButton.setDisabledIcon(Util.loadImage("options_d.gif"));;
+        optionsButton.setIcon(Util.loadImage("options.png"));
+        optionsButton.setDisabledIcon(Util.loadImage("options-d.png"));
         optionsButton.addActionListener(this);
         optionsButton.setEnabled(true);
         optionsButton.setActionCommand(OPTIONS_TXT);
@@ -534,7 +534,7 @@ public class MainWindow extends JFrame implements ActionListener {
         syncDatabaseButton = new JButton();
         syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
         syncDatabaseButton.setIcon(Util.loadImage("sync.png"));
-        syncDatabaseButton.setDisabledIcon(Util.loadImage("sync_d.png"));;
+        syncDatabaseButton.setDisabledIcon(Util.loadImage("sync-d.png"));
         syncDatabaseButton.addActionListener(this);
         syncDatabaseButton.setEnabled(false);
         syncDatabaseButton.setActionCommand(SYNC_DATABASE_TXT);
