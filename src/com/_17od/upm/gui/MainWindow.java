@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -71,6 +72,7 @@ import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.platformspecific.PlatformSpecificCode;
 import com._17od.upm.util.Preferences;
+import com._17od.upm.util.Preferences.ApplicationOptions;
 import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
 
@@ -103,6 +105,8 @@ public class MainWindow extends JFrame implements ActionListener {
     public static final String IMPORT_TXT = "importMenuItem";
     public static final String LOCK_TIMER_TXT = "lock";
 
+    private static MainWindow Instance=null;
+    
     private JButton addAccountButton;
     private JButton editAccountButton;
     private JButton deleteAccountButton;
@@ -140,10 +144,66 @@ public class MainWindow extends JFrame implements ActionListener {
 
 
     private DatabaseActions dbActions;
+    
+    /**
+     * reads and sets the panel bounds from the preferences file.
+     * if one ore more properties does not exists, the panels default
+     * value(s) are taken.
+     */
+    public static void SetBoundsFromPreferences() {
+        // get the current value
+        int width=Instance.getWidth();
+        // try to get the value stored in the preferences
+        String s = Preferences.get(ApplicationOptions.PANE_WIDTH);
+        if (s!=null) {
+            width = Integer.parseInt(s);
+        }
+        
+        int height=Instance.getHeight();
+        s = Preferences.get(ApplicationOptions.PANE_HEIGHT);
+        if (s!=null) {
+            height = Integer.parseInt(s);
+        }
 
+        int x=Instance.getX();
+        s = Preferences.get(ApplicationOptions.PANE_XPOS);
+        if (s!=null) {
+            x = Integer.parseInt(s);
+        }
+        
+        int y=Instance.getY();
+        s = Preferences.get(ApplicationOptions.PANE_YPOS);
+        if (s!=null) {
+            y = Integer.parseInt(s);
+        }
+        
+        Instance.setBounds(x, y, width, height);
+    }
+
+    /**
+     * stores the frame bounds into the preferences file.
+     * needs the static Instance field.
+     */
+    public static void StoreBoundsToPreferences() {
+        if (Instance!=null) {
+            Rectangle r = Instance.getBounds();
+            Preferences.set(ApplicationOptions.PANE_XPOS, Integer.toString(r.x));
+            Preferences.set(ApplicationOptions.PANE_YPOS, Integer.toString(r.y));
+            Preferences.set(ApplicationOptions.PANE_WIDTH, Integer.toString(r.width));
+            Preferences.set(ApplicationOptions.PANE_HEIGHT, Integer.toString(r.height));
+            try {
+                Preferences.save();
+            } catch (IOException e) {
+                System.err.println(Translator.translate("error")+"\n"+e.getStackTrace());
+            }
+        }
+    }
+    
     public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
         super(title);
 
+        Instance = this;
+        
         Preferences.load();
         
         Translator.initialise();
@@ -156,12 +216,20 @@ public class MainWindow extends JFrame implements ActionListener {
 
         dbActions = new DatabaseActions(this);
 
+        // add shutdown hook (save position/size of JFrame)
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                StoreBoundsToPreferences();
+            }
+        });
+        
         //Set up the content pane.
         addComponentsToPane();
 
         //Display the window.
         pack();
         setLocationRelativeTo(null);
+        SetBoundsFromPreferences();
         setVisible(true);
 
         try {

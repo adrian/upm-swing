@@ -41,6 +41,10 @@ public class Preferences {
     
     public class ApplicationOptions {
         public static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
+        public static final String PANE_WIDTH = "panel.width";
+        public static final String PANE_HEIGHT = "panel.heigth";
+        public static final String PANE_XPOS = "panel.xpos";
+        public static final String PANE_YPOS = "panel.ypos";
 
         public static final String ACCOUNT_HIDE_PASSWORD="account.hidePassword";
         public static final String ACCOUNT_PASSWORD_LENGTH="account.passwordLenght";
