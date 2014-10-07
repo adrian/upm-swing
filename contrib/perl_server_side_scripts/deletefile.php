@@ -13,7 +13,7 @@ $q = CGI->new;
 
 if ($ENV{'REQUEST_METHOD'} eq 'POST') {
 	# Just take the filename so that someone can't put in a relative path
-	$fileToDeleteName = basename($q->param($userfile_param_name));
+	$fileToDeleteName = basename(scalar($q->param($userfile_param_name)));
 
 	# Ensure we don't delete this file or the upload file
 	if ($fileToDeleteName ne basename($ENV{'SCRIPT_NAME'}) &&
