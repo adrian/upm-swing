@@ -26,14 +26,14 @@ if ($ENV{'REQUEST_METHOD'} eq 'POST') {
 	$fh = $q->upload($userfile_param_name);
 	if (defined $fh) {
 		# Get the name of the file that was uploaded
-		my $uploadedFileName = basename($q->param($userfile_param_name));
+		my $uploadedFileName = basename(scalar($q->param($userfile_param_name)));
 
 		# If the file already exists throw an error
 		if (-e $uploadedFileName) {
 			advise($msg{'FILE_ALREADY_EXISTS'});
 		} else {
 			open (UFILE, ">$uploadedFileName")
-				|| advise("Cannot open file \"$q->param($userfile_param_name)\" for writing!\n");
+				|| advise("Cannot open file \"scalar($q->param($userfile_param_name))\" for writing!\n");
 			binmode UFILE;
 			print UFILE while <$fh>;
 			close UFILE;
