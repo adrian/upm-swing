@@ -58,7 +58,7 @@ public class Translator {
 
 
     public static void initialise() {
-        Locale locale = Locale.ENGLISH;
+        Locale locale = new Locale("en");
         String localePreference = Preferences.get(Preferences.ApplicationOptions.LOCALE);
         if (localePreference != null) {
             locale = new Locale(localePreference);
