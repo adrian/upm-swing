@@ -573,8 +573,8 @@ public class OptionsDialog extends EscapeDialog {
         Object[] names = new Object[Translator.SUPPORTED_LOCALES.length];
 
         for (int i=0; i<Translator.SUPPORTED_LOCALES.length; i++) {
-            names[i] = Translator.SUPPORTED_LOCALES[i].getDisplayName() +
-                " (" + Translator.SUPPORTED_LOCALES[i].getDisplayName(Translator.getCurrentLocale())
+            names[i] = Translator.SUPPORTED_LOCALES[i].getDisplayLanguage(Translator.getCurrentLocale()) +
+                " (" + Translator.SUPPORTED_LOCALES[i].getDisplayLanguage(Translator.SUPPORTED_LOCALES[i])
                 + ')';
         }
 
