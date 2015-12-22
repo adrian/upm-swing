@@ -77,6 +77,9 @@ import com._17od.upm.platformspecific.PlatformSpecificCode;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 
 /**
@@ -144,6 +147,12 @@ public class MainWindow extends JFrame implements ActionListener {
     private JList accountsListview;
     private JLabel statusBar = new JLabel(" ");
     private JPanel databaseFileChangedPanel;
+    
+    private static final String XLOC = "XWindowLocation";
+    private static final String YLOC = "YWindowLocation";
+    private static final String WWIDTH = "WindowWidth";
+    private static final String WHEIGHT = "WindowHeight";
+    
 
 
     private DatabaseActions dbActions;
@@ -165,6 +174,14 @@ public class MainWindow extends JFrame implements ActionListener {
 
         //Set up the content pane.
         addComponentsToPane();
+        
+        // Add listener to store current position and size on closing
+        this.addWindowListener(new WindowAdapter() {
+           public void windowClosing(WindowEvent e) {
+              storeWindowBounds();
+           }
+
+        });
 
         //Display the window.
         pack();
@@ -801,7 +818,15 @@ public class MainWindow extends JFrame implements ActionListener {
         }
 
 
-}
+   }
+    
+    private void storeWindowBounds() {
+       Preferences.set(XLOC, Integer.toString(this.getX()));
+       Preferences.set(YLOC, Integer.toString(this.getY()));
+       Preferences.set(WWIDTH, Integer.toString(this.getWidth()));
+       Preferences.set(WHEIGHT, Integer.toString(this.getHeight()));
+    }
+    
     public JButton getCopyPasswordButton() {
         return copyPasswordButton;
     }
