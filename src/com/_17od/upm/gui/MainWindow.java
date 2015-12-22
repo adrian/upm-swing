@@ -79,7 +79,6 @@ import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 
 /**
@@ -179,6 +178,12 @@ public class MainWindow extends JFrame implements ActionListener {
         this.addWindowListener(new WindowAdapter() {
            public void windowClosing(WindowEvent e) {
               storeWindowBounds();
+              try {
+                 Preferences.save();
+              } catch (IOException ex) {
+                 // Not much we can do at this point
+                 ex.printStackTrace();
+              }
            }
 
         });
@@ -186,6 +191,7 @@ public class MainWindow extends JFrame implements ActionListener {
         //Display the window.
         pack();
         setLocationRelativeTo(null);
+        restoreWindowBounds();
         setVisible(true);
 
         try {
@@ -825,6 +831,16 @@ public class MainWindow extends JFrame implements ActionListener {
        Preferences.set(YLOC, Integer.toString(this.getY()));
        Preferences.set(WWIDTH, Integer.toString(this.getWidth()));
        Preferences.set(WHEIGHT, Integer.toString(this.getHeight()));
+    }
+    
+    private void restoreWindowBounds() {
+       int x = Preferences.getInt(XLOC, this.getX());
+       int y = Preferences.getInt(YLOC, this.getY());
+       int width = Preferences.getInt(WWIDTH, (this.getWidth()));
+       int height = Preferences.getInt(WHEIGHT, this.getHeight());
+       // TODO: check if this position is still displayable (people who 
+       // occassionaly use two monitors can have problems
+       this.setBounds(x, y, width, height);
     }
     
     public JButton getCopyPasswordButton() {
