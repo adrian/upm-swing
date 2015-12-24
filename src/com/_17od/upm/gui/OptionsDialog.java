@@ -72,6 +72,7 @@ public class OptionsDialog extends EscapeDialog {
     private JCheckBox hidePasswordCheckbox;
     private JCheckBox databaseAutoLockCheckbox;
     private JTextField databaseAutoLockTime;
+    private final JCheckBox storeWindowPosCheckbox;
     private JCheckBox acceptSelfSignedCertsCheckbox;
     private JLabel proxyLabel;
     private JLabel proxyPortLabel;
@@ -272,6 +273,19 @@ public class OptionsDialog extends EscapeDialog {
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.NONE;
 		mainPanel.add(inclEscCharstoPassCheckbox, c);
+      
+      // The "Store Window position" row
+		Boolean storeWindowPos = Boolean.valueOf(Preferences.get(Preferences.ApplicationOptions.REMEMBER_WINDOW_POSITION, "false"));
+		storeWindowPosCheckbox = new JCheckBox((Translator.translate("storeWindowPosition")), storeWindowPos.booleanValue());
+		c.gridx = 0;
+		c.gridy = 8;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.insets = new Insets(0, 2, 5, 0);
+		c.weightx = 1;
+		c.weighty = 0;
+		c.gridwidth = 1;
+		c.fill = GridBagConstraints.NONE;
+		mainPanel.add(storeWindowPosCheckbox, c);
 
 
         // Some spacing
@@ -526,6 +540,7 @@ public class OptionsDialog extends EscapeDialog {
             Preferences.set(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP, dbToLoadOnStartup.getText());
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_HIDE_PASSWORD, String.valueOf(hideAccountPasswordCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS, String.valueOf(inclEscCharstoPassCheckbox.isSelected()));
+            Preferences.set(Preferences.ApplicationOptions.REMEMBER_WINDOW_POSITION, String.valueOf(storeWindowPosCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK, String.valueOf(databaseAutoLockCheckbox.isSelected()));
             Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK_TIME, databaseAutoLockTime.getText());
             Preferences.set(Preferences.ApplicationOptions.ACCOUNT_PASSWORD_LENGTH, accountPasswordLength.getText());

@@ -191,7 +191,9 @@ public class MainWindow extends JFrame implements ActionListener {
         //Display the window.
         pack();
         setLocationRelativeTo(null);
-        restoreWindowBounds();
+        String restore = Preferences.get(Preferences.ApplicationOptions.REMEMBER_WINDOW_POSITION);
+        if (restore.equals("true"))
+           restoreWindowBounds();
         setVisible(true);
 
         try {

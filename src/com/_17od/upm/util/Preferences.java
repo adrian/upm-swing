@@ -37,7 +37,7 @@ import com._17od.upm.platformspecific.PlatformSpecificCode;
  */
 public class Preferences {
 
-    private static Log log = LogFactory.getLog(Preferences.class);
+    private static final Log log = LogFactory.getLog(Preferences.class);
 
     public class ApplicationOptions {
         public static final String DB_TO_LOAD_ON_STARTUP= "DBToLoadOnStartup";
@@ -47,6 +47,7 @@ public class Preferences {
         public static final String INCLUDE_ESCAPE_CHARACTERS="account.inclescapechars";
         public static final String DATABASE_AUTO_LOCK="database.auto_lock";
         public static final String DATABASE_AUTO_LOCK_TIME = "database.auto_lock_time";
+        public static final String REMEMBER_WINDOW_POSITION="window.store_position";
 
         public static final String HTTP_PROXY_ENABLED="http.proxy.enabled";
         public static final String HTTP_PROXY_HOST="http.proxy.host";
