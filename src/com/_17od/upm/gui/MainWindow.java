@@ -169,6 +169,7 @@ public class MainWindow extends JFrame implements ActionListener {
         //Display the window.
         pack();
         setLocationRelativeTo(null);
+        setAlwaysOnTop(true);
         setVisible(true);
 
         try {
