@@ -193,7 +193,7 @@ public class MainWindow extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         String restore = Preferences.get(
                 Preferences.ApplicationOptions.REMEMBER_WINDOW_POSITION, "false");
-        if (restore.equals("true"))
+        if (restore != null && restore.equals("true"))
            restoreWindowBounds();
         setVisible(true);
 
