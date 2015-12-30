@@ -55,6 +55,11 @@ public class Preferences {
         public static final String HTTP_PROXY_USERNAME="http.proxy.username";
         public static final String HTTP_PROXY_PASSWORD="http.proxy.password";
         public static final String HTTPS_ACCEPT_SELFSIGNED_CERTS="https.accept.selfsigned.certs";
+        
+        public static final String XLOC = "window.location.x";
+        public static final String YLOC = "window.location.y";
+        public static final String WWIDTH = "window.width";
+        public static final String WHEIGHT = "window.height";
 
         public static final String LOCALE="locale";
     }
