@@ -500,7 +500,7 @@ public class AccountDialog extends EscapeDialog {
             }
         });
         
-        JButton urlLaunchButton = new JButton();
+        final JButton urlLaunchButton = new JButton();
         urlLaunchButton.setIcon(Util.loadImage("launch-url-sm.png"));
         urlLaunchButton.setToolTipText("Launch URL");
         urlLaunchButton.setEnabled(true);
@@ -511,11 +511,11 @@ public class AccountDialog extends EscapeDialog {
 
                 //Check if the selected  url is null or emty and inform the user via JoptioPane message
                 if ((urlText == null) || (urlText.length() == 0)) {
-                    JOptionPane.showMessageDialog(null, Translator.translate("EmptyUrlJoptionpaneMsg"), 
+                    JOptionPane.showMessageDialog(urlLaunchButton.getParent(), Translator.translate("EmptyUrlJoptionpaneMsg"), 
                             Translator.translate("UrlErrorJoptionpaneTitle"), JOptionPane.WARNING_MESSAGE);
                 //Check if the selected  url is a valid formated url(via urlIsValid() method) and inform the user via JoptioPane message
                 } else if (!(urlIsValid(urlText))) {
-                    JOptionPane.showMessageDialog(null, Translator.translate("InvalidUrlJoptionpaneMsg"), 
+                    JOptionPane.showMessageDialog(urlLaunchButton.getParent(), Translator.translate("InvalidUrlJoptionpaneMsg"), 
                             Translator.translate("UrlErrorJoptionpaneTitle"), JOptionPane.WARNING_MESSAGE);
                 //Call the method LaunchSelectedURL() using the selected url as input
                 } else {

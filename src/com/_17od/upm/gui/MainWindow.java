@@ -501,11 +501,11 @@ public class MainWindow extends JFrame implements ActionListener {
 
             //Check if the selected  url is null or emty and inform the user via JoptioPane message
             if ((uRl == null) || (uRl.length() == 0)) {
-			   JOptionPane.showMessageDialog(null,Translator.translate("EmptyUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+			   JOptionPane.showMessageDialog(launchURLButton.getParent(),Translator.translate("EmptyUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
 
            //Check if the selected  url is a valid formated url(via urlIsValid() method)   and inform the user via JoptioPane message
 		  }	else if (!(urlIsValid(uRl))) {
-							JOptionPane.showMessageDialog(null,Translator.translate("InvalidUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(launchURLButton.getParent(),Translator.translate("InvalidUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
 
            //Call the method LaunchSelectedURL() using the selected url as input
 		  } else {
@@ -688,11 +688,11 @@ public class MainWindow extends JFrame implements ActionListener {
 
           //Check if the selected  url is null or emty and inform the user via JoptioPane message
 		             if ((uRl == null) || (uRl.length() == 0)) {
-		 			   JOptionPane.showMessageDialog(null,Translator.translate("EmptyUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+		 			   JOptionPane.showMessageDialog(accountMenu.getParent().getParent(),Translator.translate("EmptyUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
 
 		  //Check if the selected  url is a valid formated url(via urlIsValid() method)   and inform the user via JoptioPane message
 		 		  }	else if (!(urlIsValid(uRl))) {
-		 							JOptionPane.showMessageDialog(null,Translator.translate("InvalidUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+		 							JOptionPane.showMessageDialog(accountMenu.getParent().getParent(),Translator.translate("InvalidUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
 
 		  //Call the method LaunchSelectedURL() using the selected url as input
 		 		  } else {

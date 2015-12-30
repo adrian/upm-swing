@@ -560,7 +560,7 @@ public class OptionsDialog extends EscapeDialog {
     private void getDBToLoadOnStartup() {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle(Translator.translate("dbToOpenOnStartup"));
-        int returnVal = fc.showOpenDialog(parentFrame);
+        int returnVal = fc.showOpenDialog(this);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File databaseFile = fc.getSelectedFile();
