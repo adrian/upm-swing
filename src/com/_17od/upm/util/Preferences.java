@@ -45,6 +45,7 @@ public class Preferences {
         public static final String ACCOUNT_HIDE_PASSWORD="account.hidePassword";
         public static final String ACCOUNT_PASSWORD_LENGTH="account.passwordLenght";
         public static final String INCLUDE_ESCAPE_CHARACTERS="account.inclescapechars";
+        public static final String MAINWINDOW_ALWAYS_ON_TOP="mainwindow.alwaysontop";
         public static final String DATABASE_AUTO_LOCK="database.auto_lock";
         public static final String DATABASE_AUTO_LOCK_TIME = "database.auto_lock_time";
 

@@ -144,7 +144,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JList accountsListview;
     private JLabel statusBar = new JLabel(" ");
     private JPanel databaseFileChangedPanel;
-
+    public static MainWindow AppWindow;
 
     private DatabaseActions dbActions;
 
@@ -175,7 +175,9 @@ public class MainWindow extends JFrame implements ActionListener {
         //Display the window.
         pack();
         setLocationRelativeTo(null);
-        setAlwaysOnTop(true);
+        Boolean appAlwaysonTop = new Boolean(
+				Preferences.get(Preferences.ApplicationOptions.MAINWINDOW_ALWAYS_ON_TOP, "false"));
+        setAlwaysOnTop(appAlwaysonTop.booleanValue());
         setVisible(true);
 
         try {
@@ -200,14 +202,20 @@ public class MainWindow extends JFrame implements ActionListener {
 
     }
 
-
+    public static void setAppAlwaysonTop(boolean val){
+    	AppWindow.setAlwaysOnTop(val);
+    	//AppWindow.revalidate();
+    	
+    	
+    	
+    }
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
                     //Use the System look and feel
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    new MainWindow(applicationName);
+                     AppWindow =  new MainWindow(applicationName);
                     
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -912,7 +920,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
 
         try {
-            if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
+            if (event.getActionCommand() == NEW_DATABASE_TXT) {
                 dbActions.newDatabase();
             } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_TXT) {
                 dbActions.openDatabase();
