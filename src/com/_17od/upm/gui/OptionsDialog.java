@@ -479,6 +479,8 @@ public class OptionsDialog extends EscapeDialog {
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		emptyBorderPanel.add(buttonPanel);
 		JButton okButton = new JButton(Translator.translate("ok"));
+		//Link Enter key to okButton
+		getRootPane().setDefaultButton(okButton);
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				okButtonAction();

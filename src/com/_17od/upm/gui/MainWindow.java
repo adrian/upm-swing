@@ -363,7 +363,7 @@ public class MainWindow extends JFrame implements ActionListener {
            }
         });
         accountsListview.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     viewAccountMenuItem.doClick();
                 }
