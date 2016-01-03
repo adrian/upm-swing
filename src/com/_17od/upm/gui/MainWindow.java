@@ -920,7 +920,7 @@ public class MainWindow extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
 
         try {
-            if (event.getActionCommand() == NEW_DATABASE_TXT) {
+            if (event.getActionCommand() == MainWindow.NEW_DATABASE_TXT) {
                 dbActions.newDatabase();
             } else if (event.getActionCommand() == MainWindow.OPEN_DATABASE_TXT) {
                 dbActions.openDatabase();
