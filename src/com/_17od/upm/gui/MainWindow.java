@@ -71,6 +71,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.commons.validator.routines.UrlValidator;
 
+import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.database.ProblemReadingDatabaseFile;
 import com._17od.upm.platformspecific.PlatformSpecificCode;
@@ -369,6 +370,30 @@ public class MainWindow extends JFrame implements ActionListener {
                 }
             }
         });
+        // Create a shortcut to delete account functionality with DEL(delete) key
+        
+        accountsListview.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+                	
+						try {
+							dbActions.reloadDatabaseBefore(
+							        new DeleteAccountAction());
+						} catch (InvalidPasswordException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (ProblemReadingDatabaseFile e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					
+                }
+            }
+        });
+        
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.CENTER;
