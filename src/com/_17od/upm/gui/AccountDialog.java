@@ -21,16 +21,27 @@
 package com._17od.upm.gui;
 
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 
@@ -46,20 +57,12 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.apache.commons.validator.routines.UrlValidator;
+
 import com._17od.upm.database.AccountInformation;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
-import java.awt.Desktop;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import org.apache.commons.validator.routines.UrlValidator;
 
 public class AccountDialog extends EscapeDialog {
 
@@ -120,6 +123,15 @@ public class AccountDialog extends EscapeDialog {
 		super(parentWindow, true);
 
 		boolean addingAccount = false;
+		
+		//Request focus on Account JDialog when mouse clicked
+		this.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 1) {
+					requestFocus();
+					
+				}
+			}});
 
 		// Set the title based on weather we've been opened in readonly mode and
 		// weather the
