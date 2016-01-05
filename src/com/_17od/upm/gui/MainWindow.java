@@ -153,17 +153,6 @@ public class MainWindow extends JFrame implements ActionListener {
 			ProblemReadingDatabaseFile {
 		super(title);
 
-		Preferences.load();
-
-		Translator.initialise();
-
-		Double jvmVersion = new Double(System.getProperty("java.specification.version"));
-		if (jvmVersion.doubleValue() < 1.4) {
-			JOptionPane.showMessageDialog(null, Translator.translate("requireJava14"), Translator.translate("problem"),
-					JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
-
 		setIconImage(Util.loadImage("upm.gif").getImage());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -216,8 +205,18 @@ public class MainWindow extends JFrame implements ActionListener {
 			public void run() {
 				try {
 					// Use the System look and feel
+					Preferences.load();
+					Translator.initialise();
+					Double jvmVersion = new Double(System.getProperty("java.specification.version"));
+					if (jvmVersion.doubleValue() < 1.9) {
+						JOptionPane.showMessageDialog(null, Translator.translate("requireJava14"), Translator.translate("problem"),
+								JOptionPane.ERROR_MESSAGE);
+						System.exit(1);
+					}
+					else{
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 					AppWindow = new MainWindow(applicationName);
+					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
