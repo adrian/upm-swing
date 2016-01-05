@@ -208,7 +208,7 @@ public class MainWindow extends JFrame implements ActionListener {
 					Preferences.load();
 					Translator.initialise();
 					Double jvmVersion = new Double(System.getProperty("java.specification.version"));
-					if (jvmVersion.doubleValue() < 1.9) {
+					if (jvmVersion.doubleValue() < 1.4) {
 						JOptionPane.showMessageDialog(null, Translator.translate("requireJava14"), Translator.translate("problem"),
 								JOptionPane.ERROR_MESSAGE);
 						System.exit(1);
