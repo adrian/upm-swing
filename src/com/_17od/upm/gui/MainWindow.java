@@ -159,17 +159,6 @@ public class MainWindow extends JFrame implements ActionListener {
 			ProblemReadingDatabaseFile {
 		super(title);
 
-		Preferences.load();
-
-		Translator.initialise();
-
-		Double jvmVersion = new Double(System.getProperty("java.specification.version"));
-		if (jvmVersion.doubleValue() < 1.4) {
-			JOptionPane.showMessageDialog(null, Translator.translate("requireJava14"), Translator.translate("problem"),
-					JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
-
 		setIconImage(Util.loadImage("upm.gif").getImage());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -239,10 +228,20 @@ public class MainWindow extends JFrame implements ActionListener {
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+
 				try {
 					// Use the System look and feel
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					AppWindow = new MainWindow(applicationName);
+					Preferences.load();
+					Translator.initialise();
+					Double jvmVersion = new Double(System.getProperty("java.specification.version"));
+					if (jvmVersion.doubleValue() < 1.4) {
+						JOptionPane.showMessageDialog(null, Translator.translate("requireJava14"),
+								Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
+						System.exit(1);
+					} else {
+						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+						AppWindow = new MainWindow(applicationName);
+					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -886,81 +885,72 @@ public class MainWindow extends JFrame implements ActionListener {
 		}
 
 	}
-	
-	 /**
-	      * Writes current window position and size to the preferences
-	      */
-	     private void storeWindowBounds() {
-	         Preferences.set(Preferences.ApplicationOptions.XLOC, 
-	                 Integer.toString(this.getX()));
-	         Preferences.set(Preferences.ApplicationOptions.YLOC, 
-	                 Integer.toString(this.getY()));
-	         Preferences.set(Preferences.ApplicationOptions.WWIDTH, 
-	                 Integer.toString(this.getWidth()));
-	         Preferences.set(Preferences.ApplicationOptions.WHEIGHT, 
-	                 Integer.toString(this.getHeight()));
-	     }
-	 
-	     /**
-	      * Restores the window position and size to those found in the preferences
-	      * Checks if the window can still be displayed, if not, revert to default position
-	      */
-	     private void restoreWindowBounds() {
-	         int x = Preferences.getInt(Preferences.ApplicationOptions.XLOC, 
-	                 this.getX());
-	         int y = Preferences.getInt(Preferences.ApplicationOptions.YLOC, 
-	                 this.getY());
-	         // check if this position can still be displayed to avoid problems
-	         // for people who dragged the window on a screen that is no longer 
-	         // connected.
-	         if (getGraphicsConfigurationContaining(x, y) == null) {
-	             x = this.getX();
-	             y = this.getY();
-	         }
-	         int width = Preferences.getInt(Preferences.ApplicationOptions.WWIDTH, 
-	                 (this.getWidth()));
-	         int height = Preferences.getInt(Preferences.ApplicationOptions.WHEIGHT, 
-	                 this.getHeight());
-	         
-	         this.setBounds(x, y, width, height);
-	     }
-	 
-	     /**
-	      * Utility function for restoreWindowBounds
-	      */
-	     private GraphicsConfiguration getGraphicsConfigurationContaining(
-	             int x, int y) {
-	         ArrayList configs = new ArrayList();
-	         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	         GraphicsDevice[] devices = env.getScreenDevices();
-	         for (int i = 0; i < devices.length; i++) {
-	             GraphicsConfiguration[] gconfigs = devices[i].getConfigurations();
-	             configs.addAll(Arrays.asList(gconfigs));
-	         }
-	         for (int i = 0; i < configs.size(); i++) {
-	             GraphicsConfiguration config = ((GraphicsConfiguration) configs.get(i));
-	             Rectangle bounds = config.getBounds();
-	             if (bounds.contains(x, y)) {
-	                 return config;
-	             }
-	         }
-	         return null;
-	     }
-	 
-	     /**
-	     * Convenience method to iterate over all graphics configurations.
-	     */
-	     private static ArrayList getConfigs() {
-	         ArrayList result = new ArrayList();
-	         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	         GraphicsDevice[] devices = env.getScreenDevices();
-	         for (int i = 0; i < devices.length; i++) {
-	            GraphicsConfiguration[] configs = devices[i].getConfigurations();
-	            result.addAll(Arrays.asList(configs));
-	         }
-	         return result;
-	     }
-	     
+
+	/**
+	 * Writes current window position and size to the preferences
+	 */
+	private void storeWindowBounds() {
+		Preferences.set(Preferences.ApplicationOptions.XLOC, Integer.toString(this.getX()));
+		Preferences.set(Preferences.ApplicationOptions.YLOC, Integer.toString(this.getY()));
+		Preferences.set(Preferences.ApplicationOptions.WWIDTH, Integer.toString(this.getWidth()));
+		Preferences.set(Preferences.ApplicationOptions.WHEIGHT, Integer.toString(this.getHeight()));
+	}
+
+	/**
+	 * Restores the window position and size to those found in the preferences
+	 * Checks if the window can still be displayed, if not, revert to default
+	 * position
+	 */
+	private void restoreWindowBounds() {
+		int x = Preferences.getInt(Preferences.ApplicationOptions.XLOC, this.getX());
+		int y = Preferences.getInt(Preferences.ApplicationOptions.YLOC, this.getY());
+		// check if this position can still be displayed to avoid problems
+		// for people who dragged the window on a screen that is no longer
+		// connected.
+		if (getGraphicsConfigurationContaining(x, y) == null) {
+			x = this.getX();
+			y = this.getY();
+		}
+		int width = Preferences.getInt(Preferences.ApplicationOptions.WWIDTH, (this.getWidth()));
+		int height = Preferences.getInt(Preferences.ApplicationOptions.WHEIGHT, this.getHeight());
+
+		this.setBounds(x, y, width, height);
+	}
+
+	/**
+	 * Utility function for restoreWindowBounds
+	 */
+	private GraphicsConfiguration getGraphicsConfigurationContaining(int x, int y) {
+		ArrayList configs = new ArrayList();
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] devices = env.getScreenDevices();
+		for (int i = 0; i < devices.length; i++) {
+			GraphicsConfiguration[] gconfigs = devices[i].getConfigurations();
+			configs.addAll(Arrays.asList(gconfigs));
+		}
+		for (int i = 0; i < configs.size(); i++) {
+			GraphicsConfiguration config = ((GraphicsConfiguration) configs.get(i));
+			Rectangle bounds = config.getBounds();
+			if (bounds.contains(x, y)) {
+				return config;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Convenience method to iterate over all graphics configurations.
+	 */
+	private static ArrayList getConfigs() {
+		ArrayList result = new ArrayList();
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] devices = env.getScreenDevices();
+		for (int i = 0; i < devices.length; i++) {
+			GraphicsConfiguration[] configs = devices[i].getConfigurations();
+			result.addAll(Arrays.asList(configs));
+		}
+		return result;
+	}
 
 	public JButton getCopyPasswordButton() {
 		return copyPasswordButton;
