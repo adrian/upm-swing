@@ -62,6 +62,7 @@ public class OptionsDialog extends EscapeDialog {
 	private JCheckBox enableProxyCheckbox;
 	private JCheckBox hideAccountPasswordCheckbox;
 	private JCheckBox inclEscCharstoPassCheckbox;
+	private JCheckBox storeWindowPosCheckbox;
 	private JCheckBox appAlwaysonTopCheckbox;
 	private JLabel accountPasswordLengthLabel;
 	private JTextField accountPasswordLength;
@@ -277,6 +278,21 @@ public class OptionsDialog extends EscapeDialog {
 		c.fill = GridBagConstraints.NONE;
 		mainPanel.add(inclEscCharstoPassCheckbox, c);
 
+		// The "Store Window position" row
+		Boolean storeWindowPos = Boolean
+				.valueOf(Preferences.get(Preferences.ApplicationOptions.REMEMBER_WINDOW_POSITION, "false"));
+		storeWindowPosCheckbox = new JCheckBox((Translator.translate("storeWindowPosition")),
+				storeWindowPos.booleanValue());
+		c.gridx = 0;
+		c.gridy = 8;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.insets = new Insets(0, 2, 5, 0);
+		c.weightx = 1;
+		c.weighty = 0;
+		c.gridwidth = 1;
+		c.fill = GridBagConstraints.NONE;
+		mainPanel.add(storeWindowPosCheckbox, c);
+
 		// The "Application always on top" row
 		Boolean appAlwaysonTop = new Boolean(
 				Preferences.get(Preferences.ApplicationOptions.MAINWINDOW_ALWAYS_ON_TOP, "false"));
@@ -479,7 +495,7 @@ public class OptionsDialog extends EscapeDialog {
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		emptyBorderPanel.add(buttonPanel);
 		JButton okButton = new JButton(Translator.translate("ok"));
-		//Link Enter key to okButton
+		// Link Enter key to okButton
 		getRootPane().setDefaultButton(okButton);
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -559,7 +575,7 @@ public class OptionsDialog extends EscapeDialog {
 			Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_PASSWORD, encodedPassword);
 			Preferences.set(Preferences.ApplicationOptions.HTTP_PROXY_ENABLED,
 					String.valueOf(enableProxyCheckbox.isSelected()));
-			
+
 			MainWindow.setAppAlwaysonTop(appAlwaysonTopCheckbox.isSelected());
 
 			// Save the new language and set a flag if it has changed

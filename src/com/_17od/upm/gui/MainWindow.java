@@ -78,12 +78,21 @@ import com._17od.upm.platformspecific.PlatformSpecificCode;
 import com._17od.upm.util.Preferences;
 import com._17od.upm.util.Translator;
 import com._17od.upm.util.Util;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This is the main application entry class
  */
 public class MainWindow extends JFrame implements ActionListener {
 
+<<<<<<< HEAD
 	private static final long serialVersionUID = 1L;
 	private static final String applicationName = "Universal Password Manager";
 
@@ -185,6 +194,458 @@ public class MainWindow extends JFrame implements ActionListener {
 			}
 		} catch (Exception e) {
 			dbActions.errorHandler(e);
+=======
+    private static final long serialVersionUID = 1L;
+    private static final String applicationName = "Universal Password Manager";
+
+    public static final String NEW_DATABASE_TXT = "newDatabaseMenuItem";
+    public static final String OPEN_DATABASE_TXT = "openDatabaseMenuItem";
+    public static final String OPEN_DATABASE_FROM_URL_TXT = "openDatabaseFromURLMenuItem";
+    public static final String SYNC_DATABASE_TXT = "syncWithRemoteDatabaseMenuItem";
+    public static final String CHANGE_MASTER_PASSWORD_TXT = "changeMasterPasswordMenuItem";
+    public static final String DATABASE_PROPERTIES_TXT = "databasePropertiesMenuItem";
+    public static final String ADD_ACCOUNT_TXT = "addAccountMenuItem";
+    public static final String EDIT_ACCOUNT_TXT = "editAccountMenuItem";
+    public static final String DELETE_ACCOUNT_TXT = "deleteAccountMenuItem";
+    public static final String VIEW_ACCOUNT_TXT = "viewAccountMenuItem";
+    public static final String COPY_USERNAME_TXT = "copyUsernameMenuItem";
+    public static final String COPY_PASSWORD_TXT = "copyPasswordMenuItem";
+    public static final String LAUNCH_URL_TXT = "launchURLMenuItem";
+    public static final String OPTIONS_TXT = "optionsMenuItem";
+    public static final String ABOUT_TXT = "aboutMenuItem";
+    public static final String RESET_SEARCH_TXT = "resetSearchMenuItem";
+    public static final String EXIT_TXT = "exitMenuItem";
+    public static final String EXPORT_TXT = "exportMenuItem";
+    public static final String IMPORT_TXT = "importMenuItem";
+    public static final String LOCK_TIMER_TXT = "lock";
+
+    private JButton addAccountButton;
+    private JButton editAccountButton;
+    private JButton deleteAccountButton;
+    private JButton copyUsernameButton;
+    private JButton copyPasswordButton;
+    private JButton launchURLButton;
+    private JButton optionsButton;
+    private JButton syncDatabaseButton;
+    private JTextField searchField;
+    private JButton resetSearchButton;
+    private JLabel searchIcon;
+
+    private JMenu databaseMenu;
+    private JMenuItem newDatabaseMenuItem;
+    private JMenuItem openDatabaseMenuItem;
+    private JMenuItem openDatabaseFromURLMenuItem;
+    private JMenuItem syncWithRemoteDatabaseMenuItem;
+    private JMenuItem changeMasterPasswordMenuItem;
+    private JMenuItem databasePropertiesMenuItem;
+    private JMenuItem exitMenuItem;
+    private JMenu helpMenu;
+    private JMenuItem aboutMenuItem;
+    private JMenu accountMenu;
+    private JMenuItem addAccountMenuItem;
+    private JMenuItem editAccountMenuItem;
+    private JMenuItem deleteAccountMenuItem;
+    private JMenuItem viewAccountMenuItem;
+    private JMenuItem copyUsernameMenuItem;
+    private JMenuItem copyPasswordMenuItem;
+    private JMenuItem launchURLMenuItem;
+    private JMenuItem exportMenuItem;
+    private JMenuItem importMenuItem;
+
+    private JList accountsListview;
+    private JLabel statusBar = new JLabel(" ");
+    private JPanel databaseFileChangedPanel;
+    
+
+    
+
+
+    private DatabaseActions dbActions;
+
+    public MainWindow(String title) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IllegalBlockSizeException, IOException, GeneralSecurityException, ProblemReadingDatabaseFile {
+        super(title);
+
+        Preferences.load();
+
+        Translator.initialise();
+
+        setIconImage(Util.loadImage("upm.gif").getImage());
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        PlatformSpecificCode.getInstance().initialiseApplication(this);
+
+        dbActions = new DatabaseActions(this);
+
+        //Set up the content pane.
+        addComponentsToPane();
+        
+        // Add listener to store current position and size on closing
+        this.addWindowListener(new WindowAdapter() {
+           public void windowClosing(WindowEvent e) {
+              storeWindowBounds();
+              try {
+                 Preferences.save();
+              } catch (IOException ex) {
+                 // Not much we can do at this point
+                 ex.printStackTrace();
+              }
+           }
+
+        });
+
+        //Display the window.
+        pack();
+        setLocationRelativeTo(null);
+        boolean restore = Preferences.get(
+                Preferences.ApplicationOptions.REMEMBER_WINDOW_POSITION, "false").
+                equals("true");
+        if (restore) {
+           restoreWindowBounds();
+        }
+        setVisible(true);
+
+        try {
+            //Load the startup database if it's configured
+            String db = Preferences.get(Preferences.ApplicationOptions.DB_TO_LOAD_ON_STARTUP);
+            if (db != null && !db.equals("")) {
+                File dbFile = new File(db);
+                if (!dbFile.exists()) {
+                    dbActions.errorHandler(new Exception(Translator.translate("dbDoesNotExist", db)));
+                } else {
+                    dbActions.openDatabase(db);
+                }
+            }
+        } catch (Exception e) {
+            dbActions.errorHandler(e);
+        }
+
+        //Give the search field focus
+        // I'm using requestFocusInWindow() rathar than requestFocus()
+        // because the javadocs recommend it
+        searchField.requestFocusInWindow();
+
+    }
+
+
+    public static void main(String[] args) {
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    //Use the System look and feel
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+                    Double jvmVersion = new Double(System.getProperty("java.specification.version"));
+                    if (jvmVersion.doubleValue() < 1.4) {
+                        JOptionPane.showMessageDialog(null, Translator.translate("requireJava14"), Translator.translate("problem"), JOptionPane.ERROR_MESSAGE);
+                        System.exit(1);
+                     } else {
+                        new MainWindow(applicationName);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+    private void addComponentsToPane() {
+
+        //Ensure the layout manager is a BorderLayout
+        if (!(getContentPane().getLayout() instanceof GridBagLayout)) {
+                getContentPane().setLayout(new GridBagLayout());
+        }
+
+        //Create the menubar
+        setJMenuBar(createMenuBar());
+
+        GridBagConstraints c = new GridBagConstraints();
+
+        //The toolbar Row
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.insets = new Insets(0, 0, 0, 0);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        Component toolbar = createToolBar();
+        getContentPane().add(toolbar, c);
+
+        //Keep the frame background color consistent
+        getContentPane().setBackground(toolbar.getBackground());
+
+        //The seperator Row
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, 0, 0, 0);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        getContentPane().add(new JSeparator(), c);
+
+        //The search field row
+        searchIcon = new JLabel(Util.loadImage("search.gif"));
+        searchIcon.setDisabledIcon(Util.loadImage("search_d.gif"));
+        searchIcon.setEnabled(false);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(5, 1, 5, 1);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        getContentPane().add(searchIcon, c);
+
+        searchField = new JTextField(15);
+        searchField.setEnabled(false);
+        searchField.setMinimumSize(searchField.getPreferredSize());
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                //This method never seems to be called
+            }
+            public void insertUpdate(DocumentEvent e) {
+                dbActions.filter();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                dbActions.filter();
+            }
+        });
+        searchField.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    dbActions.resetSearch();
+                } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    //If the user hits the enter key in the search field and there's only one item
+                    //in the listview then open that item (this code assumes that the one item in
+                    //the listview has already been selected. this is done automatically in the
+                    //DatabaseActions.filter() method)
+                    if (accountsListview.getModel().getSize() == 1) {
+                        viewAccountMenuItem.doClick();
+                    }
+                }
+            }
+        });
+        c.gridx = 1;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(5, 1, 5, 1);
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        getContentPane().add(searchField, c);
+
+        resetSearchButton = new JButton(Util.loadImage("stop.gif"));
+        resetSearchButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
+        resetSearchButton.setEnabled(false);
+        resetSearchButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
+        resetSearchButton.setActionCommand(RESET_SEARCH_TXT);
+        resetSearchButton.addActionListener(this);
+        resetSearchButton.setBorder(BorderFactory.createEmptyBorder());
+        resetSearchButton.setFocusable(false);
+        c.gridx = 2;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(5, 1, 5, 1);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        getContentPane().add(resetSearchButton, c);
+
+        //The accounts listview row
+        accountsListview = new JList();
+        accountsListview.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        accountsListview.setSelectedIndex(0);
+        accountsListview.setVisibleRowCount(10);
+        accountsListview.setModel(new SortedListModel());
+        JScrollPane accountsScrollList = new JScrollPane(accountsListview, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        accountsListview.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent e) {
+             //If the listview gets focus, there is one ore more items in the listview and there is nothing
+             //already selected, then select the first item in the list
+                if (accountsListview.getModel().getSize() > 0 && accountsListview.getSelectedIndex() == -1) {
+                    accountsListview.setSelectionInterval(0, 0);
+                }
+            }
+        });
+        accountsListview.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                dbActions.setButtonState();
+            }
+        });
+        accountsListview.addMouseListener(new MouseAdapter() {
+           public void mouseClicked(MouseEvent e) {
+               if (e.getClickCount() == 2) {
+                   viewAccountMenuItem.doClick();
+               }
+           }
+        });
+        accountsListview.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    viewAccountMenuItem.doClick();
+                }
+            }
+        });
+        c.gridx = 0;
+        c.gridy = 3;
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(0, 1, 1, 1);
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.BOTH;
+        getContentPane().add(accountsScrollList, c);
+
+        // The "File Changed" panel
+        c.gridx = 0;
+        c.gridy = 4;
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(0, 1, 0, 1);
+        c.ipadx = 3;
+        c.ipady = 3;
+        c.weightx = 0;
+        c.weighty = 0;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.BOTH;
+        databaseFileChangedPanel = new JPanel();
+        databaseFileChangedPanel.setLayout(new BoxLayout(databaseFileChangedPanel, BoxLayout.X_AXIS));
+        databaseFileChangedPanel.setBackground(new Color(249, 172, 60));
+        databaseFileChangedPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        JLabel fileChangedLabel = new JLabel("Database file changed");
+        fileChangedLabel.setAlignmentX(LEFT_ALIGNMENT);
+        databaseFileChangedPanel.add(fileChangedLabel);
+        databaseFileChangedPanel.add(Box.createHorizontalGlue());
+        JButton reloadButton = new JButton("Reload");
+        reloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    dbActions.reloadDatabaseFromDisk();
+                } catch (Exception ex) {
+                    dbActions.errorHandler(ex);
+                }
+            }
+        });
+        databaseFileChangedPanel.add(reloadButton);
+        databaseFileChangedPanel.setVisible(false);
+        getContentPane().add(databaseFileChangedPanel, c);
+
+        // Add the statusbar
+        c.gridx = 0;
+        c.gridy = 5;
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(0, 1, 1, 1);
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridwidth = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        getContentPane().add(statusBar, c);
+
+    }
+
+    public void setFileChangedPanelVisible(boolean visible) {
+        databaseFileChangedPanel.setVisible(visible);
+    }
+
+    private JToolBar createToolBar() {
+
+        JToolBar toolbar = new JToolBar();
+        toolbar.setFloatable(false);
+        toolbar.setRollover(true);
+
+        // The "Add Account" button
+        addAccountButton = new JButton();
+        addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
+        addAccountButton.setIcon(Util.loadImage("add_account.gif"));
+        addAccountButton.setDisabledIcon(Util.loadImage("add_account_d.gif"));;
+        addAccountButton.addActionListener(this);
+        addAccountButton.setEnabled(false);
+        addAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
+        toolbar.add(addAccountButton);
+
+        // The "Edit Account" button
+        editAccountButton = new JButton();
+        editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
+        editAccountButton.setIcon(Util.loadImage("edit_account.gif"));
+        editAccountButton.setDisabledIcon(Util.loadImage("edit_account_d.gif"));;
+        editAccountButton.addActionListener(this);
+        editAccountButton.setEnabled(false);
+        editAccountButton.setActionCommand(EDIT_ACCOUNT_TXT);
+        toolbar.add(editAccountButton);
+
+        // The "Delete Account" button
+        deleteAccountButton = new JButton();
+        deleteAccountButton.setToolTipText(Translator.translate(DELETE_ACCOUNT_TXT));
+        deleteAccountButton.setIcon(Util.loadImage("delete_account.gif"));
+        deleteAccountButton.setDisabledIcon(Util.loadImage("delete_account_d.gif"));;
+        deleteAccountButton.addActionListener(this);
+        deleteAccountButton.setEnabled(false);
+        deleteAccountButton.setActionCommand(DELETE_ACCOUNT_TXT);
+        toolbar.add(deleteAccountButton);
+
+        toolbar.addSeparator();
+
+        // The "Copy Username" button
+        copyUsernameButton = new JButton();
+        copyUsernameButton.setToolTipText(Translator.translate(COPY_USERNAME_TXT));
+        copyUsernameButton.setIcon(Util.loadImage("copy_username.gif"));
+        copyUsernameButton.setDisabledIcon(Util.loadImage("copy_username_d.gif"));;
+        copyUsernameButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                copyUsernameToClipboard();
+            }
+        });
+        copyUsernameButton.setEnabled(false);
+        toolbar.add(copyUsernameButton);
+
+        // The "Copy Password" button
+        copyPasswordButton = new JButton();
+        copyPasswordButton.setToolTipText(Translator.translate(COPY_PASSWORD_TXT));
+        copyPasswordButton.setIcon(Util.loadImage("copy_password.gif"));
+        copyPasswordButton.setDisabledIcon(Util.loadImage("copy_password_d.gif"));;
+        copyPasswordButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                copyPasswordToClipboard();
+            }
+        });
+        copyPasswordButton.setEnabled(false);
+        toolbar.add(copyPasswordButton);
+
+
+
+        // The "Launch URL" button
+        launchURLButton = new JButton();
+        launchURLButton.setToolTipText(Translator.translate(LAUNCH_URL_TXT));
+        launchURLButton.setIcon(Util.loadImage("launch_URL.gif"));
+        launchURLButton.setDisabledIcon(Util.loadImage("launch_URL_d.gif"));;
+        launchURLButton.addActionListener(new ActionListener() {
+
+		    public void actionPerformed(ActionEvent e) {
+
+				  AccountInformation accInfo = dbActions.getSelectedAccount();
+			      String uRl = accInfo.getUrl();
+
+            //Check if the selected  url is null or emty and inform the user via JoptioPane message
+            if ((uRl == null) || (uRl.length() == 0)) {
+			   JOptionPane.showMessageDialog(null,Translator.translate("EmptyUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+
+           //Check if the selected  url is a valid formated url(via urlIsValid() method)   and inform the user via JoptioPane message
+		  }	else if (!(urlIsValid(uRl))) {
+							JOptionPane.showMessageDialog(null,Translator.translate("InvalidUrlJoptionpaneMsg"),Translator.translate("UrlErrorJoptionpaneTitle"),JOptionPane.WARNING_MESSAGE);
+
+           //Call the method LaunchSelectedURL() using the selected url as input
+		  } else {
+			  LaunchSelectedURL(uRl);
+
+		    }
+>>>>>>> upstream/master
 		}
 
 		// Give the search field focus
@@ -222,8 +683,129 @@ public class MainWindow extends JFrame implements ActionListener {
 					e.printStackTrace();
 				}
 			}
+<<<<<<< HEAD
 		});
 	}
+=======
+// Linux and Mac specific code in order to launch url
+			        }else{
+			            Runtime runtime = Runtime.getRuntime();
+
+			            try {
+			                runtime.exec("xdg-open " + url);
+
+			                } catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+                            }
+
+        }
+
+
+    }
+   
+    /**
+     * Writes current window position and size to the preferences
+     */
+    private void storeWindowBounds() {
+        Preferences.set(Preferences.ApplicationOptions.XLOC, 
+                Integer.toString(this.getX()));
+        Preferences.set(Preferences.ApplicationOptions.YLOC, 
+                Integer.toString(this.getY()));
+        Preferences.set(Preferences.ApplicationOptions.WWIDTH, 
+                Integer.toString(this.getWidth()));
+        Preferences.set(Preferences.ApplicationOptions.WHEIGHT, 
+                Integer.toString(this.getHeight()));
+    }
+
+    /**
+     * Restores the window position and size to those found in the preferences
+     * Checks if the window can still be displayed, if not, revert to default position
+     */
+    private void restoreWindowBounds() {
+        int x = Preferences.getInt(Preferences.ApplicationOptions.XLOC, 
+                this.getX());
+        int y = Preferences.getInt(Preferences.ApplicationOptions.YLOC, 
+                this.getY());
+        // check if this position can still be displayed to avoid problems
+        // for people who dragged the window on a screen that is no longer 
+        // connected.
+        if (getGraphicsConfigurationContaining(x, y) == null) {
+            x = this.getX();
+            y = this.getY();
+        }
+        int width = Preferences.getInt(Preferences.ApplicationOptions.WWIDTH, 
+                (this.getWidth()));
+        int height = Preferences.getInt(Preferences.ApplicationOptions.WHEIGHT, 
+                this.getHeight());
+        
+        this.setBounds(x, y, width, height);
+    }
+
+    /**
+     * Utility function for restoreWindowBounds
+     */
+    private GraphicsConfiguration getGraphicsConfigurationContaining(
+            int x, int y) {
+        ArrayList configs = new ArrayList();
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] devices = env.getScreenDevices();
+        for (int i = 0; i < devices.length; i++) {
+            GraphicsConfiguration[] gconfigs = devices[i].getConfigurations();
+            configs.addAll(Arrays.asList(gconfigs));
+        }
+        for (int i = 0; i < configs.size(); i++) {
+            GraphicsConfiguration config = ((GraphicsConfiguration) configs.get(i));
+            Rectangle bounds = config.getBounds();
+            if (bounds.contains(x, y)) {
+                return config;
+            }
+        }
+        return null;
+    }
+
+    /**
+    * Convenience method to iterate over all graphics configurations.
+    */
+    private static ArrayList getConfigs() {
+        ArrayList result = new ArrayList();
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] devices = env.getScreenDevices();
+        for (int i = 0; i < devices.length; i++) {
+           GraphicsConfiguration[] configs = devices[i].getConfigurations();
+           result.addAll(Arrays.asList(configs));
+        }
+        return result;
+    }
+    
+    public JButton getCopyPasswordButton() {
+        return copyPasswordButton;
+    }
+
+    public JButton getLaunchURLButton() {
+        return launchURLButton;
+    }
+
+    public JButton getCopyUsernameButton() {
+        return copyUsernameButton;
+    }
+
+
+    public JButton getEditAccountButton() {
+        return editAccountButton;
+    }
+
+
+    public JButton getAddAccountButton() {
+        return addAccountButton;
+    }
+
+
+    public JButton getOptionsButton() {
+        return optionsButton;
+    }
+
+>>>>>>> upstream/master
 
 	private void addComponentsToPane() {
 
