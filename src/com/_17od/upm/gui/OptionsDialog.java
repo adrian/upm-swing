@@ -283,7 +283,7 @@ public class OptionsDialog extends EscapeDialog {
 		appAlwaysonTopCheckbox = new JCheckBox((Translator.translate("applicationAlwaysonTop")),
 				appAlwaysonTop.booleanValue());
 		c.gridx = 0;
-		c.gridy = 8;
+		c.gridy = 9;
 		c.anchor = GridBagConstraints.LINE_START;
 		c.insets = new Insets(0, 2, 5, 0);
 		c.weightx = 1;
