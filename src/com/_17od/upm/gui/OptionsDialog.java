@@ -559,6 +559,8 @@ public class OptionsDialog extends EscapeDialog {
 					String.valueOf(hideAccountPasswordCheckbox.isSelected()));
 			Preferences.set(Preferences.ApplicationOptions.INCLUDE_ESCAPE_CHARACTERS,
 					String.valueOf(inclEscCharstoPassCheckbox.isSelected()));
+			Preferences.set(Preferences.ApplicationOptions.REMEMBER_WINDOW_POSITION,
+					String.valueOf(storeWindowPosCheckbox.isSelected()));
 			Preferences.set(Preferences.ApplicationOptions.MAINWINDOW_ALWAYS_ON_TOP,
 					String.valueOf(appAlwaysonTopCheckbox.isSelected()));
 			Preferences.set(Preferences.ApplicationOptions.DATABASE_AUTO_LOCK,
