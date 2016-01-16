@@ -81,7 +81,7 @@ public class AboutDialog extends EscapeDialog {
         panel.add(okButton);
 
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
-
+        getRootPane().setDefaultButton(okButton);
         getContentPane().add(panel);
         
         setResizable(false);

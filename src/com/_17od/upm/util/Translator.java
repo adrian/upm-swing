@@ -28,9 +28,9 @@ import java.util.ResourceBundle;
 public class Translator {
 
     public static Locale[] SUPPORTED_LOCALES = {
-        new Locale("cs"), Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN,
-        Locale.ITALIAN, new Locale("es"), new Locale("pl"), new Locale("nl"), new Locale("el")};
-
+        Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN,Locale.ITALIAN, new Locale("es"),
+        new Locale("nl"),new Locale("pl"),new Locale("el"),new Locale("cs")};
+        
     private static ResourceBundle resourceBundle;
     private static MessageFormat formatter;
 
@@ -58,7 +58,7 @@ public class Translator {
 
 
     public static void initialise() {
-        Locale locale = Locale.ENGLISH;
+        Locale locale = new Locale("en");
         String localePreference = Preferences.get(Preferences.ApplicationOptions.LOCALE);
         if (localePreference != null) {
             locale = new Locale(localePreference);
