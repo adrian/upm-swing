@@ -29,6 +29,22 @@ public  class TestAccountDialog extends TestCase {
 
 	//Imre test
 	//Matt test
+    public void test2InclEscapeFalse() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+
+//Using reflection to test private method
+        Class myTarget = AccountDialog.class;
+        Class params[] = new Class[1];
+        params[0] = boolean.class;
+
+        Method method = myTarget.getDeclaredMethod(InclEscapeMethod, new Class[] {String.class});
+        method.setAccessible(true);
+
+        String Password = "Ghlwh7895h4HDSh";
+        Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+
+        assertFalse(result.booleanValue());
+
+    }
 //Reflection Strings for Private Method Name
  String InclUpperCaseMethod = "InclUpperCase";
  String InclLowerCaseMethod = "InclLowerCase";
