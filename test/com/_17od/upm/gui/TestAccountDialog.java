@@ -207,35 +207,27 @@ public void testGeneratePassword() throws SecurityException, NoSuchMethodExcepti
      assertNotSame(new Integer(9), new Integer(result4.length()));
 
  }
-<<<<<<< HEAD
 
-    public void test2InclEscapeTrue() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
 
-=======
+
+
     public void test2InclUpperCaseFalse() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
->>>>>>> 3e4ea6dead188d4e0e20e39c955706b708f1361c
+
         //Using reflection to test private method
         Class myTarget = AccountDialog.class;
         Class params[] = new Class[1];
         params[0] = boolean.class;
 
-<<<<<<< HEAD
         Method method = myTarget.getDeclaredMethod(InclEscapeMethod, new Class[] {String.class});
-        method.setAccessible(true);
-
-        String Password = "%&hfshHD\\fdsjkl";
-        Boolean result = (Boolean)method.invoke(method, new String[] {Password});
-
-        assertTrue(result.booleanValue());
-=======
-        Method method = myTarget.getDeclaredMethod(InclUpperCaseMethod, new Class[] {String.class});
         method.setAccessible(true);
 
         String Password = "278ak$&fdj90)(";
         Boolean result = (Boolean)method.invoke(method, new String[] {Password});
 
-        assertFalse(result.booleanValue());
->>>>>>> 3e4ea6dead188d4e0e20e39c955706b708f1361c
+        assertTrue(result.booleanValue());
+
+        
+
 
     }
 }
