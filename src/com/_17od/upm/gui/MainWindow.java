@@ -243,6 +243,8 @@ public class MainWindow extends JFrame implements ActionListener {
 						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 						AppWindow = new MainWindow(applicationName);
 						
+						
+						//test Imre
 						testurlIsValid("http://google.com");
 						
 					}
