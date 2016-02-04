@@ -241,10 +241,22 @@ public class MainWindow extends JFrame implements ActionListener {
 					} else {
 						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 						AppWindow = new MainWindow(applicationName);
+						
+						testurlIsValid("http://google.com");
+						
 					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
+				}
+			}
+
+			private void testurlIsValid(String string) {
+				if (AppWindow.urlIsValid(string)==false){
+					System.out.println("testurlIsValid failed");
+				} else {
+					System.out.println("testurlIsValid passed");
+
 				}
 			}
 		});
