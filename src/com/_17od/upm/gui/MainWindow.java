@@ -222,6 +222,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	public static void setAppAlwaysonTop(boolean val) {
 		AppWindow.setAlwaysOnTop(val);
 		// AppWindow.revalidate();
+		
 
 	}
 
@@ -250,6 +251,12 @@ public class MainWindow extends JFrame implements ActionListener {
 					e.printStackTrace();
 				}
 			}
+
+			
+
+			
+
+
 
 			private void testurlIsValid(String string) {
 				if (AppWindow.urlIsValid(string)==false){
@@ -286,6 +293,10 @@ public class MainWindow extends JFrame implements ActionListener {
 		Component toolbar = createToolBar();
 		getContentPane().add(toolbar, c);
 
+		
+		test2createToolbar(toolbar);
+		
+		
 		// Keep the frame background color consistent
 		getContentPane().setBackground(toolbar.getBackground());
 
@@ -491,6 +502,18 @@ public class MainWindow extends JFrame implements ActionListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		getContentPane().add(statusBar, c);
 
+	}
+
+	
+
+	private void test2createToolbar(Component toolbar) {
+		
+		final Component test= createToolBar();
+		if (toolbar==test){
+			System.out.println("test2createToolbar passed");
+		} else
+			System.out.println("test2createToolbar failed");
+			
 	}
 
 	public void setFileChangedPanelVisible(boolean visible) {
