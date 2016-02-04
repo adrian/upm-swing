@@ -511,7 +511,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private void test2createToolbar(Component toolbar) {
 		
 		final Component test= createToolBar();
-		if (toolbar==test){
+		if (toolbar.toString().equals(test.toString())){
 			System.out.println("test2createToolbar passed");
 		} else
 			System.out.println("test2createToolbar failed");
@@ -656,7 +656,11 @@ public class MainWindow extends JFrame implements ActionListener {
 		syncDatabaseButton.setActionCommand(SYNC_DATABASE_TXT);
 		toolbar.add(syncDatabaseButton);
 
+	//	System.out.println(toolbar);
+		
 		return toolbar;
+		
+		
 	}
 
 	private JMenuBar createMenuBar() {
