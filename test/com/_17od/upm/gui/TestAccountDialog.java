@@ -27,6 +27,8 @@ import java.lang.reflect.Method;
 
 public  class TestAccountDialog extends TestCase {
 
+	//Imre test
+	
 //Reflection Strings for Private Method Name
  String InclUpperCaseMethod = "InclUpperCase";
  String InclLowerCaseMethod = "InclLowerCase";
