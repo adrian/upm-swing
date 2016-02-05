@@ -244,7 +244,7 @@ public void test2InclUpperCaseTrue() throws SecurityException, NoSuchMethodExcep
 
 }
 
-
+    //Cody test
     public void test2InclUpperCaseFalse() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
 
         //Using reflection to test private method
