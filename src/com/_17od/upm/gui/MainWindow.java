@@ -46,6 +46,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -124,6 +125,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JButton syncDatabaseButton;
 	private JTextField searchField;
 	private JButton resetSearchButton;
+	private JButton testButton;
 	private JLabel searchIcon;
 
 	private JMenu databaseMenu;
@@ -388,6 +390,33 @@ public class MainWindow extends JFrame implements ActionListener {
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.NONE;
 		getContentPane().add(resetSearchButton, c);
+		
+		//Imre edit
+		ImageIcon giticon = new ImageIcon("images/github_picture.gif");
+		testButton = new JButton(giticon);
+		testButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
+		testButton.setEnabled(true);
+		testButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
+		testButton.setActionCommand(RESET_SEARCH_TXT);
+		HelperClass helper= new HelperClass();
+		testButton.addActionListener(helper);
+		testButton.setBorder(BorderFactory.createEmptyBorder());
+		testButton.setFocusable(false);
+		c.gridx = 3;
+		c.gridy = 2;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.insets = new Insets(5, 1, 5, 1);
+		c.weightx = 1;
+		c.weighty = 0;
+		c.gridwidth = 1;
+		c.fill = GridBagConstraints.NONE;
+		getContentPane().add(testButton, c);
+		
+		
+		
+		//Imre edit end
+		
+		
 
 		// The accounts listview row
 		accountsListview = new JList();
