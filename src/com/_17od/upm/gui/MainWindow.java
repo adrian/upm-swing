@@ -114,6 +114,8 @@ public class MainWindow extends JFrame implements ActionListener {
 	public static final String EXPORT_TXT = "exportMenuItem";
 	public static final String IMPORT_TXT = "importMenuItem";
 	public static final String LOCK_TIMER_TXT = "lock";
+	public static final String GO_TO_GITHUB = "Go to the Github repo";
+
 
 	private JButton addAccountButton;
 	private JButton editAccountButton;
@@ -125,7 +127,8 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JButton syncDatabaseButton;
 	private JTextField searchField;
 	private JButton resetSearchButton;
-	private JButton testButton;
+	private JButton gitButton;
+	private JButton hintButton;
 	private JLabel searchIcon;
 
 	private JMenu databaseMenu;
@@ -392,16 +395,16 @@ public class MainWindow extends JFrame implements ActionListener {
 		getContentPane().add(resetSearchButton, c);
 		
 		//Imre edit
-		ImageIcon giticon = new ImageIcon("images/github_picture.gif");
-		testButton = new JButton(giticon);
-		testButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
-		testButton.setEnabled(true);
-		testButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
-		testButton.setActionCommand(RESET_SEARCH_TXT);
+		ImageIcon giticon = new ImageIcon("images/github-mark.png");
+		gitButton = new JButton(giticon);
+		gitButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
+		gitButton.setEnabled(true);
+	//	gitButton.setToolTipText(Translator.translate("GO_TO_GITHUB"));
+		gitButton.setActionCommand(RESET_SEARCH_TXT);
 		HelperClass helper= new HelperClass();
-		testButton.addActionListener(helper);
-		testButton.setBorder(BorderFactory.createEmptyBorder());
-		testButton.setFocusable(false);
+		gitButton.addActionListener(helper);
+		gitButton.setBorder(BorderFactory.createEmptyBorder());
+		gitButton.setFocusable(false);
 		c.gridx = 3;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_START;
@@ -410,9 +413,9 @@ public class MainWindow extends JFrame implements ActionListener {
 		c.weighty = 0;
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.NONE;
-		getContentPane().add(testButton, c);
+		getContentPane().add(gitButton, c);
 		
-		
+	
 		
 		//Imre edit end
 		
@@ -684,6 +687,20 @@ public class MainWindow extends JFrame implements ActionListener {
 		syncDatabaseButton.setEnabled(false);
 		syncDatabaseButton.setActionCommand(SYNC_DATABASE_TXT);
 		toolbar.add(syncDatabaseButton);
+		
+		ImageIcon hinticon = new ImageIcon("images/exclamation.jpg");
+		hintButton = new JButton(hinticon);
+	//	syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
+	//	hintButton.setIcon(Util.loadImage("imagesexclamation.jpg"));
+	//	hintButton.setDisabledIcon(Util.loadImage("sync_d.png"));
+		;
+		hintButton.addActionListener(this);
+		hintButton.setEnabled(true);
+		
+		//MODIFY THIS!
+		hintButton.setActionCommand(SYNC_DATABASE_TXT);
+		toolbar.add(hintButton);
+		
 
 	//	System.out.println(toolbar);
 		
