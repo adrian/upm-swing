@@ -15,7 +15,7 @@ public class HelperClass implements ActionListener{
 		if(Desktop.isDesktopSupported())
 		{
 		  try {
-			Desktop.getDesktop().browse(new URI(makeValidHttp("https://www.github.com/adrian/upm-swing")));
+			Desktop.getDesktop().browse(new URI(makeValidHttp(this.returnGithub())));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -41,6 +41,10 @@ public class HelperClass implements ActionListener{
 			//	System.out.println(e);
 				}
 			return "http://www."+webpage;
+	}
+	public String returnGithub() {
+		// TODO Auto-generated method stub
+		return "https://www.github.com/adrian/upm-swing";
 	}
 
 }
