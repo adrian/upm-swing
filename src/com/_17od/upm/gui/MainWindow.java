@@ -218,7 +218,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		}
 
 		// Give the search field focus
-		// I'm using requestFocusInWindow() rathar than requestFocus()
+		// I'm using requestFocusInWindow() rather than requestFocus()
 		// because the javadocs recommend it
 		searchField.requestFocusInWindow();
 
@@ -396,6 +396,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		
 		//Imre edit
 		ImageIcon giticon = new ImageIcon("images/github-mark.png");
+		//gitButton = new JButton(Util.loadImage("github.png"));
 		gitButton = new JButton(giticon);
 		gitButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
 		gitButton.setEnabled(true);
@@ -690,15 +691,13 @@ public class MainWindow extends JFrame implements ActionListener {
 		
 		ImageIcon hinticon = new ImageIcon("images/exclamation.jpg");
 		hintButton = new JButton(hinticon);
-	//	syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
-	//	hintButton.setIcon(Util.loadImage("imagesexclamation.jpg"));
-	//	hintButton.setDisabledIcon(Util.loadImage("sync_d.png"));
-		;
-		hintButton.addActionListener(this);
+		PasswordHelper hintListener= new PasswordHelper();
+		hintButton.addActionListener(hintListener);
 		hintButton.setEnabled(true);
-		
 		//MODIFY THIS!
-		hintButton.setActionCommand(SYNC_DATABASE_TXT);
+		//You don't tell me what to do!
+		//Not needed, writing a class solely to handle this hint button
+		hintButton.setActionCommand("HINT");
 		toolbar.add(hintButton);
 		
 
