@@ -29,7 +29,17 @@ public class HelperClass implements ActionListener{
 	}
 	public String makeValidHttp(String webpage){
 		
-		
+		try{
+			if (webpage.substring(0,11).equals("http://www.")){
+				return webpage;
+			}
+			
+			if (webpage.substring(0,4).equals("www.")){
+				return "http://"+webpage;
+			}
+			} catch (Exception e){ 
+			//	System.out.println(e);
+				}
 			return "http://www."+webpage;
 		
 		
