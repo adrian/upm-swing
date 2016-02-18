@@ -9,15 +9,18 @@ public class PasswordHelper implements ActionListener
 {
     boolean called = false;
 
+    public String passwordHint()
+    {
+
+        return "Password should:\n- Be between 8-12 characters length\n- Have at least one special character" +
+                "\n- Have at least one uppercase letter\n- Not be a dictionary word\n- Not be a recent password\n";
+    }
+
     public void actionPerformed(ActionEvent e)
     {
         if(e.getActionCommand().equals("HINT"))
         {
-            String hints = "Password should:\n- Be between 8-12 characters length\n- Have at least one special character" +
-                    "\n- Have at least one uppercase letter\n- Not be a dictionary word\n- Not be a recent password\n";
-            JOptionPane.showMessageDialog(null, hints);
-            //JOptionPane.showMessageDialog(null, "Your mom is a jOptionPane.");
-            //System.out.println(" Password Hints ");
+            JOptionPane.showMessageDialog(null, passwordHint());
             called = true;
         }
     }
