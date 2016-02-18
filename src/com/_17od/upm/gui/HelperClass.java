@@ -15,7 +15,7 @@ public class HelperClass implements ActionListener{
 		if(Desktop.isDesktopSupported())
 		{
 		  try {
-			Desktop.getDesktop().browse(new URI("https://github.com/adrian/upm-swing"));
+			Desktop.getDesktop().browse(new URI(makeValidHttp("https://www.github.com/adrian/upm-swing")));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -28,9 +28,9 @@ public class HelperClass implements ActionListener{
 		
 	}
 	public String makeValidHttp(String webpage){
-		
+		System.out.println("Valid HTTP Made :)");
 		try{
-			if (webpage.substring(0,11).equals("http://www.")){
+			if (webpage.substring(0,11).equals("http://www.") || webpage.substring(0,12).equals("https://www.") ){
 				return webpage;
 			}
 			
@@ -41,9 +41,6 @@ public class HelperClass implements ActionListener{
 			//	System.out.println(e);
 				}
 			return "http://www."+webpage;
-		
-		
-		
 	}
 
 }
