@@ -527,7 +527,9 @@ public class AccountDialog extends EscapeDialog {
 		urlLaunchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				String urlText = url.getText();
-
+				HelperClass h=new HelperClass();
+				//New stuff Matt-Imre
+urlText=h.makeValidHttp(urlText);
 				// Check if the selected url is null or emty and inform the user
 				// via JoptioPane message
 				if ((urlText == null) || (urlText.length() == 0)) {

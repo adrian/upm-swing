@@ -27,5 +27,13 @@ public class HelperClass implements ActionListener{
 
 		
 	}
+	public String makeValidHttp(String webpage){
+		
+		
+			return "http://www."+webpage;
+		
+		
+		
+	}
 
 }
