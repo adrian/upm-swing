@@ -2,7 +2,8 @@ package com._17od.upm.gui;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertTrue;
+
 
 public class TestHelperClass {
 
