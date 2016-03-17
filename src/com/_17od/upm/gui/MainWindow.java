@@ -692,8 +692,8 @@ public class MainWindow extends JFrame implements ActionListener {
 		
 		ImageIcon hinticon = new ImageIcon("images/exclamation.jpg");
 		hintButton = new JButton(hinticon);
-	//	PasswordHelper hintListener= new PasswordHelper();
-	//	hintButton.addActionListener(hintListener);
+		PasswordHelper2 hintListener= new PasswordHelper2();
+		hintButton.addActionListener(hintListener);
 		hintButton.setEnabled(true);
 		//MODIFY THIS!
 		//You don't tell me what to do!
