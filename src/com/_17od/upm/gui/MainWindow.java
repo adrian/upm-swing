@@ -690,10 +690,10 @@ public class MainWindow extends JFrame implements ActionListener {
 		toolbar.add(syncDatabaseButton);
 		
 		ImageIcon hinticon = new ImageIcon("images/exclamation.jpg");
-		hintButton = new JButton(hinticon);
-		PasswordHelper hintListener= new PasswordHelper();
-		hintButton.addActionListener(hintListener);
-		hintButton.setEnabled(true);
+	//	hintButton = new JButton(hinticon);
+	//	PasswordHelper hintListener= new PasswordHelper();
+	//	hintButton.addActionListener(hintListener);
+	//	hintButton.setEnabled(true);
 		//MODIFY THIS!
 		//You don't tell me what to do!
 		//Not needed, writing a class solely to handle this hint button
