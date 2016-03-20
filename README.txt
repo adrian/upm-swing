@@ -85,6 +85,16 @@ Contents
 
 6. History
    -------
+   20-Mar-2016 : Version 1.14
+     - Mark the database "dirty" shortly after a sync
+     - Updated spanish translation
+     - Added greek translation
+     - Added button to launch account URL
+     - Improvements to the password generation feature
+     - Useability improvements to the account notes area
+     - Added copy/paste buttons to account dialog
+     - Remember window position between restarts
+
    25-Feb-2014 : Version 1.13
      - Added Dutch translation
      - Bug Fix: don't validate db lock time unnecessarily
