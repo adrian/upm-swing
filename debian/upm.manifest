@@ -1,2 +1,2 @@
 usr/share/upm/upm.jar:
- Class-Path: /usr/share/java/commons-logging.jar /usr/share/java/commons-httpclient.jar /usr/share/java/csv.jar /usr/share/java/bcprov.jar /usr/share/java/commons-codec.jar
+ Class-Path: /usr/share/java/commons-logging.jar /usr/share/java/commons-httpclient.jar /usr/share/java/csv.jar /usr/share/java/bcprov.jar /usr/share/java/commons-codec.jar /usr/share/java/commons-validator.jar

@@ -1,52 +1,54 @@
-Remove MAC OS X code
-Index: upm-src-1.11/src/com/_17od/upm/gui/MainWindow.java
-===================================================================
---- upm-src-1.11.orig/src/com/_17od/upm/gui/MainWindow.java	2013-04-12 20:34:54.000000000 +0100
-+++ upm-src-1.11/src/com/_17od/upm/gui/MainWindow.java	2013-04-12 21:05:25.204499259 +0100
-@@ -644,18 +644,14 @@
-         aboutMenuItem.addActionListener(this);
-         aboutMenuItem.setActionCommand(ABOUT_TXT);
+diff --git a/src/com/_17od/upm/gui/MainWindow.java b/src/com/_17od/upm/gui/MainWindow.java
+index 882908d..3478534 100644
+--- a/src/com/_17od/upm/gui/MainWindow.java
++++ b/src/com/_17od/upm/gui/MainWindow.java
+@@ -800,19 +800,14 @@ public class MainWindow extends JFrame implements ActionListener {
+ 		aboutMenuItem.addActionListener(this);
+ 		aboutMenuItem.setActionCommand(ABOUT_TXT);
  
--        //Because the MAC version of UPM will have a program item in the menu bar then these items
--        //only need to be added on non-mac platforms
--        if (!PlatformSpecificCode.isMAC()) {
--            databaseMenu.addSeparator();
--            databaseMenu.add(exitMenuItem);
+-		// Because the MAC version of UPM will have a program item in the menu
+-		// bar then these items
+-		// only need to be added on non-mac platforms
+-		if (!PlatformSpecificCode.isMAC()) {
+-			databaseMenu.addSeparator();
+-			databaseMenu.add(exitMenuItem);
 -
--            helpMenu = new JMenu(Translator.translate("helpMenu"));
--            helpMenu.setMnemonic(KeyEvent.VK_H);
--            menuBar.add(helpMenu);
-+        databaseMenu.addSeparator();
-+        databaseMenu.add(exitMenuItem);
+-			helpMenu = new JMenu(Translator.translate("helpMenu"));
+-			helpMenu.setMnemonic(KeyEvent.VK_H);
+-			menuBar.add(helpMenu);
+-
+-			helpMenu.add(aboutMenuItem);
+-		}
++		databaseMenu.addSeparator();
++		databaseMenu.add(exitMenuItem);
 +
-+        helpMenu = new JMenu(Translator.translate("helpMenu"));
-+        helpMenu.setMnemonic(KeyEvent.VK_H);
-+        menuBar.add(helpMenu);
-     
--            helpMenu.add(aboutMenuItem);
--        }
-+        helpMenu.add(aboutMenuItem);
++		helpMenu = new JMenu(Translator.translate("helpMenu"));
++		helpMenu.setMnemonic(KeyEvent.VK_H);
++		menuBar.add(helpMenu);
++
++		helpMenu.add(aboutMenuItem);
  
-         return menuBar;
-         
-@@ -888,11 +884,7 @@
-         exportMenuItem.setText(Translator.translate(EXPORT_TXT));
-         importMenuItem.setText(Translator.translate(IMPORT_TXT));
+ 		return menuBar;
  
--        //Because the MAC version of UPM will have a program item in the menu bar then these items
--        //only need to be added on non-mac platforms
--        if (!PlatformSpecificCode.isMAC()) {
--            helpMenu.setText(Translator.translate("helpMenu"));
--        }
-+        helpMenu.setText(Translator.translate("helpMenu"));
+@@ -1131,12 +1126,7 @@ public class MainWindow extends JFrame implements ActionListener {
+ 		exportMenuItem.setText(Translator.translate(EXPORT_TXT));
+ 		importMenuItem.setText(Translator.translate(IMPORT_TXT));
  
-         addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
-         editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
-Index: upm-src-1.11/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java
-===================================================================
---- upm-src-1.11.orig/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java	2013-04-12 20:34:54.000000000 +0100
-+++ upm-src-1.11/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java	2013-04-12 21:05:39.748499855 +0100
-@@ -29,18 +29,7 @@
+-		// Because the MAC version of UPM will have a program item in the menu
+-		// bar then these items
+-		// only need to be added on non-mac platforms
+-		if (!PlatformSpecificCode.isMAC()) {
+-			helpMenu.setText(Translator.translate("helpMenu"));
+-		}
++		helpMenu.setText(Translator.translate("helpMenu"));
+ 
+ 		addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
+ 		editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
+diff --git a/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java b/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java
+index df55fb0..d33c176 100644
+--- a/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java
++++ b/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java
+@@ -29,18 +29,7 @@ public abstract class PlatformSpecificCode {
  
  
      public static PlatformSpecificCode getInstance() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -66,24 +68,11 @@ Index: upm-src-1.11/src/com/_17od/upm/platformspecific/PlatformSpecificCode.java
      }
      
      
-Index: upm-src-1.11/src/com/_17od/upm/util/Preferences.java
-===================================================================
---- upm-src-1.11.orig/src/com/_17od/upm/util/Preferences.java	2013-04-12 20:34:54.000000000 +0100
-+++ upm-src-1.11/src/com/_17od/upm/util/Preferences.java	2013-04-12 21:06:38.780502282 +0100
-@@ -114,9 +114,6 @@
- 				}
- 				System.setProperty(PREF_FILE_SYS_PROP, configBase + System.getProperty("file.separator") + "upm.properties");
- 			}
--			else if(PlatformSpecificCode.isMAC()) {
--				System.setProperty(PREF_FILE_SYS_PROP, System.getProperty("user.home") + System.getProperty("file.separator") + "Library" + System.getProperty("file.separator") + "Preferences" + System.getProperty("file.separator") + "upm.properties");
--			}
- 		}
- 
-         propertiesFile = System.getProperty(PREF_FILE_SYS_PROP);
-Index: upm-src-1.11/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java
-===================================================================
---- upm-src-1.11.orig/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java	2013-04-12 20:34:54.000000000 +0100
-+++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+diff --git a/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java b/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java
+deleted file mode 100644
+index a855e3e..0000000
+--- a/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.java
++++ /dev/null
 @@ -1,54 +0,0 @@
 -/*
 - * Universal Password Manager
@@ -139,3 +128,17 @@ Index: upm-src-1.11/src/com/_17od/upm/platformspecific/mac/MACOSXSpecificCode.ja
 -    }
 -
 -}
+diff --git a/src/com/_17od/upm/util/Preferences.java b/src/com/_17od/upm/util/Preferences.java
+index d94bf64..92ddb03 100644
+--- a/src/com/_17od/upm/util/Preferences.java
++++ b/src/com/_17od/upm/util/Preferences.java
+@@ -124,9 +124,6 @@ public class Preferences {
+ 				}
+ 				System.setProperty(PREF_FILE_SYS_PROP, configBase + System.getProperty("file.separator") + "upm.properties");
+ 			}
+-			else if(PlatformSpecificCode.isMAC()) {
+-				System.setProperty(PREF_FILE_SYS_PROP, System.getProperty("user.home") + System.getProperty("file.separator") + "Library" + System.getProperty("file.separator") + "Preferences" + System.getProperty("file.separator") + "upm.properties");
+-			}
+ 		}
+ 
+         propertiesFile = System.getProperty(PREF_FILE_SYS_PROP);
