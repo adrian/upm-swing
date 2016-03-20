@@ -6,6 +6,7 @@ These instructions assume the upstream source tarball has been created (ant pack
 
 Required packages,
  * javahelper
+ * ubuntu-dev-tools (to test PPA builds before uploading to launchpad)
 
 Config ~/.dput.cf,
 [adriansmith]
@@ -52,10 +53,22 @@ allow_unsigned_uploads = 0
 
     Use gpg --list-secret-keys to get the key ID. Look for a line like "sec 12345/12ABCDEF"; the part after the slash is the key ID.
 
-9. Upload the PPA to Launchpad,
+9. Create an environment to test the build in,
+
+   $ pbuilder-dist <release> create
+
+   where <release> is for example precise, quantal or raring or in the case of Debian maybe sid. This will take a while as it will download all the necessary packages for a “minimal installation”.
+
+10. Perform the build,
+ 
+   $ pbuilder-dist <release> build ../<package>_<version>.dsc
+
+11. Upload the PPA to Launchpad,
 
     $ dput adriansmith ../upm_<version>_source.changes
 
+Links
+ * https://developer.ubuntu.com/en/publish/other-forms-of-submitting-apps/ppa/
 
 --------------------------------------------------------------------------------
 -- Creating Patches for Debian build
