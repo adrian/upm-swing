@@ -83,8 +83,10 @@ Section "Universal Password Manager"
   File ..\lib\commons-codec-1.3.jar
   File ..\lib\commons-httpclient-3.0.jar
   File ..\lib\commons-logging-1.1.jar
+  File ..\lib\commons-validator-1.4.0.jar
   File ..\lib\bcprov-jdk14-145.jar
   File ..\lib\javacsv.jar
+
 
   ;Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\UPM "Install_Dir" "$INSTDIR"
@@ -131,6 +133,7 @@ Section "Uninstall"
   Delete $INSTDIR\commons-codec-1.3.jar
   Delete $INSTDIR\commons-httpclient-3.0.jar
   Delete $INSTDIR\commons-logging-1.1.jar
+  Delete $INSTDIR\commons-validator-1.4.0.jar
   Delete $INSTDIR\bcprov-jdk14-145.jar
   Delete $INSTDIR\javacsv.jar
   Delete $INSTDIR\server\http\upload.php
