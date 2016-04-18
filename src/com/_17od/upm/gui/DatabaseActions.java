@@ -1100,7 +1100,7 @@ public class DatabaseActions {
                 status = Translator.translate("synchronised");
                 color = Color.BLACK;
             }
-            status = Translator.translate("revision") + ' ' + String.valueOf(database.getRevision()) + " - " + status;
+            status = Translator.translate("revision") + ' ' + database.getRevision() + " - " + status; //MMR04-18-20
         } else {
             status = Translator.translate("localDatabase");
             color = Color.BLACK;
