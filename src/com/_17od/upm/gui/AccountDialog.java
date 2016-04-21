@@ -816,14 +816,13 @@ urlText=h.makeValidHttp(urlText);
 			for (int i = 0; i < PassLength; i++) {
 				passwordBuffer.append(EXTRA_ALLOWED_CHARS[random.nextInt(EXTRA_ALLOWED_CHARS.length)]);
 			}
-			return passwordBuffer.toString();
 
 		} else {
 			for (int i = 0; i < PassLength; i++) {
 				passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
 			}
-			return passwordBuffer.toString();
 		}
+		return passwordBuffer.toString();
 	} // End GeneratePassword()
 
 	/**
