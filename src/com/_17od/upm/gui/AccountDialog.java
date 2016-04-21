@@ -527,7 +527,9 @@ public class AccountDialog extends EscapeDialog {
 		urlLaunchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				String urlText = url.getText();
-
+				HelperClass h=new HelperClass();
+				//New stuff Matt-Imre
+urlText=h.makeValidHttp(urlText);
 				// Check if the selected url is null or emty and inform the user
 				// via JoptioPane message
 				if ((urlText == null) || (urlText.length() == 0)) {
@@ -814,14 +816,13 @@ public class AccountDialog extends EscapeDialog {
 			for (int i = 0; i < PassLength; i++) {
 				passwordBuffer.append(EXTRA_ALLOWED_CHARS[random.nextInt(EXTRA_ALLOWED_CHARS.length)]);
 			}
-			return passwordBuffer.toString();
 
 		} else {
 			for (int i = 0; i < PassLength; i++) {
 				passwordBuffer.append(ALLOWED_CHARS[random.nextInt(ALLOWED_CHARS.length)]);
 			}
-			return passwordBuffer.toString();
 		}
+		return passwordBuffer.toString();
 	} // End GeneratePassword()
 
 	/**

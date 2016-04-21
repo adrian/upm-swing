@@ -1,3 +1,4 @@
+
 /*
  * Universal Password Manager
  * Copyright (C) 2005-2013 Adrian Smith
@@ -46,6 +47,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -113,6 +115,8 @@ public class MainWindow extends JFrame implements ActionListener {
 	public static final String EXPORT_TXT = "exportMenuItem";
 	public static final String IMPORT_TXT = "importMenuItem";
 	public static final String LOCK_TIMER_TXT = "lock";
+	public static final String GO_TO_GITHUB = "Go to the Github repo";
+
 
 	private JButton addAccountButton;
 	private JButton editAccountButton;
@@ -124,6 +128,8 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JButton syncDatabaseButton;
 	private JTextField searchField;
 	private JButton resetSearchButton;
+	private JButton gitButton;
+	private JButton hintButton;
 	private JLabel searchIcon;
 
 	private JMenu databaseMenu;
@@ -213,7 +219,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		}
 
 		// Give the search field focus
-		// I'm using requestFocusInWindow() rathar than requestFocus()
+		// I'm using requestFocusInWindow() rather than requestFocus()
 		// because the javadocs recommend it
 		searchField.requestFocusInWindow();
 
@@ -222,9 +228,10 @@ public class MainWindow extends JFrame implements ActionListener {
 	public static void setAppAlwaysonTop(boolean val) {
 		AppWindow.setAlwaysOnTop(val);
 		// AppWindow.revalidate();
+		
 
 	}
-
+	//This is the main entry point to the application
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -241,10 +248,30 @@ public class MainWindow extends JFrame implements ActionListener {
 					} else {
 						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 						AppWindow = new MainWindow(applicationName);
+						
+						
+						//test Imre
+						testurlIsValid("http://google.com");
+						
 					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
+				}
+			}
+
+			
+
+			
+
+
+
+			private void testurlIsValid(String string) {
+				if (AppWindow.urlIsValid(string)==false){
+					System.out.println("testurlIsValid failed");
+				} else {
+					System.out.println("testurlIsValid passed");
+
 				}
 			}
 		});
@@ -274,6 +301,10 @@ public class MainWindow extends JFrame implements ActionListener {
 		Component toolbar = createToolBar();
 		getContentPane().add(toolbar, c);
 
+		
+		test2createToolbar(toolbar);
+		
+		
 		// Keep the frame background color consistent
 		getContentPane().setBackground(toolbar.getBackground());
 
@@ -363,6 +394,34 @@ public class MainWindow extends JFrame implements ActionListener {
 		c.gridwidth = 1;
 		c.fill = GridBagConstraints.NONE;
 		getContentPane().add(resetSearchButton, c);
+		
+		//Imre edit
+		ImageIcon giticon = new ImageIcon("images/github-mark.png");
+		//gitButton = new JButton(Util.loadImage("github.png"));
+		gitButton = new JButton(giticon);
+		gitButton.setDisabledIcon(Util.loadImage("stop_d.gif"));
+		gitButton.setEnabled(true);
+	//	gitButton.setToolTipText(Translator.translate("GO_TO_GITHUB"));
+		gitButton.setActionCommand(RESET_SEARCH_TXT);
+		HelperClass helper= new HelperClass();
+		gitButton.addActionListener(helper);
+		gitButton.setBorder(BorderFactory.createEmptyBorder());
+		gitButton.setFocusable(false);
+		c.gridx = 3;
+		c.gridy = 2;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.insets = new Insets(5, 1, 5, 1);
+		c.weightx = 1;
+		c.weighty = 0;
+		c.gridwidth = 1;
+		c.fill = GridBagConstraints.NONE;
+		getContentPane().add(gitButton, c);
+		
+	
+		
+		//Imre edit end
+		
+		
 
 		// The accounts listview row
 		accountsListview = new JList();
@@ -481,6 +540,20 @@ public class MainWindow extends JFrame implements ActionListener {
 
 	}
 
+	
+
+	private void test2createToolbar(Component toolbar) {
+		
+		final Component test= createToolBar();
+		if (toolbar.toString().equals(test.toString())){
+			System.out.println("test2createToolbar passed");
+		} else
+		{
+			System.out.println("test2createToolbar failed");
+		}
+			
+	}
+
 	public void setFileChangedPanelVisible(boolean visible) {
 		databaseFileChangedPanel.setVisible(visible);
 	}
@@ -496,7 +569,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		addAccountButton.setToolTipText(Translator.translate(ADD_ACCOUNT_TXT));
 		addAccountButton.setIcon(Util.loadImage("add_account.gif"));
 		addAccountButton.setDisabledIcon(Util.loadImage("add_account_d.gif"));
-		;
+
 		addAccountButton.addActionListener(this);
 		addAccountButton.setEnabled(false);
 		addAccountButton.setActionCommand(ADD_ACCOUNT_TXT);
@@ -507,7 +580,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		editAccountButton.setToolTipText(Translator.translate(EDIT_ACCOUNT_TXT));
 		editAccountButton.setIcon(Util.loadImage("edit_account.gif"));
 		editAccountButton.setDisabledIcon(Util.loadImage("edit_account_d.gif"));
-		;
+
 		editAccountButton.addActionListener(this);
 		editAccountButton.setEnabled(false);
 		editAccountButton.setActionCommand(EDIT_ACCOUNT_TXT);
@@ -518,7 +591,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		deleteAccountButton.setToolTipText(Translator.translate(DELETE_ACCOUNT_TXT));
 		deleteAccountButton.setIcon(Util.loadImage("delete_account.gif"));
 		deleteAccountButton.setDisabledIcon(Util.loadImage("delete_account_d.gif"));
-		;
+
 		deleteAccountButton.addActionListener(this);
 		deleteAccountButton.setEnabled(false);
 		deleteAccountButton.setActionCommand(DELETE_ACCOUNT_TXT);
@@ -531,7 +604,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		copyUsernameButton.setToolTipText(Translator.translate(COPY_USERNAME_TXT));
 		copyUsernameButton.setIcon(Util.loadImage("copy_username.gif"));
 		copyUsernameButton.setDisabledIcon(Util.loadImage("copy_username_d.gif"));
-		;
+
 		copyUsernameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				copyUsernameToClipboard();
@@ -545,7 +618,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		copyPasswordButton.setToolTipText(Translator.translate(COPY_PASSWORD_TXT));
 		copyPasswordButton.setIcon(Util.loadImage("copy_password.gif"));
 		copyPasswordButton.setDisabledIcon(Util.loadImage("copy_password_d.gif"));
-		;
+
 		copyPasswordButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				copyPasswordToClipboard();
@@ -559,7 +632,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		launchURLButton.setToolTipText(Translator.translate(LAUNCH_URL_TXT));
 		launchURLButton.setIcon(Util.loadImage("launch_URL.gif"));
 		launchURLButton.setDisabledIcon(Util.loadImage("launch_URL_d.gif"));
-		;
+
 		launchURLButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -600,7 +673,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
 		optionsButton.setIcon(Util.loadImage("options.gif"));
 		optionsButton.setDisabledIcon(Util.loadImage("options_d.gif"));
-		;
+
 		optionsButton.addActionListener(this);
 		optionsButton.setEnabled(true);
 		optionsButton.setActionCommand(OPTIONS_TXT);
@@ -613,13 +686,26 @@ public class MainWindow extends JFrame implements ActionListener {
 		syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
 		syncDatabaseButton.setIcon(Util.loadImage("sync.png"));
 		syncDatabaseButton.setDisabledIcon(Util.loadImage("sync_d.png"));
-		;
+
 		syncDatabaseButton.addActionListener(this);
 		syncDatabaseButton.setEnabled(false);
 		syncDatabaseButton.setActionCommand(SYNC_DATABASE_TXT);
 		toolbar.add(syncDatabaseButton);
+		
+		ImageIcon hinticon = new ImageIcon("images/exclamation.jpg");
+		hintButton = new JButton(hinticon);
+		PasswordHelper2 hintListener= new PasswordHelper2();
+		hintButton.addActionListener(hintListener);
+		hintButton.setEnabled(true);
+		hintButton.setActionCommand("HINT");
+		toolbar.add(hintButton);
+		
 
+	//	System.out.println(toolbar);
+		
 		return toolbar;
+		
+		
 	}
 
 	private JMenuBar createMenuBar() {
@@ -946,7 +1032,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] devices = env.getScreenDevices();
 		for (int i = 0; i < devices.length; i++) {
-			GraphicsConfiguration[] configs = devices[i].getConfigurations();
+			final GraphicsConfiguration[] configs = devices[i].getConfigurations();
 			result.addAll(Arrays.asList(configs));
 		}
 		return result;
@@ -1220,3 +1306,4 @@ public class MainWindow extends JFrame implements ActionListener {
 	}
 
 }
+

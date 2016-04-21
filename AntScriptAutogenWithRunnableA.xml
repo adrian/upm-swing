@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project UPM">
+   
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="C:/Imre/egyetem/info/II_mesteri/Testing/EclipseWork"/>
+    <property name="dir.jarfile" value="${dir.buildfile}"/>
+    <target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/UPMRunnableA.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="com._17od.upm.gui.MainWindow"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${dir.jarfile}/testbuild"/>
+            <fileset dir="${dir.jarfile}/build"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.jarfile}/lib/commons-httpclient-3.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.jarfile}/lib/commons-logging-1.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.jarfile}/lib/commons-codec-1.3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.jarfile}/lib/junit.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.jarfile}/lib/bcprov-jdk14-145.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.jarfile}/lib/javacsv.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.jarfile}/lib/AppleJavaExtensions.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.jarfile}/lib/commons-validator-1.4.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/Eclipse/eclipse/plugins/org.junit_4.12.0.v201504281640/junit.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/Eclipse/eclipse/plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+        </jar>
+    </target>
+</project>

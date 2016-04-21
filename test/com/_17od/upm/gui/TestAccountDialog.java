@@ -27,6 +27,24 @@ import java.lang.reflect.Method;
 
 public  class TestAccountDialog extends TestCase {
 
+	//Imre test
+	//Matt test
+    public void test2InclEscapeFalse() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+
+//Using reflection to test private method
+        Class myTarget = AccountDialog.class;
+        Class params[] = new Class[1];
+        params[0] = boolean.class;
+
+        Method method = myTarget.getDeclaredMethod(InclEscapeMethod, new Class[] {String.class});
+        method.setAccessible(true);
+
+        String Password = "Ghlwh7895h4HDSh";
+        Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+
+        assertFalse(result.booleanValue());
+
+    }
 //Reflection Strings for Private Method Name
  String InclUpperCaseMethod = "InclUpperCase";
  String InclLowerCaseMethod = "InclLowerCase";
@@ -205,4 +223,67 @@ public void testGeneratePassword() throws SecurityException, NoSuchMethodExcepti
      assertNotSame(new Integer(9), new Integer(result4.length()));
 
  }
+
+public void test2InclUpperCaseTrue() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+
+    //Using reflection to test private method
+    Class myTarget = AccountDialog.class;
+    Class params[] = new Class[1];
+    params[0] = boolean.class;
+
+    Method method = myTarget.getDeclaredMethod(InclEscapeMethod, new Class[] {String.class});
+    method.setAccessible(true);
+
+    String Password = "fdjsklHK3478&&";
+    Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+
+    assertTrue(result.booleanValue());
+
+    
+
+
 }
+
+    //Cody test
+    public void test2InclUpperCaseFalse() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+
+        //Using reflection to test private method
+        Class myTarget = AccountDialog.class;
+        Class params[] = new Class[1];
+        params[0] = boolean.class;
+
+        Method method = myTarget.getDeclaredMethod(InclEscapeMethod, new Class[] {String.class});
+        method.setAccessible(true);
+
+        String Password = "278ak$&fdj90)(";
+        Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+
+        assertTrue(result.booleanValue());
+
+        
+
+
+    }
+    
+    //Max test
+    
+    public void test2InclEscapeTrue() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
+    	 
+    	         //Using reflection to test private method
+    	         Class myTarget = AccountDialog.class;
+    	         Class params[] = new Class[1];
+    	         params[0] = boolean.class;
+    	 
+    	         Method method = myTarget.getDeclaredMethod(InclEscapeMethod, new Class[] {String.class});
+    	         method.setAccessible(true);
+    	 
+    	         String Password = "%&hfshHD\\fdsjkl";
+    	         Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+    	 
+    	         assertTrue(result.booleanValue());
+    	 
+    	     }
+    	  
+    
+}
+
