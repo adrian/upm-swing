@@ -384,7 +384,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		});
 		accountsListview.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				dbActions.setButtonState();
+				setButtonState();
 			}
 		});
 		accountsListview.addMouseListener(new MouseAdapter() {
@@ -1147,6 +1147,34 @@ public class MainWindow extends JFrame implements ActionListener {
 		optionsButton.setToolTipText(Translator.translate(OPTIONS_TXT));
 		syncDatabaseButton.setToolTipText(Translator.translate(SYNC_DATABASE_TXT));
 		resetSearchButton.setToolTipText(Translator.translate(RESET_SEARCH_TXT));
+	}
+	
+	public void setButtonState() {
+		if (getAccountsListview().getSelectedValue() == null) {
+			getEditAccountButton().setEnabled(false);
+			getCopyUsernameButton().setEnabled(false);
+			getCopyPasswordButton().setEnabled(false);
+			getLaunchURLButton().setEnabled(false);
+			getDeleteAccountButton().setEnabled(false);
+			getEditAccountMenuItem().setEnabled(false);
+			getCopyUsernameMenuItem().setEnabled(false);
+			getCopyPasswordMenuItem().setEnabled(false);
+			getLaunchURLMenuItem().setEnabled(false);
+			getDeleteAccountMenuItem().setEnabled(false);
+			getViewAccountMenuItem().setEnabled(false);
+		} else {
+			getEditAccountButton().setEnabled(true);
+			getCopyUsernameButton().setEnabled(true);
+			getCopyPasswordButton().setEnabled(true);
+			getLaunchURLButton().setEnabled(true);
+			getDeleteAccountButton().setEnabled(true);
+			getEditAccountMenuItem().setEnabled(true);
+			getCopyUsernameMenuItem().setEnabled(true);
+			getCopyPasswordMenuItem().setEnabled(true);
+			getLaunchURLMenuItem().setEnabled(true);
+			getDeleteAccountMenuItem().setEnabled(true);
+			getViewAccountMenuItem().setEnabled(true);
+		}
 	}
 
 	public interface ChangeDatabaseAction {
