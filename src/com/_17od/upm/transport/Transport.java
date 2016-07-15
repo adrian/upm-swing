@@ -30,11 +30,28 @@ import java.net.URL;
  */
 public abstract class Transport {
 
+    /**
+     * the remote hostname
+     */
+    protected String remoteHost=null;
+
+    /**
+     * the remote path (if any)
+     */
+    protected String remotePath=null;
+
+    /**
+     * the remote filename
+     */
+    protected String remoteFile=null;
+
     public abstract void put(String targetLocation, File file, String username, String password) throws TransportException;
     
     public abstract void put(String targetLocation, File file) throws TransportException;
 
     public abstract byte[] get(String url, String fileName) throws TransportException;
+
+    public abstract byte[] get(String url) throws TransportException;
 
     public abstract byte[] get(String url, String fileName, String username, String password) throws TransportException;
 
@@ -58,6 +75,8 @@ public abstract class Transport {
             retVal = new HTTPTransport();
         } else if (url.getProtocol().equals("https")) {
             retVal = new HTTPTransport();
+        } else if (url.getProtocol().equals("ftp")) {
+            retVal = new FTPtransport(url.toString());
         }
         return retVal;
     }
@@ -69,6 +88,8 @@ public abstract class Transport {
         } else if (protocol.equals("https")) {
             supported = true;
         } else if (protocol.equals("file")) {
+            supported = true;
+        } else if (protocol.equals("ftp")) {
             supported = true;
         }
         return supported;
