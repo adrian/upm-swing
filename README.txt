@@ -85,6 +85,9 @@ Contents
 
 6. History
    -------
+   04-Feb-2019 : Version 1.15.1
+     - Repackage the OS X tarball to work with the default JRE and Mojave
+
    20-Mar-2016 : Version 1.14
      - Mark the database "dirty" shortly after a sync
      - Updated spanish translation
