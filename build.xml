@@ -194,9 +194,9 @@
             <classpath dir="${dist}\build" includes="${short.name}.jar"/>
         </bundleapp>
 
-        <tar destfile="${dist}\${short.name}-mac-${version}.tar.gz">
-            <tarfileset dir="${dist-mac-dir}" prefix="${short.name}-mac-${version}"/>
-        </tar>
+        <exec executable="tar" dir="${basedir}">
+            <arg line="-czvf dist/${short.name}-mac-${version}.tar.gz -C dist/ ${short.name}-mac-${version}"/>
+        </exec>
     </target>
 
 
