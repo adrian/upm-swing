@@ -48,7 +48,6 @@
         </fileset>
     </path>
 
-
     <!-- The clean target cleans the environment -->
     <target name="clean">
         <delete dir="${build}"/>
@@ -66,13 +65,15 @@
     <!-- The compile target compiles the source -->
     <target name="compile">
         <mkdir dir="${build}"/>
-        <javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" source="6" target="1.6">
+        <javac srcdir="${src}" destdir="${build}" debug="on" failonerror="true" source="8" target="8" includeAntRuntime="no">
             <classpath refid="project.class.path"/>
+            <compilerarg value="-Xbootclasspath/p:${toString:project.class.path}"/>
         </javac>
 
         <mkdir dir="${test.build}"/>
-        <javac srcdir="${test.src}" destdir="${test.build}" debug="on" failonerror="true" source="6" target="1.6">
+        <javac srcdir="${test.src}" destdir="${test.build}" debug="on" failonerror="true" source="8" target="8" includeAntRuntime="no">
             <classpath refid="project.class.path"/>
+            <compilerarg value="-Xbootclasspath/p:${toString:project.class.path}"/>
         </javac>
 
         <copy todir="${build}">

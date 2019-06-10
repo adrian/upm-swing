@@ -45,7 +45,7 @@ public  class TestAccountDialog extends TestCase {
    method.setAccessible(true);
 
    String Password = "Klfjjru!234";
-   Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+   Boolean result = (Boolean)method.invoke(method, Password);
 
    assertTrue(result.booleanValue());
 
@@ -62,7 +62,7 @@ public  class TestAccountDialog extends TestCase {
     method.setAccessible(true);
 
     String Password = "kllfmjiugiwug@#$%%^k856";
-    Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+    Boolean result = (Boolean)method.invoke(method, Password);
 
     assertFalse(result.booleanValue());
 
@@ -79,7 +79,7 @@ public void testInclLowerCaseTrue() throws SecurityException, NoSuchMethodExcept
    method.setAccessible(true);
 
    String Password = "hghtkghjKLLP123%^&";
-   Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+   Boolean result = (Boolean)method.invoke(method, Password);
 
    assertTrue(result.booleanValue());
 
@@ -97,7 +97,7 @@ public void testInclLowerCaseFalse() throws SecurityException, NoSuchMethodExcep
    method.setAccessible(true);
 
    String Password = "KGHJLMBCX78990^&**";
-   Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+   Boolean result = (Boolean)method.invoke(method, Password);
 
    assertFalse(result.booleanValue());
 
@@ -114,7 +114,7 @@ public void testInclLowerCaseFalse() throws SecurityException, NoSuchMethodExcep
     method.setAccessible(true);
 
     String Password = "Kghkfrjgir*&^$%4523";
-    Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+    Boolean result = (Boolean)method.invoke(method, Password);
 
     assertTrue(result.booleanValue());
 
@@ -131,7 +131,7 @@ public void testInclLowerCaseFalse() throws SecurityException, NoSuchMethodExcep
      method.setAccessible(true);
 
      String Password = "KJHHGhnnfhhshd&*()hghg";
-     Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+     Boolean result = (Boolean)method.invoke(method, Password);
 
      assertFalse(result.booleanValue());
 
@@ -148,7 +148,7 @@ public void testInclLowerCaseFalse() throws SecurityException, NoSuchMethodExcep
      method.setAccessible(true);
 
      String Password = "Jajjggj*hgjf12364";
-     Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+     Boolean result = (Boolean)method.invoke(method, Password);
 
      assertTrue(result.booleanValue());
 
@@ -165,7 +165,7 @@ public void testInclEscapeFalse() throws SecurityException, NoSuchMethodExceptio
      method.setAccessible(true);
 
      String Password = "JKhghgloeor159645";
-     Boolean result = (Boolean)method.invoke(method, new String[] {Password});
+     Boolean result = (Boolean)method.invoke(method, Password);
 
      assertFalse(result.booleanValue());
 
