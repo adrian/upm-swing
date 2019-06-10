@@ -27,7 +27,7 @@ import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 
 
-public class MACOSXSpecificCode extends PlatformSpecificCode {
+public class AppleExtensionsCode extends PlatformSpecificCode {
 
     public void initialiseApplication(final MainWindow mainWindow) {
         Application fApplication = Application.getApplication();

@@ -36,7 +36,7 @@
     <property name="full.name" value="UPM"/>
     <property name="lib" value="lib"/>
     <property name="coveragereport.dir" value="coveragereport.dir"/>
-    <property name="version" value="1.15.1" />
+    <property name="version" value="1.15.2" />
 
 
     <!-- Define a classpath for use later on -->
@@ -162,7 +162,16 @@
         <copy file="${basedir}\COPYING.txt" todir="${dist-mac-dir}"/>
         <copy file="${basedir}\README.txt" todir="${dist-mac-dir}"/>
 
-        <!-- https://bitbucket.org/infinitekind/appbundler/overview -->
+        <!--
+            Plugin Home: https://github.com/TheInfiniteKind/appbundler
+
+            JDKs on OS X are installed to /Library/Java/JavaVirtualMachines/
+            To list the installed versions run "/usr/libexec/java_home -V"
+
+            JREs on OX X are installed to /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/
+
+            Apps created with the appbundler plugin don't work with JDK 12. They do work with a JRE (tested with 1.8.0_211).
+        -->
         <taskdef name="bundleapp"
             classpath="${lib}/appbundler-1.0ea.jar"
             classname="com.oracle.appbundler.AppBundlerTask"/>

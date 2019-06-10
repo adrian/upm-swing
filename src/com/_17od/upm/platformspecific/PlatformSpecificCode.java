@@ -34,7 +34,14 @@ public abstract class PlatformSpecificCode {
         //Use reflection to create the platform specific code because the chances are it won't compile
         //on other platforms (causing this class to also fail compilation)
         if (isMAC()) {
-            Class clazz = Class.forName("com._17od.upm.platformspecific.mac.MACOSXSpecificCode");
+            Class clazz = null;
+            if (classAvailable("com.apple.eawt.ApplicationListener")) {
+                clazz = Class.forName("com._17od.upm.platformspecific.mac.AppleExtensionsCode");
+            } else if (classAvailable("java.awt.Desktop")) {
+                clazz = Class.forName("com._17od.upm.platformspecific.mac.DesktopModuleCode");
+            } else {
+                throw new RuntimeException("Neither com.apple.eawt.ApplicationListener nor java.awt.Desktop available");
+            }
             retVal = (PlatformSpecificCode) clazz.newInstance();
         } else {
             retVal = new NonPlatformSpecificCode();
@@ -51,5 +58,15 @@ public abstract class PlatformSpecificCode {
 	public static boolean isLinux() {
 		return System.getProperty("os.name").equals("Linux");
 	}
+
+    private static boolean classAvailable(String className) {
+        boolean available = false;
+        try {
+            Class.forName(className);
+            available = true;
+        } catch( ClassNotFoundException e ) {
+        }
+        return available;
+    }
 
 }
