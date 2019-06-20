@@ -159,7 +159,7 @@ public class MainWindow extends JFrame implements ActionListener {
 			ProblemReadingDatabaseFile {
 		super(title);
 
-		setIconImage(Util.loadImage("upm.gif").getImage());
+		setIconImage(Util.loadImage("upm.png").getImage());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
