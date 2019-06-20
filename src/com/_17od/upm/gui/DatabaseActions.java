@@ -686,9 +686,12 @@ public class DatabaseActions {
             String username = openDBDialog.getUsernameTextField().getText();
             String password = openDBDialog.getPasswordTextField().getText();
 
-            // Ask the user for a location to save the database file to
-            File saveDatabaseTo = getSaveAsFile(Translator.translate("saveDatabaseAs"));
+            // find the filename in the url
+            String file = new URL(remoteLocation).getFile();
 
+            // Ask the user for a location to save the database file to
+            File saveDatabaseTo = getSaveAsFile(Translator.translate("saveDatabaseAs"), new File(file));
+            
             if (saveDatabaseTo != null) {
 
                 // Download the database
@@ -807,6 +810,7 @@ public class DatabaseActions {
     public boolean syncWithRemoteDatabase() throws TransportException, ProblemReadingDatabaseFile, IOException, CryptoException, PasswordDatabaseException {
 
         boolean syncSuccessful = false;
+        File remoteDatabaseFile = null;
 
         try {
             fileMonitor.pause();
@@ -825,7 +829,7 @@ public class DatabaseActions {
 
             // Download the database that's already at the remote location
             Transport transport = Transport.getTransportForURL(new URL(remoteLocation));
-            File remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
+            remoteDatabaseFile = transport.getRemoteFile(remoteLocation, database.getDatabaseFile().getName(), httpUsername, httpPassword);
 
             // Attempt to decrypt the database using the password the user entered
             PasswordDatabase remoteDatabase = null;
@@ -909,6 +913,10 @@ public class DatabaseActions {
             }
 
         } finally {
+        	// delete temporary file
+        	if (remoteDatabaseFile != null) {
+        		remoteDatabaseFile.delete();
+        	}
             mainWindow.getContentPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             fileMonitor.start();
         }
@@ -1017,12 +1025,19 @@ public class DatabaseActions {
      * @return The file to save to or null
      */
     private File getSaveAsFile(String title) {
+        return getSaveAsFile(title, null);
+    }
+
+    private File getSaveAsFile(String title, File preselectedFile) {
         File selectedFile;
 
         boolean gotValidFile = false;
         do {
             JFileChooser fc = new JFileChooser();
             fc.setDialogTitle(title);
+            if (preselectedFile!=null) {
+                fc.setSelectedFile(preselectedFile);
+            }
             int returnVal = fc.showSaveDialog(mainWindow);
 
             if (returnVal != JFileChooser.APPROVE_OPTION) {
