@@ -75,6 +75,8 @@ public class DatabaseActions {
 
     private boolean lockIfInactive;
     private int msToWaitBeforeClosingDB;
+    private AutoLockDatabaseListener autoLockListener;
+    private AccountDialog openAccountDialog;
 
     private boolean runSetDBDirtyThread = true;
 
@@ -315,8 +317,11 @@ public class DatabaseActions {
 
         if (lockIfInactive) {
             LOG.debug("Enabling autoclose when focus lost");
+            if (autoLockListener == null) {
+                autoLockListener = new AutoLockDatabaseListener();
+            }
             if (mainWindow.getWindowFocusListeners().length == 0) {
-                mainWindow.addWindowFocusListener(new AutoLockDatabaseListener());
+                mainWindow.addWindowFocusListener(autoLockListener);
             }
         } else {
             LOG.debug("Disabling autoclose when focus lost");
@@ -453,9 +458,7 @@ public class DatabaseActions {
             //Initialise the AccountDialog
             AccountInformation accInfo = new AccountInformation();
             AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, false, accountNames);
-            accDialog.pack();
-            accDialog.setLocationRelativeTo(mainWindow);
-            accDialog.show();
+            showAccountDialog(accDialog);
 
             //If the user press OK then save the new account to the database
             if (accDialog.okClicked()) {
@@ -507,9 +510,25 @@ public class DatabaseActions {
     public void viewAccount() {
         AccountInformation accInfo = getSelectedAccount();
         AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, true, accountNames);
+        showAccountDialog(accDialog);
+    }
+
+
+    /**
+     * Display an account dialog. The auto-lock listener is attached to the
+     * dialog so that the database still locks if the application loses focus
+     * while an account is open. Without this the focus events go to the dialog
+     * rather than the main window and the lock timer never starts (issue #50).
+     */
+    private void showAccountDialog(AccountDialog accDialog) {
+        openAccountDialog = accDialog;
+        if (lockIfInactive && autoLockListener != null) {
+            accDialog.addWindowFocusListener(autoLockListener);
+        }
         accDialog.pack();
         accDialog.setLocationRelativeTo(mainWindow);
         accDialog.show();
+        openAccountDialog = null;
     }
 
 
@@ -526,9 +545,7 @@ public class DatabaseActions {
             }
 
             AccountDialog accDialog = new AccountDialog(accInfo, mainWindow, false, accountNames);
-            accDialog.pack();
-            accDialog.setLocationRelativeTo(mainWindow);
-            accDialog.show();
+            showAccountDialog(accDialog);
 
             //If the ok button was clicked then save the account to the database and update the
             //listview with the new account name (if it's changed)
@@ -1139,9 +1156,12 @@ public class DatabaseActions {
          */
         public synchronized void windowLostFocus(WindowEvent e) {
             // If the window receiving focus is within this application then the
-            // app isn't not losing focus so no further action is required.
+            // app isn't not losing focus so no further action is required. This
+            // includes the main window itself and any dialog it owns (e.g. the
+            // account window), so moving between them doesn't start the timer.
             if (e.getOppositeWindow() != null &&
-                    e.getOppositeWindow().getOwner() == mainWindow) {
+                    (e.getOppositeWindow() == mainWindow ||
+                    e.getOppositeWindow().getOwner() == mainWindow)) {
                 LOG.debug("Focus switched to another window within this app");
                 return;
             }
@@ -1151,6 +1171,12 @@ public class DatabaseActions {
                 closeDBTimer.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         LOG.debug("Closing database due to inactivity");
+                        // Close the account window if one is open so account
+                        // details aren't left on screen after locking.
+                        if (openAccountDialog != null) {
+                            openAccountDialog.dispose();
+                            openAccountDialog = null;
+                        }
                         databaseClosedOnTimer =
                                 database.getDatabaseFile().getAbsolutePath();
                         doCloseDatabaseActions();
