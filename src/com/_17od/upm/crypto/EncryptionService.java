@@ -43,6 +43,13 @@ public class EncryptionService {
     private byte[] salt;
     private BufferedBlockCipher encryptCipher;
     private BufferedBlockCipher decryptCipher;
+    private char[] password;
+
+    /**
+     * For EncryptionServiceV4 which implements its own crypto.
+     */
+    protected EncryptionService() {
+    }
 
     public EncryptionService(char[] password) throws CryptoException {
         try {
@@ -59,6 +66,7 @@ public class EncryptionService {
     }
 
     public void initCipher(char[] password) {
+        this.password = password.clone();
         PBEParametersGenerator keyGenerator = new PKCS12ParametersGenerator(new SHA256Digest());
         keyGenerator.init(PKCS12ParametersGenerator.PKCS12PasswordToBytes(password), salt, 20);
         CipherParameters keyParams = keyGenerator.generateDerivedParameters(256, 128);
@@ -106,6 +114,15 @@ public class EncryptionService {
 
     public byte[] getSalt() {
         return salt;
+    }
+
+    /**
+     * The master password this service derives its key from, if available.
+     * Used by PasswordDatabasePersistence to upgrade a v3 database to v4 on
+     * the next save.
+     */
+    public char[] getPassword() {
+        return password == null ? null : password.clone();
     }
 
 }
