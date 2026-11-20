@@ -36,6 +36,7 @@ import java.util.Iterator;
 import com._17od.upm.crypto.CryptoException;
 import com._17od.upm.crypto.DESDecryptionService;
 import com._17od.upm.crypto.EncryptionService;
+import com._17od.upm.crypto.EncryptionServiceV4;
 import com._17od.upm.crypto.InvalidPasswordException;
 import com._17od.upm.util.Util;
 
@@ -45,6 +46,11 @@ import com._17od.upm.util.Util;
  * care of those differences.
  * 
  * Database versions and formats. The items between [] brackets are encrypted.
+ *   4     >> MAGIC_NUMBER DB_VERSION SALT16 ARGON2_PARAMS [IV CIPHERTEXT TAG DB_REVISION DB_OPTIONS ACCOUNTS]
+ *      SALT16 = 16 byte Argon2 salt (big endian)
+ *      ARGON2_PARAMS = iterations(4) memoryKB(4) parallelism(1), all in the clear
+ *      Key derivation: Argon2id (UTF-8 password) -> AES-256-GCM
+ *      Databases saved with this version of the code are always written as v4.
  *   3     >> MAGIC_NUMBER DB_VERSION SALT [DB_REVISION DB_OPTIONS ACCOUNTS]
  *      (all strings are encoded using UTF-8)
  *   2     >> MAGIC_NUMBER DB_VERSION SALT [DB_REVISION DB_OPTIONS ACCOUNTS]
@@ -64,7 +70,7 @@ import com._17od.upm.util.Util;
 public class PasswordDatabasePersistence {
 
     private static final String FILE_HEADER = "UPM";
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION_V4 = 4;
 
     private EncryptionService encryptionService;
 
@@ -81,7 +87,7 @@ public class PasswordDatabasePersistence {
      * @throws CryptoException
      */
     public PasswordDatabasePersistence(char[] password) throws CryptoException {
-        encryptionService = new EncryptionService(password);
+        encryptionService = new EncryptionServiceV4(password);
     }
 
     public PasswordDatabase load(File databaseFile) throws InvalidPasswordException, ProblemReadingDatabaseFile, IOException {
@@ -114,12 +120,41 @@ public class PasswordDatabasePersistence {
             // Get the database version 
             byte dbVersion = fullDatabase[dbVersionPos];
 
-            if (dbVersion == 2 || dbVersion == 3) {
-                byte[] salt = new byte[EncryptionService.SALT_LENGTH];
-                System.arraycopy(fullDatabase, saltPos, salt, 0, EncryptionService.SALT_LENGTH);
-                int encryptedBytesLength = fullDatabase.length - encryptedBytesPos;
-                byte[] encryptedBytes = new byte[encryptedBytesLength]; 
-                System.arraycopy(fullDatabase, encryptedBytesPos, encryptedBytes, 0, encryptedBytesLength);
+            if (dbVersion == 2 || dbVersion == 3 || dbVersion == 4) {
+
+                int payloadPos = encryptedBytesPos;
+
+                if (dbVersion == 4) {
+                    // v4: 16 byte salt + Argon2 parameters before the payload
+                    int saltLengthV4 = EncryptionServiceV4.SALT_LENGTH_V4;
+                    int paramsPos = saltPos + saltLengthV4;
+                    if (fullDatabase.length < paramsPos + 9 + EncryptionServiceV4.IV_LENGTH + 16) {
+                        throw new ProblemReadingDatabaseFile("This file doesn't appear to be a UPM password database");
+                    }
+                    byte[] saltV4 = new byte[saltLengthV4];
+                    System.arraycopy(fullDatabase, saltPos, saltV4, 0, saltLengthV4);
+                    int argon2Iterations = readIntBE(fullDatabase, paramsPos);
+                    int argon2MemoryKB = readIntBE(fullDatabase, paramsPos + 4);
+                    int argon2Parallelism = fullDatabase[paramsPos + 8] & 0xFF;
+                    payloadPos = paramsPos + 9;
+
+                    if (encryptionService instanceof EncryptionServiceV4) {
+                        // Re-derive the key using this file's salt and parameters
+                        ((EncryptionServiceV4) encryptionService).reconfigure(saltV4, argon2Iterations, argon2MemoryKB, argon2Parallelism);
+                    } else {
+                        // Without the master password we can't derive an Argon2 key;
+                        // throw InvalidPasswordException so the GUI asks for the
+                        // password and retries via load(File, char[])
+                        throw new InvalidPasswordException();
+                    }
+                } else {
+                    byte[] salt = new byte[EncryptionService.SALT_LENGTH];
+                    System.arraycopy(fullDatabase, saltPos, salt, 0, EncryptionService.SALT_LENGTH);
+                }
+
+                int encryptedBytesLength = fullDatabase.length - payloadPos;
+                byte[] encryptedBytes = new byte[encryptedBytesLength];
+                System.arraycopy(fullDatabase, payloadPos, encryptedBytes, 0, encryptedBytesLength);
 
                 // From version 3 onwards Strings in AccountInformation are
                 // encoded using UTF-8. To ensure we can still open older dbs
@@ -206,12 +241,34 @@ public class PasswordDatabasePersistence {
             // Get the database version 
             byte dbVersion = fullDatabase[dbVersionPos];
 
-            if (dbVersion == 2 || dbVersion == 3) {
-                byte[] salt = new byte[EncryptionService.SALT_LENGTH];
-                System.arraycopy(fullDatabase, saltPos, salt, 0, EncryptionService.SALT_LENGTH);
-                int encryptedBytesLength = fullDatabase.length - encryptedBytesPos;
-                byte[] encryptedBytes = new byte[encryptedBytesLength]; 
-                System.arraycopy(fullDatabase, encryptedBytesPos, encryptedBytes, 0, encryptedBytesLength);
+            if (dbVersion == 2 || dbVersion == 3 || dbVersion == 4) {
+
+                int payloadPos = encryptedBytesPos;
+
+                if (dbVersion == 4) {
+                    // v4: 16 byte salt + Argon2 parameters before the payload
+                    int saltLengthV4 = EncryptionServiceV4.SALT_LENGTH_V4;
+                    int paramsPos = saltPos + saltLengthV4;
+                    if (fullDatabase.length < paramsPos + 9 + EncryptionServiceV4.IV_LENGTH + 16) {
+                        throw new ProblemReadingDatabaseFile("This file doesn't appear to be a UPM password database");
+                    }
+                    byte[] saltV4 = new byte[saltLengthV4];
+                    System.arraycopy(fullDatabase, saltPos, saltV4, 0, saltLengthV4);
+                    int argon2Iterations = readIntBE(fullDatabase, paramsPos);
+                    int argon2MemoryKB = readIntBE(fullDatabase, paramsPos + 4);
+                    int argon2Parallelism = fullDatabase[paramsPos + 8] & 0xFF;
+                    payloadPos = paramsPos + 9;
+
+                    encryptionService = new EncryptionServiceV4(password, saltV4, argon2Iterations, argon2MemoryKB, argon2Parallelism);
+                } else {
+                    byte[] salt = new byte[EncryptionService.SALT_LENGTH];
+                    System.arraycopy(fullDatabase, saltPos, salt, 0, EncryptionService.SALT_LENGTH);
+                    encryptionService = new EncryptionService(password, salt);
+                }
+
+                int encryptedBytesLength = fullDatabase.length - payloadPos;
+                byte[] encryptedBytes = new byte[encryptedBytesLength];
+                System.arraycopy(fullDatabase, payloadPos, encryptedBytes, 0, encryptedBytesLength);
 
                 // From version 3 onwards Strings in AccountInformation are
                 // encoded using UTF-8. To ensure we can still open older dbs
@@ -221,7 +278,6 @@ public class PasswordDatabasePersistence {
                 }
 
                 //Attempt to decrypt the database information
-                encryptionService = new EncryptionService(password, salt);
                 byte[] decryptedBytes;
                 try {
                     decryptedBytes = encryptionService.decrypt(encryptedBytes);
@@ -277,8 +333,9 @@ public class PasswordDatabasePersistence {
                 throw new ProblemReadingDatabaseFile("Don't know how to handle database version [" + dh.getVersion() + "]");
             }
 
-            // Initialise the EncryptionService so that it's ready for the "save" operation
-            encryptionService = new EncryptionService(password);
+            // Initialise the EncryptionService so that it's ready for the "save"
+            // operation (the next save migrates this legacy DES database to v4)
+            encryptionService = new EncryptionServiceV4(password);
 
         }
         
@@ -317,16 +374,40 @@ public class PasswordDatabasePersistence {
         os.close();
         byte[] dataToEncrypt = os.toByteArray();
 
+        // v2/v3 services always get upgraded to v4 (Argon2id + AES-GCM) at the
+        // first save, because we keep the master password in the service. This
+        // gives an automatic migration of existing databases.
+        if (!(encryptionService instanceof EncryptionServiceV4)) {
+            char[] masterPassword = encryptionService.getPassword();
+            if (masterPassword == null) {
+                throw new CryptoException(new Exception("Cannot migrate the database to format v4: the master password is not available"));
+            }
+            encryptionService = new EncryptionServiceV4(masterPassword);
+        }
+        EncryptionServiceV4 v4 = (EncryptionServiceV4) encryptionService;
+
         //Now encrypt the database data
-        byte[] encryptedData = encryptionService.encrypt(dataToEncrypt);
-        
-        //Write the salt and the encrypted data out to the database file
+        byte[] encryptedData = v4.encrypt(dataToEncrypt);
+
+        //Write the header, salt, Argon2 parameters and encrypted data out to the database file
         FileOutputStream fos = new FileOutputStream(database.getDatabaseFile());
         fos.write(FILE_HEADER.getBytes());
-        fos.write(DB_VERSION);
-        fos.write(encryptionService.getSalt());
+        fos.write(DB_VERSION_V4);
+        fos.write(v4.getSalt());
+        fos.write(intBE(v4.getIterations()));
+        fos.write(intBE(v4.getMemoryKB()));
+        fos.write((byte) v4.getParallelism());
         fos.write(encryptedData);
         fos.close();
+    }
+
+    private static int readIntBE(byte[] b, int off) {
+        return ((b[off] & 0xFF) << 24) | ((b[off + 1] & 0xFF) << 16)
+                | ((b[off + 2] & 0xFF) << 8) | (b[off + 3] & 0xFF);
+    }
+
+    private static byte[] intBE(int value) {
+        return new byte[] { (byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value };
     }
 
     public EncryptionService getEncryptionService() {
